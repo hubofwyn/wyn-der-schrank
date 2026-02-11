@@ -7,29 +7,29 @@ last_updated: 2026-02-11
 
 ## Snapshot
 
-- __Active:__ none
-- __Next ready:__ G1 — Scene Infrastructure
+- __Active:__ G1 — Scene Infrastructure [feat/scene-infrastructure]
+- __Next ready:__ G2, G3, G4 (after G1 merges)
 - __Blocked:__ none
 - __Last milestone:__ 2026-02-11 — MVP colored-rect platformer (32 tests) [feat/minimal-playable-game]
-- __Gates:__ all green (32 tests)
+- __Gates:__ all green (48 tests)
 
 ## Goals
 
 ### G1: Scene Infrastructure
 
-> __Status:__ ready
+> __Status:__ in-progress
 > __Requires:__ none
 > __Benefits from:__ none
 > __Unlocks:__ G2, G3, G4
-> __Branch:__ --
+> __Branch:__ feat/scene-infrastructure
 
 BaseScene with container access, full Container wiring, camera module, PreloadScene with asset manifest. The platform everything else builds on.
 
-- [ ] BaseScene class with typed container access pattern
-- [ ] Full Container wiring in main.ts (all ports resolved)
-- [ ] Camera module (modules/camera/) with port interface
-- [ ] PreloadScene with asset manifest loading
-- [ ] Full scene chain: Boot -> Preload -> Platformer
+- [x] BaseScene class with typed container access pattern
+- [x] Full Container wiring in main.ts (all ports resolved)
+- [x] Camera module (modules/camera/) with port interface
+- [x] PreloadScene with asset manifest loading
+- [x] Full scene chain: Boot -> Preload -> Platformer
 
 ### G2: Visual Identity
 

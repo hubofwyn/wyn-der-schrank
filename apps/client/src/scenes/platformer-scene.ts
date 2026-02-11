@@ -1,19 +1,22 @@
 import type { CharacterStats } from '@wds/shared';
 import { PlatformerConfigSchema, SettingsSchema } from '@wds/shared';
-import { PhaserClock } from '../core/adapters/phaser-clock.js';
+import type { PhaserClock } from '../core/adapters/phaser-clock.js';
 import { PhaserInput } from '../core/adapters/phaser-input.js';
 import { PhaserBody } from '../core/adapters/phaser-physics.js';
 import { getFirstStepsLevel } from '../modules/level/level-data.js';
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
 import { PlayerController } from '../modules/player/player-controller.js';
+import { BaseScene } from './base-scene.js';
 
 /**
  * PlatformerScene — the core gameplay scene.
  *
  * Wires PlayerController through ports to Phaser rendering.
- * Adapters are scene-scoped (PhaserInput/PhaserBody require a live scene).
+ * Game-scoped services (clock, audio, network, storage) come from the
+ * DI container. Scene-scoped adapters (input, body) are created here
+ * because they require a live Phaser scene.
  */
-export class PlatformerScene extends Phaser.Scene {
+export class PlatformerScene extends BaseScene {
 	private clock!: PhaserClock;
 	private phaserInput!: PhaserInput;
 	private playerController!: PlayerController;
@@ -25,8 +28,10 @@ export class PlatformerScene extends Phaser.Scene {
 	create(): void {
 		const level = getFirstStepsLevel();
 
-		// ── Adapters ──
-		this.clock = new PhaserClock();
+		// ── Game-scoped services from container ──
+		this.clock = this.container.clock as PhaserClock;
+
+		// ── Scene-scoped adapters ──
 		this.phaserInput = new PhaserInput(
 			this.input.keyboard!,
 			SettingsSchema.parse({
