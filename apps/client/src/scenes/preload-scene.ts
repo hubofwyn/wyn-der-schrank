@@ -1,5 +1,6 @@
 import type { AssetEntry } from '@wds/shared';
 import { parseManifest } from '../modules/assets/manifest-parser.js';
+import { getSkeletonAnimationDefs } from '../modules/enemy/animation-config.js';
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
 import type { AnimationDef } from '../modules/player/animation-config.js';
 import { getPlayerAnimationDefs } from '../modules/player/animation-config.js';
@@ -82,8 +83,10 @@ export class PreloadScene extends BaseScene {
 	}
 
 	private createAnimations(): void {
-		const playerDefs = getPlayerAnimationDefs('player');
-		for (const def of playerDefs) {
+		for (const def of getPlayerAnimationDefs('player')) {
+			this.registerAnimation(def);
+		}
+		for (const def of getSkeletonAnimationDefs()) {
 			this.registerAnimation(def);
 		}
 	}

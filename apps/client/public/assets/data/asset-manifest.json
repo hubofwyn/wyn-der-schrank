@@ -9,6 +9,20 @@
 			"frameHeight": 16
 		},
 		{
+			"key": "enemy-skeleton-idle",
+			"type": "spritesheet",
+			"url": "assets/sprites/enemies/skeleton-idle.png",
+			"frameWidth": 32,
+			"frameHeight": 32
+		},
+		{
+			"key": "enemy-skeleton-walk",
+			"type": "spritesheet",
+			"url": "assets/sprites/enemies/skeleton-walk.png",
+			"frameWidth": 32,
+			"frameHeight": 32
+		},
+		{
 			"key": "tiles-dungeon",
 			"type": "image",
 			"url": "assets/tilemaps/tilesets/dungeon-tileset.png"

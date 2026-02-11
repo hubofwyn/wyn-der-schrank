@@ -3,6 +3,7 @@ import { PlatformerConfigSchema, SettingsSchema } from '@wds/shared';
 import { PhaserInput } from '../core/adapters/phaser-input.js';
 import { PhaserBody } from '../core/adapters/phaser-physics.js';
 import type { IGameClock } from '../core/ports/engine.js';
+import { getSkeletonDefaultAnim } from '../modules/enemy/animation-config.js';
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
 import { getAnimKeyForState } from '../modules/player/animation-config.js';
 import { PlayerController } from '../modules/player/player-controller.js';
@@ -88,6 +89,9 @@ export class PlatformerScene extends BaseScene {
 			stats,
 		});
 
+		// ── Enemies (visual only — domain AI is G4) ──
+		this.placeEnemies(map);
+
 		// ── Collisions ──
 		this.physics.add.collider(this.playerSprite, groundLayer);
 
@@ -109,6 +113,20 @@ export class PlatformerScene extends BaseScene {
 		const animKey = getAnimKeyForState(snap.state);
 		this.playerSprite.play(animKey, true);
 		this.playerSprite.flipX = snap.facing === 'left';
+	}
+
+	private placeEnemies(map: Phaser.Tilemaps.Tilemap): void {
+		const objectLayer = map.getObjectLayer('Objects');
+		if (!objectLayer) return;
+
+		for (const obj of objectLayer.objects) {
+			if (obj.type !== 'enemy') continue;
+			if (obj.x == null || obj.y == null) continue;
+
+			const sprite = this.add.sprite(obj.x, obj.y, 'enemy-skeleton-idle');
+			sprite.setDisplaySize(32, 48);
+			sprite.play(getSkeletonDefaultAnim());
+		}
 	}
 
 	private getSpawnPoint(map: Phaser.Tilemaps.Tilemap): { x: number; y: number } {

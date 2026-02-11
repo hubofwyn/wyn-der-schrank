@@ -11,7 +11,7 @@
 	"version": "1.10",
 	"tiledversion": "1.11.2",
 	"nextlayerid": 3,
-	"nextobjectid": 2,
+	"nextobjectid": 6,
 	"layers": [
 		{
 			"data": [
@@ -369,6 +369,78 @@
 					"height": 0,
 					"rotation": 0,
 					"visible": true
+				},
+				{
+					"id": 2,
+					"name": "skeleton-1",
+					"type": "enemy",
+					"x": 500,
+					"y": 736,
+					"width": 0,
+					"height": 0,
+					"rotation": 0,
+					"visible": true,
+					"properties": [
+						{
+							"name": "enemyType",
+							"type": "string",
+							"value": "skeleton"
+						}
+					]
+				},
+				{
+					"id": 3,
+					"name": "skeleton-2",
+					"type": "enemy",
+					"x": 1050,
+					"y": 464,
+					"width": 0,
+					"height": 0,
+					"rotation": 0,
+					"visible": true,
+					"properties": [
+						{
+							"name": "enemyType",
+							"type": "string",
+							"value": "skeleton"
+						}
+					]
+				},
+				{
+					"id": 4,
+					"name": "skeleton-3",
+					"type": "enemy",
+					"x": 1800,
+					"y": 736,
+					"width": 0,
+					"height": 0,
+					"rotation": 0,
+					"visible": true,
+					"properties": [
+						{
+							"name": "enemyType",
+							"type": "string",
+							"value": "skeleton"
+						}
+					]
+				},
+				{
+					"id": 5,
+					"name": "skeleton-4",
+					"type": "enemy",
+					"x": 2600,
+					"y": 334,
+					"width": 0,
+					"height": 0,
+					"rotation": 0,
+					"visible": true,
+					"properties": [
+						{
+							"name": "enemyType",
+							"type": "string",
+							"value": "skeleton"
+						}
+					]
 				}
 			]
 		}
