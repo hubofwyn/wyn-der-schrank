@@ -11,7 +11,7 @@ last_updated: 2026-02-12
 - __Next ready:__ G3, G4
 - __Blocked:__ none
 - __Last milestone:__ 2026-02-11 — G1 Scene Infrastructure (48 tests) [feat/scene-infrastructure]
-- __Gates:__ all green (54 tests)
+- __Gates:__ all green (65 tests)
 
 ## Goals
 
@@ -41,8 +41,8 @@ BaseScene with container access, full Container wiring, camera module, PreloadSc
 
 Sprites, animation, and tile rendering replace colored rectangles. The game looks like a game.
 
-- [ ] Sprite-based player replacing colored rectangle
-- [ ] Player animation state machine (idle, run, jump, fall)
+- [x] Sprite-based player replacing colored rectangle
+- [x] Player animation state machine (idle, run, jump, fall)
 - [ ] Tilemap rendering from Tiled JSON
 - [ ] Enemy sprites with idle/walk display animation (domain AI is G4)
 - [ ] Collectible sprites with idle display animation (domain pickup logic is G3)
