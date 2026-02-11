@@ -1,0 +1,25 @@
+# wyn-der-schrank – Bun configuration
+# https://bun.sh/docs/runtime/bunfig
+
+[install]
+# Exact versions by default – prevents accidental drift across workspaces
+exact = true
+
+# Text lockfile (readable diffs, reviewable in PRs)
+saveTextLockfile = true
+
+# Require new packages to have been published for at least 3 days
+# before they can be installed – supply-chain protection
+minimumReleaseAge = 259200 # 3 days in seconds
+
+# Types packages and tooling ship frequently; exempt them
+minimumReleaseAgeExcludes = [
+	"@types/bun",
+	"@types/node",
+	"typescript",
+	"@biomejs/biome",
+]
+
+[run]
+# Suppress the "$ <command>" echo lines from bun run
+silent = true
