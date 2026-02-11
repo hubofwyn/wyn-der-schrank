@@ -6,12 +6,18 @@ import { BaseScene } from './base-scene.js';
 /**
  * PreloadScene — loads all game assets with a progress bar.
  *
- * Flow: loads asset-manifest.json, delegates parsing to the
- * manifest-parser module, then queues every asset into the
- * Phaser loader. Displays a simple progress bar while loading.
- * Transitions to Platformer when complete.
+ * Flow:
+ * 1. preload() — loads the asset-manifest.json only.
+ * 2. create()  — parses the manifest, queues every game asset into
+ *    the Phaser loader, and starts a second load pass. When the
+ *    second pass completes, transitions to the next scene.
+ *
+ * If the manifest is empty (no assets), transitions immediately.
  */
 export class PreloadScene extends BaseScene {
+	private progressFill: Phaser.GameObjects.Rectangle | null = null;
+	private progressBarWidth = 400;
+
 	constructor() {
 		super({ key: SceneKeys.PRELOAD });
 	}
@@ -19,31 +25,46 @@ export class PreloadScene extends BaseScene {
 	preload(): void {
 		this.createProgressBar();
 		this.load.json('asset-manifest', 'assets/data/asset-manifest.json');
-		this.load.on('complete', () => this.onManifestLoaded());
 	}
 
 	create(): void {
-		// All assets loaded — transition to Platformer.
-		// Later: transition to Title -> MainMenu.
-		this.navigateTo(SceneKeys.PLATFORMER);
+		const raw = this.cache.json.get('asset-manifest') as unknown;
+		const assets = parseManifest(raw);
+
+		if (assets.length === 0) {
+			this.navigateTo(SceneKeys.PLATFORMER);
+			return;
+		}
+
+		for (const asset of assets) {
+			this.queueAsset(asset);
+		}
+
+		this.load.on('progress', (value: number) => {
+			if (this.progressFill) {
+				this.progressFill.width = this.progressBarWidth * value;
+			}
+		});
+
+		this.load.once('complete', () => {
+			this.navigateTo(SceneKeys.PLATFORMER);
+		});
+
+		this.load.start();
 	}
 
 	private createProgressBar(): void {
 		const { width, height } = this.scale;
-		const barWidth = 400;
 		const barHeight = 28;
-		const x = (width - barWidth) / 2;
+		const x = (width - this.progressBarWidth) / 2;
 		const y = height / 2;
 
-		// Background bar
-		const bg = this.add.rectangle(width / 2, y, barWidth, barHeight, 0x222222);
+		const bg = this.add.rectangle(width / 2, y, this.progressBarWidth, barHeight, 0x222222);
 		bg.setOrigin(0.5);
 
-		// Fill bar
-		const fill = this.add.rectangle(x, y, 0, barHeight, 0x3355ff);
-		fill.setOrigin(0, 0.5);
+		this.progressFill = this.add.rectangle(x, y, 0, barHeight, 0x3355ff);
+		this.progressFill.setOrigin(0, 0.5);
 
-		// Loading text
 		const text = this.add.text(width / 2, y - 30, 'Loading...', {
 			fontSize: '18px',
 			color: '#cccccc',
@@ -51,21 +72,10 @@ export class PreloadScene extends BaseScene {
 		text.setOrigin(0.5);
 
 		this.load.on('progress', (value: number) => {
-			fill.width = barWidth * value;
+			if (this.progressFill) {
+				this.progressFill.width = this.progressBarWidth * value;
+			}
 		});
-	}
-
-	private onManifestLoaded(): void {
-		const raw = this.cache.json.get('asset-manifest') as unknown;
-		const assets = parseManifest(raw);
-		if (assets.length === 0) return;
-
-		for (const asset of assets) {
-			this.queueAsset(asset);
-		}
-
-		// Start a second load pass for manifest assets
-		this.load.start();
 	}
 
 	private queueAsset(asset: AssetEntry): void {

@@ -20,6 +20,7 @@ export class PlatformerScene extends BaseScene {
 	private clock!: IGameClock;
 	private phaserInput!: PhaserInput;
 	private playerController!: PlayerController;
+	private playerSprite!: Phaser.GameObjects.Sprite;
 
 	constructor() {
 		super({ key: SceneKeys.PLATFORMER });
@@ -50,10 +51,11 @@ export class PlatformerScene extends BaseScene {
 		}
 
 		// ── Player ──
-		const playerRect = this.add.rectangle(level.spawn.x, level.spawn.y, 32, 48, 0x3355ff);
-		this.physics.add.existing(playerRect, false);
+		this.playerSprite = this.add.sprite(level.spawn.x, level.spawn.y, 'player');
+		this.playerSprite.setDisplaySize(32, 48);
+		this.physics.add.existing(this.playerSprite, false);
 
-		const arcadeBody = playerRect.body as Phaser.Physics.Arcade.Body;
+		const arcadeBody = this.playerSprite.body as Phaser.Physics.Arcade.Body;
 		arcadeBody.setCollideWorldBounds(true);
 		arcadeBody.setMaxVelocity(300, 600);
 
@@ -77,10 +79,10 @@ export class PlatformerScene extends BaseScene {
 		});
 
 		// ── Collisions ──
-		this.physics.add.collider(playerRect, platforms);
+		this.physics.add.collider(this.playerSprite, platforms);
 
 		// ── Camera ──
-		this.cameras.main.startFollow(playerRect, true, 0.1, 0.1);
+		this.cameras.main.startFollow(this.playerSprite, true, 0.1, 0.1);
 		this.cameras.main.setBounds(0, 0, level.worldWidth, level.worldHeight);
 
 		// ── World bounds ──

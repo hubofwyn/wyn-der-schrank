@@ -1,4 +1,12 @@
 {
 	"version": "0.1.0",
-	"assets": []
+	"assets": [
+		{
+			"key": "player",
+			"type": "spritesheet",
+			"url": "assets/sprites/characters/player.png",
+			"frameWidth": 16,
+			"frameHeight": 16
+		}
+	]
 }

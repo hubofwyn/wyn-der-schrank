@@ -69,7 +69,10 @@ Do not duplicate entries — if a symbol is already listed, additional usages do
 | `Camera.setScroll()` | `/classes/Phaser.Cameras.Scene2D.BaseCamera.html#setScroll` | (planned) | — | type-verified |
 | `Camera.scrollX` | `/classes/Phaser.Cameras.Scene2D.BaseCamera.html#scrollX` | (planned) | — | type-verified |
 | `Camera.scrollY` | `/classes/Phaser.Cameras.Scene2D.BaseCamera.html#scrollY` | (planned) | — | type-verified |
-| `Phaser.GameObjects.Sprite` | `/classes/Phaser.GameObjects.Sprite.html` | (planned) | — | — |
+| `Phaser.GameObjects.Sprite` | `/classes/Phaser.GameObjects.Sprite.html` | `scenes/platformer-scene.ts` | 2026-02-12 | type-verified |
+| `scene.add.sprite()` | `/classes/Phaser.GameObjects.GameObjectFactory.html#sprite` | `scenes/platformer-scene.ts` | 2026-02-12 | type-verified |
+| `Sprite.setDisplaySize()` | `/classes/Phaser.GameObjects.Components.Size.html#setDisplaySize` | `scenes/platformer-scene.ts` | 2026-02-12 | type-verified |
+| `Loader.once('complete')` | `/classes/Phaser.Loader.LoaderPlugin.html` | `scenes/preload-scene.ts` | 2026-02-12 | type-verified |
 | `SpriteGPULayer` | `/classes/Phaser.GameObjects.SpriteGPULayer.html` | (planned) | — | — |
 | `Texture#setWrap` | `/classes/Phaser.Textures.Texture.html#setWrap` | (planned) | — | — |
 
