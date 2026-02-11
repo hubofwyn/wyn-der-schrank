@@ -17,8 +17,9 @@ Web-based side-scrolling platformer with integrated minigame subsystem.
 
 ```bash
 bun install
-bun run dev        # client dev server
-bun run check      # full gate: typecheck + zone lint + dep check + tests
+bun run hooks:install # install Lefthook git hooks (once)
+bun run dev           # client dev server
+bun run check         # full gate: typecheck + zone lint + dep check + tests
 ```
 
 ## Project Structure
@@ -55,6 +56,8 @@ Types are inferred from Zod schemas, never hand-written. Services are wired thro
 | `bun run test` | Vitest watch mode |
 | `bun run test:run` | Vitest single run |
 | `bun run check` | Full gate (typecheck + zones + deps + tests) |
+| `bun run lint:md` | Markdown lint check |
+| `bun run hooks:install` | Install Lefthook git hooks (run once after clone) |
 
 ## Documentation
 

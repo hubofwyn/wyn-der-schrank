@@ -56,7 +56,11 @@ apps/server/             → Hono API + game server (@wds/server)
   src/routes/            → API route handlers
   src/services/          → Server-side business logic
 scripts/
+  pre-push-banner.sh    → Cosmetic pre-push header (called by Lefthook)
   telemetry-report.sh   → Human-run telemetry analysis
+.github/workflows/
+  ci.yml                → CI pipeline (5 parallel gates)
+  dependency-review.yml → PR dependency audit
 ```
 
 ## Commands
@@ -71,7 +75,9 @@ scripts/
 - `bun run test` — Vitest watch mode
 - `bun run test:run` — Vitest single run (CI)
 - **`bun run check`** — Full gate: typecheck + lint:zones + deps:check + test:run
-- `bun run pre-commit` — check + format:check
+- `bun run lint:md` — markdownlint check
+- `bun run lint:md:fix` — markdownlint autofix
+- `bun run hooks:install` — Install Lefthook git hooks (run once after clone)
 
 ## Definition of Done
 
@@ -83,23 +89,109 @@ scripts/
 - [ ] New Phaser symbols recorded in `docs/PHASER_EVIDENCE.md`
 - [ ] ADR written for architectural changes (use `docs/adr/template.md`)
 
-## Workflow
+## Branch Workflow
 
-1. **Investigate first.** Before writing code: grep for existing patterns, read relevant docs, check `core/ports/` and `core/container.ts`. Show evidence.
-2. **Explore -> plan -> implement.** For non-trivial tasks, write a short plan with file paths before coding.
-3. **Verify after every change.** Run `bun run check`. Never `--no-verify`.
-4. **Keep diffs small.** 1-3 focused commits. If touching >10 files, write a plan first.
+Every work session follows this cycle. No exceptions.
+
+### 1. Start from clean main
+
+```bash
+git checkout main
+git pull origin main
+# Working tree must be clean. Stash or discard if not.
+```
+
+### 2. Create a work branch
+
+```bash
+git checkout -b <type>/<short-description>
+```
+
+Branch naming: `type/short-description` (kebab-case). Types match conventional commits:
+`feat/`, `fix/`, `refactor/`, `docs/`, `chore/`, `test/`, `ci/`.
+
+Examples: `feat/composition-root`, `fix/coyote-time-edge`, `refactor/player-state-machine`.
+
+### 3. Work on the branch
+
+- Investigate first. Before writing code: grep for existing patterns, read relevant docs, check `core/ports/` and `core/container.ts`. Show evidence.
+- Explore → plan → implement. For non-trivial tasks, write a short plan with file paths before coding.
+- Run `bun run check` after each logical change.
+- Commit as each piece of work completes (not one big commit at the end).
+- Keep diffs small and focused. If touching >10 files, write a plan first.
+
+### 4. Commit conventions
+
+```text
+type(scope): concise description
+
+Optional body explaining why, not what.
+```
+
+- **Types:** `feat`, `fix`, `refactor`, `docs`, `chore`, `test`, `ci`, `perf`
+- **Scopes:** `shared`, `client`, `server`, `audit`, or omit for cross-cutting
+- **Subject line:** imperative mood, lowercase, no period, ≤72 chars
+- Each commit should be a coherent unit. One logical change per commit.
+- Never use `--no-verify` on commits or pushes.
+
+### 5. Pre-push gate
+
+Before pushing, Lefthook's `pre-push` hook runs all CI gates locally:
+
+| Gate | Command | What It Checks |
+|------|---------|---------------|
+| 1 | `bun run typecheck` | TypeScript compilation (tsc --build) |
+| 2 | `bun run lint:zones` | ESLint zone enforcement on modules/ |
+| 3 | `bun run deps:check` | dependency-cruiser structural validation |
+| 4 | `bun run test:run` | Vitest single run |
+| 5 | `bun run format:check` | Biome formatting check |
+| 6 | `bun run lint:md` | markdownlint check |
+
+If any gate fails, the push is rejected. Fix the issue and push again.
+
+Lefthook also runs a `pre-commit` hook that auto-formats staged files (Biome + markdownlint) before each commit.
+
+### 6. PR and CI
+
+```bash
+git push -u origin <branch-name>
+gh pr create --base main --title "type(scope): description" --body "..."
+```
+
+The human monitors CI. Once CI passes, the human merges/squashes and deletes the remote branch.
+
+### 7. Sync main
+
+After merge, return to main and pull:
+
+```bash
+git checkout main
+git pull origin main
+git branch -d <branch-name>     # delete local branch
+```
+
+Then start the next cycle from step 1.
+
+### Workflow diagram
+
+```text
+main (clean) ──→ branch ──→ work + commit ──→ pre-push ──→ push ──→ PR
+                                                                      │
+main (updated) ←── pull ←── human merges/squashes ←───────────────────┘
+```
 
 ## Boundaries
 
 ### Always
 
+- Work on a branch, never directly on `main`. All changes go through PRs.
 - Respect the three zones. `modules/` is pure TS — no Phaser, no `window`, no `document`.
 - Wire new services through `core/container.ts` (Pure DI Composition Root in `main.ts`).
 - Infer types from Zod schemas in `@wds/shared`. Never hand-write types that Zod can generate.
 - Scenes are thin. Domain logic lives in `modules/`, scenes only read state and move sprites.
 - Use port interfaces (`core/ports/`) — never import Phaser directly in domain code.
 - Verify Phaser symbols against rc.6 docs before use. Record in `docs/PHASER_EVIDENCE.md`.
+- Ensure `bun run check` passes before requesting a push or PR.
 
 ### Ask First
 
@@ -112,6 +204,9 @@ scripts/
 
 ### Never
 
+- Commit directly to `main`. All work goes through feature branches and PRs.
+- Push without the pre-push gate passing (Lefthook enforces this).
+- Force-push to `main` or any shared branch.
 - Import `phaser`, `window`, `document`, or `requestAnimationFrame` in `modules/`
 - Import `server/` or `hono` in `scenes/` (use `core/services/network-manager`)
 - Hand-write types that should be `z.infer<>`
@@ -119,7 +214,7 @@ scripts/
 - Cite Phaser 3 docs (photonstorm.github.io/phaser3-docs or docs.phaser.io/api-documentation/api-documentation)
 - Disable tests or linters to make things pass
 - Commit secrets, keys, or tokens
-- Use `--no-verify` on commits
+- Use `--no-verify` on commits or pushes
 
 ## Architecture Quick Reference
 
@@ -162,6 +257,7 @@ shared/  X any app dependency except Zod
 
 | Hook | Event | What It Does |
 |------|-------|-------------|
+| `lefthook.yml` | git pre-push | Runs all 6 CI gates locally before push |
 | `block-phaser3-urls.sh` | PreToolUse | Blocks Phaser 3 doc URL access |
 | `zone-lint-on-edit.sh` | PostToolUse | ESLint + grep on modules/ edits |
 | `phaser-version-guard.sh` | PostToolUse | Warns on undocumented Phaser symbols |

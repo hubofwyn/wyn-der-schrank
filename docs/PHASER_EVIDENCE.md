@@ -1,6 +1,6 @@
 # Phaser 4.0.0-rc.6 — API Evidence Log
 
-Source of truth: https://docs.phaser.io/api-documentation/4.0.0-rc.6/
+Source of truth: <https://docs.phaser.io/api-documentation/4.0.0-rc.6/>
 Local mirror: docs/vendor/phaser-4.0.0-rc.6/
 
 ## Format
