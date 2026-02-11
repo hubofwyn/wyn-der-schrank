@@ -16,7 +16,15 @@ Read `AGENTS.md` first. It is the project contract.
 
 ## Workflow
 
-Investigate -> plan -> implement -> `bun run check`.
+1. Start from clean `main`. Pull latest.
+2. Create a work branch: `git checkout -b type/short-description`
+3. Investigate → plan → implement → `bun run check` after each change.
+4. Commit as each piece completes. Conventional commits: `type(scope): description`.
+5. When ready, `bun run pre-push` (also enforced by git hook). Fix any failures.
+6. Push branch, open PR. Human monitors CI and merges.
+7. Return to `main`, pull, delete local branch. Repeat.
+
+Never commit directly to `main`. Never push without pre-push passing.
 
 ## Key Constraints
 
