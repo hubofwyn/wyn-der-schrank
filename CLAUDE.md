@@ -11,7 +11,7 @@ Read `AGENTS.md` first. It is the project contract.
 | Game domain | `docs/plans/game-blueprint.md` | Scenes, schemas, modules, assets, data flow |
 | Enforcement | `docs/plans/telemetry.md` | Phaser 4 enforcement, hooks, telemetry |
 | Agentic setup | `docs/plans/agentic-setup.md` | Design of .claude/ infrastructure |
-| Current plan | `docs/plans/active-plan.md` | What phase we're in, what's next |
+| Roadmap | `docs/plans/active-plan.md` | Goal status, deliverables, update protocol |
 | Phaser evidence | `docs/PHASER_EVIDENCE.md` | Verified Phaser 4 API usage log |
 | Lint & hooks | `docs/plans/lint-format-hooks.md` | Tool roles, config, git hook pipeline |
 
@@ -33,6 +33,16 @@ Never commit directly to `main`. Never push without pre-push passing.
 - Types inferred from Zod schemas. Never hand-written.
 - Services wired through `core/container.ts`. Scenes are thin.
 - Phaser 4 renderer is WebGL, not WebGPU.
+
+## Plan Protocol
+
+The living roadmap is `docs/plans/active-plan.md`. Read it at session start.
+
+- Goals are numbered by priority. Work top-down — pick the first `ready` goal.
+- One goal is `in-progress` at a time. Its branch name is in the goal metadata.
+- After completing deliverables, check the boxes and update the Snapshot.
+- Never add, remove, or reorder goals. Only the human modifies the goal list.
+- The `/implement-feature` command reads and updates the plan automatically.
 
 ## Phaser 4.0.0-rc.6 — Docs-First Contract
 

@@ -11,10 +11,46 @@ Do not duplicate entries — if a symbol is already listed, additional usages do
 
 | Symbol | rc.6 Doc Path / URL | First Used In | Date | Verified By |
 |--------|---------------------|---------------|------|-------------|
-| `Phaser.Scene` | `/classes/Phaser.Scene.html` | `scenes/base-scene.ts` | 2026-02-10 | foundation |
+| `Phaser.Scene` | `/classes/Phaser.Scene.html` | `scenes/boot-scene.ts` | 2026-02-10 | foundation |
 | `Phaser.Game` | `/classes/Phaser.Game.html` | `main.ts` | 2026-02-10 | foundation |
-| `Phaser.GameObjects.Sprite` | `/classes/Phaser.GameObjects.Sprite.html` | `scenes/platformer-scene.ts` | 2026-02-10 | foundation |
 | `Phaser.AUTO` | `/variables/Phaser.AUTO.html` | `main.ts` | 2026-02-10 | foundation |
+| `Phaser.Scale.FIT` | `/namespaces/Phaser.Scale.html` | `main.ts` | 2026-02-11 | type-verified |
+| `Phaser.Scale.CENTER_BOTH` | `/namespaces/Phaser.Scale.html` | `main.ts` | 2026-02-11 | type-verified |
+| `Phaser.GameObjects.Rectangle` | `/classes/Phaser.GameObjects.Rectangle.html` | `scenes/platformer-scene.ts` | 2026-02-11 | type-verified |
+| `Phaser.Physics.Arcade.StaticGroup` | `/classes/Phaser.Physics.Arcade.StaticGroup.html` | `scenes/platformer-scene.ts` | 2026-02-11 | type-verified |
+| `scene.physics.add.staticGroup()` | `/classes/Phaser.Physics.Arcade.Factory.html#staticGroup` | `scenes/platformer-scene.ts` | 2026-02-11 | type-verified |
+| `scene.physics.add.existing()` | `/classes/Phaser.Physics.Arcade.Factory.html#existing` | `scenes/platformer-scene.ts` | 2026-02-11 | type-verified |
+| `scene.physics.add.collider()` | `/classes/Phaser.Physics.Arcade.Factory.html#collider` | `scenes/platformer-scene.ts` | 2026-02-11 | type-verified |
+| `Phaser.Physics.Arcade.Body.setCollideWorldBounds()` | `/classes/Phaser.Physics.Arcade.Body.html#setCollideWorldBounds` | `scenes/platformer-scene.ts` | 2026-02-11 | type-verified |
+| `Phaser.Physics.Arcade.Body.setMaxVelocity()` | `/classes/Phaser.Physics.Arcade.Body.html#setMaxVelocity` | `core/adapters/phaser-physics.ts` | 2026-02-11 | type-verified |
+| `Camera.startFollow()` | `/classes/Phaser.Cameras.Scene2D.Camera.html#startFollow` | `scenes/platformer-scene.ts` | 2026-02-11 | type-verified |
+| `Camera.setBounds()` | `/classes/Phaser.Cameras.Scene2D.Camera.html#setBounds` | `scenes/platformer-scene.ts` | 2026-02-11 | type-verified |
+| `Phaser.Physics.Arcade.World.setBounds()` | `/classes/Phaser.Physics.Arcade.World.html#setBounds` | `scenes/platformer-scene.ts` | 2026-02-11 | type-verified |
+| `Phaser.Input.Keyboard.KeyboardPlugin` | `/classes/Phaser.Input.Keyboard.KeyboardPlugin.html` | `core/adapters/phaser-input.ts` | 2026-02-10 | type-verified |
+| `Phaser.Input.Keyboard.Key` | `/classes/Phaser.Input.Keyboard.Key.html` | `core/adapters/phaser-input.ts` | 2026-02-10 | type-verified |
+| `Phaser.Input.Keyboard.KeyCodes` | `/variables/Phaser.Input.Keyboard.KeyCodes.html` | `core/adapters/phaser-input.ts` | 2026-02-10 | type-verified |
+| `KeyboardPlugin.addKey()` | `/classes/Phaser.Input.Keyboard.KeyboardPlugin.html#addKey` | `core/adapters/phaser-input.ts` | 2026-02-10 | type-verified |
+| `KeyboardPlugin.removeKey()` | `/classes/Phaser.Input.Keyboard.KeyboardPlugin.html#removeKey` | `core/adapters/phaser-input.ts` | 2026-02-10 | type-verified |
+| `Phaser.Physics.Arcade.Body` | `/classes/Phaser.Physics.Arcade.Body.html` | `core/adapters/phaser-physics.ts` | 2026-02-10 | type-verified |
+| `Phaser.Physics.Arcade.World` | `/classes/Phaser.Physics.Arcade.World.html` | `core/adapters/phaser-physics.ts` | 2026-02-10 | type-verified |
+| `Body.setVelocity()` | `/classes/Phaser.Physics.Arcade.Body.html#setVelocity` | `core/adapters/phaser-physics.ts` | 2026-02-10 | type-verified |
+| `Body.setVelocityX()` | `/classes/Phaser.Physics.Arcade.Body.html#setVelocityX` | `core/adapters/phaser-physics.ts` | 2026-02-10 | type-verified |
+| `Body.setVelocityY()` | `/classes/Phaser.Physics.Arcade.Body.html#setVelocityY` | `core/adapters/phaser-physics.ts` | 2026-02-10 | type-verified |
+| `Body.setAcceleration()` | `/classes/Phaser.Physics.Arcade.Body.html#setAcceleration` | `core/adapters/phaser-physics.ts` | 2026-02-10 | type-verified |
+| `Body.setAccelerationX()` | `/classes/Phaser.Physics.Arcade.Body.html#setAccelerationX` | `core/adapters/phaser-physics.ts` | 2026-02-10 | type-verified |
+| `Body.setGravityY()` | `/classes/Phaser.Physics.Arcade.Body.html#setGravityY` | `core/adapters/phaser-physics.ts` | 2026-02-10 | type-verified |
+| `Body.setDrag()` | `/classes/Phaser.Physics.Arcade.Body.html#setDrag` | `core/adapters/phaser-physics.ts` | 2026-02-10 | type-verified |
+| `Body.setBounce()` | `/classes/Phaser.Physics.Arcade.Body.html#setBounce` | `core/adapters/phaser-physics.ts` | 2026-02-10 | type-verified |
+| `Body.setSize()` | `/classes/Phaser.Physics.Arcade.Body.html#setSize` | `core/adapters/phaser-physics.ts` | 2026-02-10 | type-verified |
+| `Body.setOffset()` | `/classes/Phaser.Physics.Arcade.Body.html#setOffset` | `core/adapters/phaser-physics.ts` | 2026-02-10 | type-verified |
+| `Body.setMass()` | `/classes/Phaser.Physics.Arcade.Body.html#setMass` | `core/adapters/phaser-physics.ts` | 2026-02-10 | type-verified |
+| `scene.add.zone()` | `/classes/Phaser.GameObjects.GameObjectFactory.html#zone` | `core/adapters/phaser-physics.ts` | 2026-02-10 | type-verified |
+| `scene.add.text()` | `/classes/Phaser.GameObjects.GameObjectFactory.html#text` | `scenes/platformer-scene.ts` | 2026-02-10 | type-verified |
+| `scene.physics.overlap()` | `/classes/Phaser.Physics.Arcade.ArcadePhysics.html#overlap` | `core/adapters/phaser-physics.ts` | 2026-02-10 | type-verified |
+| `scene.physics.collide()` | `/classes/Phaser.Physics.Arcade.ArcadePhysics.html#collide` | `core/adapters/phaser-physics.ts` | 2026-02-10 | type-verified |
+| `scene.scene.start()` | `/classes/Phaser.Scenes.ScenePlugin.html#start` | `scenes/boot-scene.ts` | 2026-02-10 | type-verified |
+| `World.gravity` | `/classes/Phaser.Physics.Arcade.World.html#gravity` | `core/adapters/phaser-physics.ts` | 2026-02-10 | type-verified |
+| `Phaser.GameObjects.Sprite` | `/classes/Phaser.GameObjects.Sprite.html` | (planned) | — | — |
 | `SpriteGPULayer` | `/classes/Phaser.GameObjects.SpriteGPULayer.html` | (planned) | — | — |
 | `Texture#setWrap` | `/classes/Phaser.Textures.Texture.html#setWrap` | (planned) | — | — |
 

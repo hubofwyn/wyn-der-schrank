@@ -18,10 +18,11 @@ docs/
   PHASER_EVIDENCE.md     → Verified Phaser 4.0.0-rc.6 API usage log
   adr/template.md        → ADR template
   plans/
-    active-plan.md       → Current phase + next steps
+    active-plan.md       → Goal roadmap, status tracking, update protocol
     game-blueprint.md    → Scenes, schemas, modules, assets, data flow
     telemetry.md         → Phaser 4 enforcement, hooks, observability
     agentic-setup.md     → Design of .claude/ infrastructure
+    lint-format-hooks.md → Tool roles, config, git hook pipeline
 .claude/
   settings.json          → Permissions + hook wiring
   agents/                → Subagent definitions (architect, tester, security-reviewer)
@@ -59,7 +60,7 @@ scripts/
   pre-push-banner.sh    → Cosmetic pre-push header (called by Lefthook)
   telemetry-report.sh   → Human-run telemetry analysis
 .github/workflows/
-  ci.yml                → CI pipeline (5 parallel gates)
+  ci.yml                → CI pipeline (6 parallel gates)
   dependency-review.yml → PR dependency audit
 ```
 
@@ -293,4 +294,4 @@ shared/  X any app dependency except Zod
 | Phaser API evidence | `docs/PHASER_EVIDENCE.md` |
 | Architecture docs | `docs/FOUNDATION.md` |
 | Game blueprint | `docs/plans/game-blueprint.md` |
-| Current plan | `docs/plans/active-plan.md` |
+| Roadmap & status | `docs/plans/active-plan.md` |
