@@ -1,0 +1,91 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  # ─── Gate: Typecheck ──────────────────────────────────────────────
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.x"
+
+      - run: bun install --frozen-lockfile
+
+      - run: bun run typecheck
+
+  # ─── Gate: Zone enforcement (ESLint) ──────────────────────────────
+  lint-zones:
+    name: Zone Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.x"
+
+      - run: bun install --frozen-lockfile
+
+      - run: bun run lint:zones
+
+  # ─── Gate: Structural validation (dependency-cruiser) ─────────────
+  deps-check:
+    name: Dependency Structure
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.x"
+
+      - run: bun install --frozen-lockfile
+
+      - run: bun run deps:check
+
+  # ─── Gate: Tests ──────────────────────────────────────────────────
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.x"
+
+      - run: bun install --frozen-lockfile
+
+      - run: bun run test:run
+
+  # ─── Gate: Formatting (Biome) ─────────────────────────────────────
+  format:
+    name: Format
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: biomejs/setup-biome@v2
+
+      - run: biome ci .
