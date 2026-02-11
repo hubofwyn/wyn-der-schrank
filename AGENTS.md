@@ -22,6 +22,7 @@ docs/
     game-blueprint.md    → Scenes, schemas, modules, assets, data flow
     telemetry.md         → Phaser 4 enforcement, hooks, observability
     agentic-setup.md     → Design of .claude/ infrastructure
+    lint-format-hooks.md → Tool roles, config, git hook pipeline
 .claude/
   settings.json          → Permissions + hook wiring
   agents/                → Subagent definitions (architect, tester, security-reviewer)
@@ -59,7 +60,7 @@ scripts/
   pre-push-banner.sh    → Cosmetic pre-push header (called by Lefthook)
   telemetry-report.sh   → Human-run telemetry analysis
 .github/workflows/
-  ci.yml                → CI pipeline (5 parallel gates)
+  ci.yml                → CI pipeline (6 parallel gates)
   dependency-review.yml → PR dependency audit
 ```
 
