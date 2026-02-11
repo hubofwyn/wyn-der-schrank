@@ -2,11 +2,27 @@
 // All services are wired here and ONLY here.
 // See core/container.ts for the Container interface.
 
-// TODO: Phase 1 — Import and wire Phaser adapters + domain modules
-// import { PhaserClock } from './core/adapters/phaser-clock.js';
-// import { PhaserInput } from './core/adapters/phaser-input.js';
-// import { PhaserAudio } from './core/adapters/phaser-audio.js';
-// import { PhaserPhysics } from './core/adapters/phaser-physics.js';
-// import type { Container } from './core/container.js';
+import { BootScene } from './scenes/boot-scene.js';
+import { PlatformerScene } from './scenes/platformer-scene.js';
 
-console.log('Wyn der Schrank — scaffold loaded');
+new Phaser.Game({
+	type: Phaser.AUTO,
+	width: 1280,
+	height: 720,
+	parent: document.body,
+	pixelArt: true,
+	physics: {
+		default: 'arcade',
+		arcade: {
+			gravity: { x: 0, y: 800 },
+			fixedStep: true,
+			fps: 60,
+			debug: false,
+		},
+	},
+	scale: {
+		mode: Phaser.Scale.FIT,
+		autoCenter: Phaser.Scale.CENTER_BOTH,
+	},
+	scene: [BootScene, PlatformerScene],
+});
