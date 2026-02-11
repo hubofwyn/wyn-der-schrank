@@ -44,12 +44,6 @@ export class PreloadScene extends BaseScene {
 			this.queueAsset(asset);
 		}
 
-		this.load.on('progress', (value: number) => {
-			if (this.progressFill) {
-				this.progressFill.width = this.progressBarWidth * value;
-			}
-		});
-
 		this.load.once('complete', () => {
 			this.createAnimations();
 			this.navigateTo(SceneKeys.PLATFORMER);
