@@ -10,8 +10,8 @@ last_updated: 2026-02-11
 - __Active:__ G3, G4 ready (no goal in-progress)
 - __Next ready:__ G3, G4
 - __Blocked:__ none
-- __Last milestone:__ 2026-02-11 — G2 Visual Identity (73 tests) [feat/visual-identity]
-- __Gates:__ all green (73 tests)
+- __Last milestone:__ 2026-02-11 — G2 Visual Identity (83 tests) [feat/visual-identity]
+- __Gates:__ all green (83 tests)
 
 ## Goals
 
@@ -129,6 +129,6 @@ Title screen, pause, game-over screen, settings, and persistence make the game s
 
 ## Completed Log
 
-- __2026-02-11__ — G2: Visual Identity — Sprite player + animation, Tiled tilemap, enemy/collectible sprites (73 tests) [feat/visual-identity]
+- __2026-02-11__ — G2: Visual Identity — Sprite player + animation, Tiled tilemap, enemy/collectible sprites (83 tests) [feat/visual-identity]
 - __2026-02-11__ — G1: Scene Infrastructure — BaseScene, container wiring, CameraController, PreloadScene, scene chain (48 tests) [feat/scene-infrastructure]
 - __2026-02-11__ — MVP: colored-rect platformer with PlayerController, hexagonal architecture (ports/adapters), full CI pipeline (6 gates), 32 tests [feat/minimal-playable-game]
