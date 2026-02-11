@@ -7,21 +7,21 @@ last_updated: 2026-02-11
 
 ## Snapshot
 
-- __Active:__ G1 — Scene Infrastructure [feat/scene-infrastructure]
-- __Next ready:__ G2, G3, G4 (after G1 merges)
+- __Active:__ G2 — Visual Identity [feat/visual-identity]
+- __Next ready:__ G3, G4
 - __Blocked:__ none
-- __Last milestone:__ 2026-02-11 — MVP colored-rect platformer (32 tests) [feat/minimal-playable-game]
+- __Last milestone:__ 2026-02-11 — G1 Scene Infrastructure (48 tests) [feat/scene-infrastructure]
 - __Gates:__ all green (48 tests)
 
 ## Goals
 
 ### G1: Scene Infrastructure
 
-> __Status:__ in-progress
+> __Status:__ done
 > __Requires:__ none
 > __Benefits from:__ none
 > __Unlocks:__ G2, G3, G4
-> __Branch:__ feat/scene-infrastructure
+> __Branch:__ merged
 
 BaseScene with container access, full Container wiring, camera module, PreloadScene with asset manifest. The platform everything else builds on.
 
@@ -33,11 +33,11 @@ BaseScene with container access, full Container wiring, camera module, PreloadSc
 
 ### G2: Visual Identity
 
-> __Status:__ not-started
+> __Status:__ in-progress
 > __Requires:__ G1
 > __Benefits from:__ none
 > __Unlocks:__ G3, G4, G5
-> __Branch:__ --
+> __Branch:__ feat/visual-identity
 
 Sprites, animation, and tile rendering replace colored rectangles. The game looks like a game.
 
@@ -49,7 +49,7 @@ Sprites, animation, and tile rendering replace colored rectangles. The game look
 
 ### G3: Gameplay Loop
 
-> __Status:__ not-started
+> __Status:__ ready
 > __Requires:__ G1
 > __Benefits from:__ G2
 > __Unlocks:__ G5
@@ -65,7 +65,7 @@ Collectibles, HUD, level-end trigger, and scoring give the player a goal.
 
 ### G4: Hazards
 
-> __Status:__ not-started
+> __Status:__ ready
 > __Requires:__ G1
 > __Benefits from:__ G2
 > __Unlocks:__ G5
@@ -127,4 +127,5 @@ Title screen, pause, game-over screen, settings, and persistence make the game s
 
 ## Completed Log
 
+- __2026-02-11__ — G1: Scene Infrastructure — BaseScene, container wiring, CameraController, PreloadScene, scene chain (48 tests) [feat/scene-infrastructure]
 - __2026-02-11__ — MVP: colored-rect platformer with PlayerController, hexagonal architecture (ports/adapters), full CI pipeline (6 gates), 32 tests [feat/minimal-playable-game]
