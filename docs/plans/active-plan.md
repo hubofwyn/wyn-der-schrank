@@ -1,6 +1,6 @@
 ---
 title: Active Plan
-last_updated: 2026-02-11
+last_updated: 2026-02-12
 ---
 
 # Active Plan
@@ -11,7 +11,7 @@ last_updated: 2026-02-11
 - __Next ready:__ G3, G4
 - __Blocked:__ none
 - __Last milestone:__ 2026-02-11 — G1 Scene Infrastructure (48 tests) [feat/scene-infrastructure]
-- __Gates:__ all green (48 tests)
+- __Gates:__ all green (54 tests)
 
 ## Goals
 
@@ -44,8 +44,8 @@ Sprites, animation, and tile rendering replace colored rectangles. The game look
 - [ ] Sprite-based player replacing colored rectangle
 - [ ] Player animation state machine (idle, run, jump, fall)
 - [ ] Tilemap rendering from Tiled JSON
-- [ ] Enemy sprites and patrol animation
-- [ ] Collectible sprites and pickup animation
+- [ ] Enemy sprites with idle/walk display animation (domain AI is G4)
+- [ ] Collectible sprites with idle display animation (domain pickup logic is G3)
 
 ### G3: Gameplay Loop
 
@@ -55,13 +55,13 @@ Sprites, animation, and tile rendering replace colored rectangles. The game look
 > __Unlocks:__ G5
 > __Branch:__ --
 
-Collectibles, HUD, level-end trigger, and scoring give the player a goal.
+Collectibles, HUD, level-end trigger, and scoring give the player a goal. Builds on G2 sprites and tilemaps.
 
-- [ ] Collectible module (modules/collectible/) with pickup logic
-- [ ] HUD scene (score, health, level indicator)
-- [ ] Level-end trigger and level-complete flow
+- [ ] Collectible module (modules/collectible/) with pickup logic wired to G2 sprites
+- [ ] HUD scene (score, health, level indicator) — PlayerController already exposes health via snapshot
+- [ ] Level-end trigger and level-complete flow (exit object in tilemap)
 - [ ] Scoring module with star rating calculation
-- [ ] At least one complete world with 2-3 levels
+- [ ] At least one complete world with 2-3 Tiled levels (requires G2 tilemap infrastructure)
 
 ### G4: Hazards
 
@@ -71,11 +71,11 @@ Collectibles, HUD, level-end trigger, and scoring give the player a goal.
 > __Unlocks:__ G5
 > __Branch:__ --
 
-Enemy patrol, damage, death/respawn, and game-over add risk to the platforming.
+Enemy patrol, damage, death/respawn, and game-over add risk to the platforming. Builds on G2 enemy sprites.
 
-- [ ] Enemy module (modules/enemy/) with patrol AI
-- [ ] Damage and health system (player takes hits)
-- [ ] Death and respawn mechanic
+- [ ] Enemy module (modules/enemy/) with patrol AI wired to G2 sprites
+- [ ] Damage and health system (PlayerController.takeDamage exists; wire collision → damage → visual feedback)
+- [ ] Death and respawn mechanic (checkpoint system + spawn reset)
 - [ ] Game-over trigger when health reaches zero
 - [ ] Enemy-player collision detection via physics port
 
@@ -87,8 +87,9 @@ Enemy patrol, damage, death/respawn, and game-over add risk to the platforming.
 > __Unlocks:__ none
 > __Branch:__ --
 
-Title screen, pause, game-over screen, settings, and persistence make the game self-contained.
+Title screen, pause, game-over screen, settings, and persistence make the game self-contained. Design tokens (colors, spacing, typography) provide consistent UI across all menu scenes.
 
+- [ ] Design tokens module (modules/ui/design-tokens.ts) — color palette, spacing scale, z-index layers (pure TS, zone-safe)
 - [ ] Title screen and main menu scene
 - [ ] Pause scene (overlay)
 - [ ] Game-over scene with retry/quit options
