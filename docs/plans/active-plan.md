@@ -1,7 +1,7 @@
 ---
 title: Active Plan
 status: Phase 1 — Core Infrastructure (in progress)
-last_updated: 2026-02-10
+last_updated: 2026-02-11
 ---
 
 # Active Plan
@@ -37,20 +37,25 @@ last_updated: 2026-02-10
 - [x] Vitest workspace properly excludes dist/ compiled output
 - [x] tsconfig.test.json for ESLint type-aware linting of test files
 - [x] All verification gates green: typecheck + lint:zones + deps:check + test:run (32/32) + format:check
+- [x] No-op adapter stubs (NoopAudio, NoopNetwork, NoopStorage) for MVP
+- [x] Hardcoded level geometry (modules/level/level-data.ts — pure TS, zone-clean)
+- [x] Composition Root functional (main.ts with Phaser.Game config)
+- [x] BootScene -> PlatformerScene scene chain
+- [x] __MVP milestone: minimal playable game__ — colored-rectangle player moving and jumping across platforms with camera follow, double jump, coyote time, jump buffer, fast fall
 
 ### Next
 
 - [ ] Local Phaser 4 docs mirror (docs/vendor/phaser-4.0.0-rc.6/)
-- [ ] Composition Root functional (main.ts wiring)
-- [ ] Boot -> Preload -> Title -> MainMenu scene chain
+- [ ] Full scene chain: Boot -> Preload -> Title -> MainMenu -> Platformer
 - [ ] BaseScene class with container access pattern
+- [ ] Full Container wiring in main.ts (deferred from MVP)
 - [ ] NetworkManager with Hono RPC client
 - [ ] LocalStorageAdapter implementing IStorageProvider
 - [ ] Settings persistence round-trip
 - [ ] Profile creation / loading
 - [ ] Asset manifest loading in PreloadScene
 - [ ] Catalog loaders (character, enemy, collectible, world)
-- [ ] `bun run check` green with all adapters wired
+- [ ] Sprite-based player replacing colored rectangle
 
 ### Phase 2: Platformer Core
 
