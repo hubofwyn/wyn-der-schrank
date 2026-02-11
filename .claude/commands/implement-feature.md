@@ -28,12 +28,14 @@ Implement the feature described in $ARGUMENTS. Follow this sequence exactly:
 3. Domain logic in modules/ (with tests)
 4. Container wiring in core/container.ts + main.ts
 5. Scene integration in scenes/ (thin — read state, move sprites)
+6. Verify: scenes reference container ports by **interface type** (e.g. `IGameClock`), never cast to concrete adapters (e.g. `as PhaserClock`)
 
 **Gate 4 — Verify**
 1. `bun run check` — must pass with zero warnings
 2. Review own diff against AGENTS.md boundaries
 3. Verify any new Phaser symbols are recorded in `docs/PHASER_EVIDENCE.md`
-4. Report: files changed, tests added, verification status
+4. Visual gate (V1): if the change affects rendering, note "V1: human must verify in browser via `bun run dev`"
+5. Report: files changed, tests added, verification status, V1 status
 
 **Gate 5 — Update Plan**
 1. In `docs/plans/active-plan.md`, check off completed deliverables: `- [ ]` -> `- [x]`

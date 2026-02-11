@@ -124,6 +124,7 @@ Title screen, pause, game-over screen, settings, and persistence make the game s
 6. __Update last_updated.__ Set the frontmatter date on any edit.
 7. __Decompose large deliverables.__ If a deliverable will touch more than 8 files, stop and split it into sub-deliverables before implementing.
 8. __Reprioritization.__ If the Snapshot's active goal doesn't match the first `in-progress` goal in the list, the human has reprioritized. Read the new Snapshot and adjust.
+9. __Merge-time vs branch-time.__ Status updates for _completed_ work (goal → `done`, deliverable checked off, Completed Log entry) are committed on the _work branch_ before the PR merge. Status updates for _starting_ new work (goal → `in-progress`, new branch name) are committed as the _first commit_ on the new branch. Never commit plan changes directly on `main`.
 
 ## Completed Log
 

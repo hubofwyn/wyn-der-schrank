@@ -190,7 +190,9 @@ main (updated) ←── pull ←── human merges/squashes ←─────
 - Wire new services through `core/container.ts` (Pure DI Composition Root in `main.ts`).
 - Infer types from Zod schemas in `@wds/shared`. Never hand-write types that Zod can generate.
 - Scenes are thin. Domain logic lives in `modules/`, scenes only read state and move sprites.
+- Thin-scene heuristic: if a scene method has more than one `if`/`switch` branch that isn't directly about Phaser rendering, extract the logic to a module.
 - Use port interfaces (`core/ports/`) — never import Phaser directly in domain code.
+- Scenes reference container ports by **interface type** (e.g. `IGameClock`), never cast to concrete adapters (e.g. `as PhaserClock`). The port abstraction exists so implementations can be swapped without changing scene code.
 - Verify Phaser symbols against rc.6 docs before use. Record in `docs/PHASER_EVIDENCE.md`.
 - Ensure `bun run check` passes before requesting a push or PR.
 
@@ -210,6 +212,7 @@ main (updated) ←── pull ←── human merges/squashes ←─────
 - Force-push to `main` or any shared branch.
 - Import `phaser`, `window`, `document`, or `requestAnimationFrame` in `modules/`
 - Import `server/` or `hono` in `scenes/` (use `core/services/network-manager`)
+- Cast container ports to concrete adapter types in scenes (e.g. `container.clock as PhaserClock`)
 - Hand-write types that should be `z.infer<>`
 - Claim Phaser 4 uses WebGPU (it uses WebGL)
 - Cite Phaser 3 docs (photonstorm.github.io/phaser3-docs or docs.phaser.io/api-documentation/api-documentation)

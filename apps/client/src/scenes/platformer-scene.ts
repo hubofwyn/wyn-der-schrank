@@ -1,8 +1,8 @@
 import type { CharacterStats } from '@wds/shared';
 import { PlatformerConfigSchema, SettingsSchema } from '@wds/shared';
-import type { PhaserClock } from '../core/adapters/phaser-clock.js';
 import { PhaserInput } from '../core/adapters/phaser-input.js';
 import { PhaserBody } from '../core/adapters/phaser-physics.js';
+import type { IGameClock } from '../core/ports/engine.js';
 import { getFirstStepsLevel } from '../modules/level/level-data.js';
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
 import { PlayerController } from '../modules/player/player-controller.js';
@@ -17,7 +17,7 @@ import { BaseScene } from './base-scene.js';
  * because they require a live Phaser scene.
  */
 export class PlatformerScene extends BaseScene {
-	private clock!: PhaserClock;
+	private clock!: IGameClock;
 	private phaserInput!: PhaserInput;
 	private playerController!: PlayerController;
 
@@ -29,7 +29,7 @@ export class PlatformerScene extends BaseScene {
 		const level = getFirstStepsLevel();
 
 		// ── Game-scoped services from container ──
-		this.clock = this.container.clock as PhaserClock;
+		this.clock = this.container.clock;
 
 		// ── Scene-scoped adapters ──
 		this.phaserInput = new PhaserInput(

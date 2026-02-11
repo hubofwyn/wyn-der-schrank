@@ -12,7 +12,7 @@ import type { BlockedState, IBody } from '../../core/ports/physics.js';
  */
 
 export function createMockClock(delta = 16.67): IGameClock {
-	return { now: 0, delta, frame: 0, elapsed: 0 };
+	return { now: 0, delta, frame: 0, elapsed: 0, refresh() {} };
 }
 
 export interface MockInput extends IInputProvider {

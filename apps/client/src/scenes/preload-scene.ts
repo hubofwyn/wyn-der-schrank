@@ -1,14 +1,15 @@
 import type { AssetEntry } from '@wds/shared';
-import { AssetManifestSchema } from '@wds/shared';
+import { parseManifest } from '../modules/assets/manifest-parser.js';
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
 import { BaseScene } from './base-scene.js';
 
 /**
  * PreloadScene — loads all game assets with a progress bar.
  *
- * Flow: loads asset-manifest.json, then queues every asset from the
- * manifest into the Phaser loader. Displays a simple progress bar
- * while loading. Transitions to Platformer when complete.
+ * Flow: loads asset-manifest.json, delegates parsing to the
+ * manifest-parser module, then queues every asset into the
+ * Phaser loader. Displays a simple progress bar while loading.
+ * Transitions to Platformer when complete.
  */
 export class PreloadScene extends BaseScene {
 	constructor() {
@@ -56,18 +57,9 @@ export class PreloadScene extends BaseScene {
 
 	private onManifestLoaded(): void {
 		const raw = this.cache.json.get('asset-manifest') as unknown;
-		if (!raw) return;
-
-		const result = AssetManifestSchema.safeParse(raw);
-		if (!result.success) {
-			console.error('Invalid asset manifest:', result.error);
-			return;
-		}
-
-		const { assets } = result.data;
+		const assets = parseManifest(raw);
 		if (assets.length === 0) return;
 
-		// Queue all assets from the manifest
 		for (const asset of assets) {
 			this.queueAsset(asset);
 		}
