@@ -86,7 +86,7 @@ rg -n "createLayer" docs/vendor/phaser-4.0.0-rc.6/types/
 
 **Add to `.gitignore`:**
 
-```
+```text
 # Vendor docs (regenerate with scripts/mirror-phaser-docs.sh)
 docs/vendor/
 ```
@@ -167,7 +167,7 @@ This skill forces a docs retrieval step before any new Phaser API usage.
 
 #### `.claude/skills/phaser-doc/SKILL.md`
 
-```markdown
+````markdown
 ---
 name: phaser-doc
 description: Look up Phaser 4.0.0-rc.6 API documentation before using any Phaser symbol
@@ -182,24 +182,30 @@ rg -n "$ARGUMENTS" docs/vendor/phaser-4.0.0-rc.6/ --max-count 10
 ```
 
 ## Step 2: Search Type Declarations
+
 ```bash
 rg -n "$ARGUMENTS" node_modules/phaser/types/ --max-count 10
 ```
 
 ## Step 3: Report
+
 Return:
+
 - The best-matching doc page path(s)
 - The exact class/method/property signature (short excerpt)
 - The canonical online URL: `https://docs.phaser.io/api-documentation/4.0.0-rc.6/<path>`
 
 ## Step 4: Evidence
+
 If this is a NEW symbol for the project, add an entry to `docs/PHASER_EVIDENCE.md`.
 
 ## If Not Found
+
 Say: "Not found in Phaser 4.0.0-rc.6 docs or types."
 Do NOT answer from memory. Do NOT guess from Phaser 3.
 Ask if the user wants to search for an alternative.
-```
+
+````
 
 ### 6. Deterministic Enforcement (Hooks)
 
@@ -460,6 +466,7 @@ claude --tools "Bash,Read,Edit,Write,Grep,Glob"
 ```
 
 The agent must work from:
+
 - `docs/vendor/phaser-4.0.0-rc.6/` (local docs mirror)
 - `node_modules/phaser/types/*.d.ts` (authoritative type declarations)
 - Existing codebase patterns (grep for what's already working)
@@ -500,7 +507,7 @@ Observability answers three questions for agentic development: *What did the age
 
 ### 10. Telemetry Architecture
 
-```
+```text
 ┌──────────────────────────────────────────────────────────────┐
 │                  CLAUDE CODE SESSION                          │
 │                                                               │
@@ -759,16 +766,19 @@ jq -n \
 The drift report (`drift-report.md`) surfaces these patterns over time:
 
 **Healthy session pattern:**
+
 - 0 violations, 0 blocked, warnings are rare
 - Agent investigates before coding, uses local docs mirror
 - Files touched matches task scope (no sprawl)
 
 **Early drift signals:**
+
 - Rising warnings → agent is trying new Phaser APIs without evidence
 - Zone violations appearing → agent starting to blur modules/scenes boundary
 - Blocked actions → agent actively trying to reach Phaser 3 docs
 
 **Red flags requiring human intervention:**
+>
 - >5 violations across 10 sessions → systematic drift, review CLAUDE.md and skills
 - Repeated blocked URLs → agent's training is overpowering instructions
 - Zone violations in modules/ → architectural corruption in progress
@@ -867,7 +877,7 @@ fi
 
 ### 17. File Structure (Telemetry + Enforcement)
 
-```
+```text
 .claude/
 ├── settings.json                       # Permissions + hooks (§7)
 ├── hooks/
@@ -898,7 +908,7 @@ scripts/
 
 **`.gitignore` additions:**
 
-```
+```text
 # Telemetry (machine-local, regenerated per session)
 .claude/telemetry/
 
@@ -908,7 +918,7 @@ docs/vendor/
 
 **Keep in version control:**
 
-```
+```text
 # These are project config — always committed
 .claude/settings.json
 .claude/hooks/*.sh
@@ -924,7 +934,7 @@ scripts/telemetry-report.sh
 
 ### 18. Daily Workflow
 
-```
+```text
 1. Start session
    → SessionStart hook initializes telemetry
    → CLAUDE.md loads with Phaser contract

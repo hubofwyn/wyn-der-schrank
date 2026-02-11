@@ -56,7 +56,7 @@ apps/server/             → Hono API + game server (@wds/server)
   src/routes/            → API route handlers
   src/services/          → Server-side business logic
 scripts/
-  pre-push               → Git pre-push hook (CI simulation)
+  pre-push-banner.sh    → Cosmetic pre-push header (called by Lefthook)
   telemetry-report.sh   → Human-run telemetry analysis
 .github/workflows/
   ci.yml                → CI pipeline (5 parallel gates)
@@ -75,12 +75,13 @@ scripts/
 - `bun run test` — Vitest watch mode
 - `bun run test:run` — Vitest single run (CI)
 - **`bun run check`** — Full gate: typecheck + lint:zones + deps:check + test:run
-- **`bun run pre-push`** — CI simulation: check + format:check (runs before every push)
-- `bun run setup-hooks` — Install git hooks (run once after clone)
+- `bun run lint:md` — markdownlint check
+- `bun run lint:md:fix` — markdownlint autofix
+- `bun run hooks:install` — Install Lefthook git hooks (run once after clone)
 
 ## Definition of Done
 
-- [ ] `bun run pre-push` passes (zero warnings, zero errors)
+- [ ] `bun run check` passes (zero warnings, zero errors)
 - [ ] New domain logic has co-located tests in `__tests__/`
 - [ ] No zone violations (modules/ imports only ports/ and @wds/shared)
 - [ ] New services registered in `core/container.ts`
@@ -121,7 +122,7 @@ Examples: `feat/composition-root`, `fix/coyote-time-edge`, `refactor/player-stat
 
 ### 4. Commit conventions
 
-```
+```text
 type(scope): concise description
 
 Optional body explaining why, not what.
@@ -135,7 +136,7 @@ Optional body explaining why, not what.
 
 ### 5. Pre-push gate
 
-Before pushing, the git `pre-push` hook runs `bun run pre-push` automatically. This simulates all 5 CI gates locally:
+Before pushing, Lefthook's `pre-push` hook runs all CI gates locally:
 
 | Gate | Command | What It Checks |
 |------|---------|---------------|
@@ -144,8 +145,11 @@ Before pushing, the git `pre-push` hook runs `bun run pre-push` automatically. T
 | 3 | `bun run deps:check` | dependency-cruiser structural validation |
 | 4 | `bun run test:run` | Vitest single run |
 | 5 | `bun run format:check` | Biome formatting check |
+| 6 | `bun run lint:md` | markdownlint check |
 
 If any gate fails, the push is rejected. Fix the issue and push again.
+
+Lefthook also runs a `pre-commit` hook that auto-formats staged files (Biome + markdownlint) before each commit.
 
 ### 6. PR and CI
 
@@ -187,7 +191,7 @@ main (updated) ←── pull ←── human merges/squashes ←─────
 - Scenes are thin. Domain logic lives in `modules/`, scenes only read state and move sprites.
 - Use port interfaces (`core/ports/`) — never import Phaser directly in domain code.
 - Verify Phaser symbols against rc.6 docs before use. Record in `docs/PHASER_EVIDENCE.md`.
-- Ensure `bun run pre-push` passes before requesting a push or PR.
+- Ensure `bun run check` passes before requesting a push or PR.
 
 ### Ask First
 
@@ -201,7 +205,7 @@ main (updated) ←── pull ←── human merges/squashes ←─────
 ### Never
 
 - Commit directly to `main`. All work goes through feature branches and PRs.
-- Push without `bun run pre-push` passing (the git hook enforces this).
+- Push without the pre-push gate passing (Lefthook enforces this).
 - Force-push to `main` or any shared branch.
 - Import `phaser`, `window`, `document`, or `requestAnimationFrame` in `modules/`
 - Import `server/` or `hono` in `scenes/` (use `core/services/network-manager`)
@@ -253,7 +257,7 @@ shared/  X any app dependency except Zod
 
 | Hook | Event | What It Does |
 |------|-------|-------------|
-| `scripts/pre-push` | git pre-push | Runs all 5 CI gates locally before push |
+| `lefthook.yml` | git pre-push | Runs all 6 CI gates locally before push |
 | `block-phaser3-urls.sh` | PreToolUse | Blocks Phaser 3 doc URL access |
 | `zone-lint-on-edit.sh` | PostToolUse | ESLint + grep on modules/ edits |
 | `phaser-version-guard.sh` | PostToolUse | Warns on undocumented Phaser symbols |

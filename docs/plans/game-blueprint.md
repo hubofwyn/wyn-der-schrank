@@ -13,7 +13,7 @@ Wyn der Schrank is a web-based side-scrolling platformer with an integrated mini
 
 ### Core Game Loop
 
-```
+```text
 ┌──────────────────────────────────────────────────────────────────┐
 │                         SESSION                                   │
 │                                                                   │
@@ -49,7 +49,7 @@ Every screen the player sees is a Phaser Scene. Scenes are thin view layers — 
 
 ### Scene Map
 
-```
+```text
 BootScene
   │  (load boot assets: logo, loading bar sprites, base font)
   ▼
@@ -152,7 +152,7 @@ export type SceneKey = (typeof SceneKeys)[keyof typeof SceneKeys];
 
 Expands the foundation document's layout with every file needed.
 
-```
+```text
 apps/client/
 ├── index.html
 ├── vite.config.ts
@@ -357,7 +357,7 @@ All schemas live in `packages/shared/src/schema/`. All types in `packages/shared
 
 ### Schema File Organization
 
-```
+```text
 packages/shared/src/
 ├── schema/
 │   ├── common.ts           # Vec2, Rect, primitives
@@ -1640,7 +1640,7 @@ export class PauseScene extends BaseScene {
 
 ### Boot → Playing (cold start)
 
-```
+```text
 1. BootScene loads: logo, loading-bar sprite, font
 2. PreloadScene reads asset-manifest.json, loads ALL assets with progress bar
 3. PreloadScene triggers: characterCatalog.loadFrom('data-characters')
@@ -1663,7 +1663,7 @@ export class PauseScene extends BaseScene {
 
 ### Minigame Portal Trigger
 
-```
+```text
 1. CollisionSystem detects player overlapping a 'minigame-portal' object
 2. collisionSystem fires event → playerController pauses
 3. flowController stores return context (position, level state)
@@ -1676,7 +1676,7 @@ export class PauseScene extends BaseScene {
 
 ### Level Complete
 
-```
+```text
 1. CollisionSystem detects player overlapping 'exit' object
 2. gameStateMachine transitions to 'level-complete'
 3. scoreCalculator computes: base + enemies + coins + time bonus + minigame bonus
@@ -1694,6 +1694,7 @@ export class PauseScene extends BaseScene {
 Maps the implementation phases from the foundation document to specific deliverables in this blueprint.
 
 ### Phase 0: Scaffold (Day 1)
+
 - All directories created per §3 file structure
 - All schema files stubbed per §4
 - `types/index.ts` with all re-exports
@@ -1702,6 +1703,7 @@ Maps the implementation phases from the foundation document to specific delivera
 - Expanded `container.ts` interface (no implementations yet)
 
 ### Phase 1: Core Infrastructure (Week 1)
+
 - All 6 port interfaces finalized (including `IStorageProvider`)
 - All adapters implemented
 - `createContainer()` wired with stub modules
@@ -1712,6 +1714,7 @@ Maps the implementation phases from the foundation document to specific delivera
 - `bun run check` green
 
 ### Phase 2: Platformer Core (Weeks 2–3)
+
 - `character/`, `player/`, `physics/`, `enemy/`, `level/`, `camera/`, `collectible/` modules
 - All catalog loaders (character, enemy, collectible, world)
 - Full `PlatformerScene` + `HudScene` + `PauseScene`
@@ -1723,6 +1726,7 @@ Maps the implementation phases from the foundation document to specific delivera
 - Tests for every module
 
 ### Phase 3: Minigame System (Week 4)
+
 - `MinigameRegistry` + `MinigameManager` + `MinigameLogic` interface
 - `MinigameScene` + `MinigameHudScene`
 - Portal detection + scene transition
@@ -1731,6 +1735,7 @@ Maps the implementation phases from the foundation document to specific delivera
 - Second minigame: `coin-catch`
 
 ### Phase 4: Progression & Polish (Weeks 5–6)
+
 - Character select screen with unlock visualization
 - World select with lock/unlock states
 - Level select with star display

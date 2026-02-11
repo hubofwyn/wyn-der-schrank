@@ -1,0 +1,38 @@
+# lefthook.yml — Git hook orchestration
+# Mirrors CI gates locally. See .github/workflows/ci.yml for the canonical gate list.
+
+pre-commit:
+  parallel: true
+  commands:
+    biome_fix:
+      glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}"
+      run: >-
+        bunx @biomejs/biome check --write
+        --no-errors-on-unmatched
+        --files-ignore-unknown=true
+        --colors=off
+        {staged_files}
+      stage_fixed: true
+
+    md_fix:
+      glob: "**/*.md"
+      run: bunx markdownlint-cli2 --config .markdownlint-cli2.jsonc --fix {staged_files}
+      stage_fixed: true
+
+pre-push:
+  parallel: false
+  commands:
+    banner:
+      run: bash scripts/pre-push-banner.sh
+    typecheck:
+      run: bun run typecheck
+    lint_zones:
+      run: bun run lint:zones
+    deps_check:
+      run: bun run deps:check
+    tests:
+      run: bun run test:run
+    format_check:
+      run: bun run format:check
+    md_lint:
+      run: bun run lint:md

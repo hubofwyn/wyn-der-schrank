@@ -56,7 +56,7 @@ All versions are pinned. No upgrades without an ADR.
 
 Designed for **Bun Workspaces**. Separates Source of Truth (Shared) from Implementation (Client/Server).
 
-```
+```text
 /project-root (wyn-der-schrank/)
 ├── .claude/                        # AGENTIC INFRASTRUCTURE
 │   ├── CLAUDE.md                   # Project constitution (short directives)
@@ -183,7 +183,7 @@ Designed for **Bun Workspaces**. Separates Source of Truth (Shared) from Impleme
 
 The architecture enforces **strict dependency direction** through three zones:
 
-```
+```text
           ┌─────────────────────────────────────────┐
           │              SERVER                       │
           │         (Hono + Services)                 │
@@ -222,7 +222,7 @@ The architecture enforces **strict dependency direction** through three zones:
 
 ### Dependency Direction Law
 
-```
+```text
 modules/ ──imports──▶ core/ports/  (interfaces only)
 modules/ ──imports──▶ @wds/shared/  (schemas + types)
 scenes/  ──imports──▶ modules/  (domain logic)
@@ -635,7 +635,7 @@ export type MinigameState = z.infer<typeof MinigameStateSchema>;
 
 ## 8. Data Flow (RPC Loop)
 
-```
+```text
 1. SHARED:   SyncStateSchema defined in Zod
 2. SERVER:   Hono endpoint validates + returns c.json({ data })
 3. CLIENT    NetworkManager (core/) fetches via hc<AppType> typed client
@@ -676,7 +676,7 @@ export type AppType = typeof app;
 
 ### Scene Lifecycle
 
-```
+```text
 BootScene → PreloadScene → MainMenuScene ─┬─▶ PlatformerScene
                                            │    (parallel: HudScene)
                                            │
@@ -762,7 +762,7 @@ export interface MinigameLogic {
 
 ## 10. Phaser 4 WebGL Renderer
 
-```
+```text
 KEY FACTS:
 - Phaser 4 uses a WebGL renderer (WebGL2-class rendering pipeline)
 - This is NOT WebGPU — do not reference WebGPU in any project documentation

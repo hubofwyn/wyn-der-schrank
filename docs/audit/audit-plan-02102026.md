@@ -31,6 +31,7 @@ You are conducting a comprehensive architectural audit of the Wyn der Schrank co
 The following decisions were made during Phase 1 implementation and should be treated as **canon** by the auditor. Deviations from the original Foundation spec in these areas are intentional and correct.
 
 ### File Organization & Naming
+
 - **kebab-case universally**: All files are `{domain}-{role}.ts` (e.g., `player-controller.ts`, `phaser-clock.ts`, `scene-keys.ts`)
 - **Adapter naming**: `phaser-{domain}.ts` (e.g., `phaser-clock.ts`, `phaser-input.ts`, `phaser-physics.ts`)
 - **Test co-location**: `__tests__/` directory inside each module directory (double-underscore prefix)
@@ -39,32 +40,38 @@ The following decisions were made during Phase 1 implementation and should be tr
 - **Declaration files**: `env.d.ts` in `apps/client/src/` for Phaser ambient type loading
 
 ### TypeScript Configuration
+
 - **Build tsconfig excludes tests**: `apps/client/tsconfig.json` has `exclude` for `__tests__/`, `*.test.ts`, `__test-utils__/` to prevent dist/ pollution
 - **Companion tsconfig.test.json**: Extends main tsconfig with `noEmit: true`, includes all files, used by ESLint for type-aware linting of test files
 - **env.d.ts**: Required for Phaser 4's ambient `declare namespace Phaser` types to load
 
 ### Schema & Types (14 files, not 13)
+
 - **physics-config.ts** added: `PlatformerConfigSchema`, `MovementConfigSchema`, `JumpConfigSchema`, `FastFallConfigSchema`, `BodyDimensionsSchema`
 - **Zod v4 `.default()` requires full objects**: No `{}`; every nested `.default()` provides explicit values for all fields
 - **Module-local interfaces are acceptable**: `PlayerControllerDeps` (deps container) and `PlayerSnapshot` (readonly state view) are structural contracts, not domain types
 
 ### Dependency Injection
+
 - **Deps object pattern**: Modules receive a single typed deps object, not positional constructor params
 - **PlatformerScope shape**: `{ levelId, config: PlatformerConfig, playerBody: IBody, dispose() }`
 - **Container has 6 infrastructure services + 2 scoped factories**
 
 ### Port Interfaces (Expanded)
+
 - **IInputProvider**: Has `update()` method (must be called once per frame), `isDown(action)` for held state, `justPressed`/`justReleased` for frame edges, `getBinding`/`setBinding`/`resetBindings` for key remapping
 - **IBody**: Full physics API — read (`position`, `velocity`, `blocked`, `isOnGround`) and write (`setVelocityX/Y`, `setAcceleration`, `setGravityY`, `setDrag`, etc.)
 - **IPhysicsWorld**: `createBody(config)`, `removeBody(body)`, `collide`, `overlap`, `raycast`, gravity control
 
 ### Testing Patterns
+
 - **Mock factories**: `createMockClock()`, `createMockInput()`, `createMockBody()`, `createDefaultConfig()`, `createDefaultStats()`
 - **MockInput/MockBody extend port interfaces**: Add test-visible properties (`_pressed`, `_justPressed`, `_velocity`, etc.)
 - **Getter/setter for primitives**: Mock body uses getter/setter pairs for `_gravityY` and `_enabled` to maintain closure synchronization (spread copies primitives by value)
 - **vitest.workspace.ts**: Named project objects with explicit `include`/`exclude` patterns (not simple string array)
 
 ### Biome Configuration
+
 - **Excludes**: `dist/`, `build/`, `coverage/`, `.claude/settings*.json`
 
 ---
@@ -100,12 +107,14 @@ done
 ```
 
 ### Expected
+
 - Root `package.json` name: `wyn-der-schrank`, private: true, workspaces: `["packages/*", "apps/*"]`
 - Three workspace packages: `@wds/shared`, `@wds/client`, `@wds/server`
 - All six config files present
 - `bun.lock` committed (Bun 1.3+ text-based lockfile; not the old binary `bun.lockb`)
 
 ### Spec Reference
+
 - Foundation §2 (Project Structure)
 - Foundation §15 (Package.json Scripts)
 
@@ -173,6 +182,7 @@ done
 Any dependency not in this table or in the Foundation §1 stack table is a 🟡 WARNING.
 
 ### Spec Reference
+
 - Foundation §1 (Technology Stack — Locked)
 
 ---
@@ -247,6 +257,7 @@ bun run typecheck 2>&1 || echo "TYPECHECK FAILED"
 ```
 
 ### Expected
+
 - `strict: true`, `isolatedDeclarations: true` in base
 - `noUncheckedIndexedAccess: true`, `exactOptionalPropertyTypes: true`
 - No `paths` aliases anywhere (Phase 0 — ADR-011)
@@ -264,9 +275,11 @@ bun run typecheck 2>&1 || echo "TYPECHECK FAILED"
 **env.d.ts for Phaser types:** Phaser 4 installs ambient `declare namespace Phaser` types. These require an explicit `/// <reference types="phaser" />` directive to load, since Phaser is installed in `apps/client/node_modules/phaser/` (not root). Without this, `Phaser` namespace is not found.
 
 ### Spec Note on `skipLibCheck`
+
 The Foundation sets `skipLibCheck: true`. The Phaser enforcement strategy recommends `false` so Phaser types catch wrong API usage. **Log this as 🔵 INFO for deliberate decision review** — the team should decide whether the Phaser type-safety benefit outweighs the build speed cost.
 
 ### Spec Reference
+
 - Foundation §13 (TypeScript Configuration)
 - Foundation §13 (Path Alias Decision)
 - Telemetry & Enforcement §1 (freeze version, types as defense)
@@ -343,6 +356,7 @@ grep -rn "from.*['\"]phaser" apps/client/src/modules/ 2>/dev/null || echo "✓ N
 ```
 
 ### Expected
+
 - All zone directories exist (core/, core/ports/, core/adapters/, core/services/, modules/, scenes/)
 - `main.ts` is the Composition Root
 - `core/container.ts` defines the Container interface
@@ -416,6 +430,7 @@ done
 ```
 
 ### Spec Reference
+
 - Foundation §2 (Project Structure)
 - Blueprint §3 (Complete File Structure)
 - Blueprint §11 (Naming Conventions)
@@ -469,6 +484,7 @@ echo "Exit code: $?"
 ```
 
 ### Expected
+
 - ESLint config has all 4 zone blocks (modules, scenes, core, shared)
 - ESLint config has a 5th block: test file override pointing `__tests__/**` and `__test-utils__/**` to `tsconfig.test.json`
 - Modules zone has: `no-restricted-imports` (phaser, scenes, adapters), `no-restricted-globals` (Phaser, window, document, requestAnimationFrame)
@@ -480,6 +496,7 @@ echo "Exit code: $?"
 The client `tsconfig.json` excludes test patterns from compilation to prevent dist/ pollution. But ESLint with `parserOptions.project: true` auto-discovers this tsconfig and can no longer type-check test files. The solution is a companion `tsconfig.test.json` (includes all files, `noEmit: true`) and an ESLint override block that routes test file patterns to it.
 
 ### Spec Reference
+
 - Foundation §4 (ESLint 10.0 Zone Enforcement)
 - Foundation §12 (dependency-cruiser Configuration)
 - Foundation §15 (Package.json Scripts — `check` command)
@@ -536,6 +553,7 @@ grep -rn "from.*core/" apps/client/src/modules/ --include="*.ts" 2>/dev/null | g
 ```
 
 ### Expected
+
 - Zero Phaser references in `modules/`
 - Zero browser globals in `modules/`
 - Zero scene imports in `modules/`
@@ -548,6 +566,7 @@ grep -rn "from.*core/" apps/client/src/modules/ --include="*.ts" 2>/dev/null | g
 **Every violation here is 🔴 CRITICAL.**
 
 ### Spec Reference
+
 - Foundation §3 (Zone Defense Architecture)
 - Foundation §4 (ESLint zone rules)
 - Foundation Appendix A (Anti-Patterns)
@@ -606,6 +625,7 @@ grep -n "^export interface\|^interface" apps/client/src/modules/ -r --include="*
 ```
 
 ### Expected
+
 - **14 schema files** in `packages/shared/src/schema/` following `{domain}.ts` naming:
   `common`, `character`, `player`, `enemy`, `level`, `collectible`, `minigame`, `scoring`, `progression`, `settings`, `events`, `sync`, `assets`, **`physics-config`**
 - `types/index.ts` contains ONLY `z.infer<>` re-exports
@@ -622,12 +642,14 @@ Zod v4's `.default()` on nested object schemas requires the full output type. Us
 ### Design Decision: Module-Local Interfaces
 
 Modules may define structural interfaces for:
+
 - **Deps objects** (`PlayerControllerDeps`) — collects constructor dependencies into a single typed parameter
 - **Readonly snapshots** (`PlayerSnapshot`) — frozen view of module state for scenes to read
 
 These are NOT domain types and do NOT belong in `@wds/shared`. They are implementation details of how modules receive deps and expose state.
 
 ### Spec Reference
+
 - Foundation §7 (Shared Contract — Zod-First)
 - Blueprint §4 (Zod Schema Catalog)
 - Blueprint §11 (Naming Conventions)
@@ -678,6 +700,7 @@ grep -n "createPlatformerScope\|createMinigameScope" apps/client/src/main.ts 2>/
 ```
 
 ### Expected
+
 - `container.ts` defines `Container`, `PlatformerScope`, `MinigameScope` interfaces
 - `Container` interface has 6 infrastructure services:
   - `clock: IGameClock`, `input: IInputProvider`, `audio: IAudioPlayer`
@@ -717,6 +740,7 @@ Benefits: self-documenting call sites, order-independent, easier to extend, `rea
 ### Design Decision: PlatformerScope Shape
 
 `PlatformerScope` carries level-specific resources:
+
 - `config: PlatformerConfig` — physics tuning for the level (from Zod schema with defaults)
 - `playerBody: IBody` — the physics body for the player (created by `IPhysicsWorld.createBody()`)
 - `dispose()` — cleanup when exiting the level
@@ -724,6 +748,7 @@ Benefits: self-documenting call sites, order-independent, easier to extend, `rea
 The scope is created by `Container.createPlatformerScope(levelId)` in the scene's `create()` lifecycle. Modules within the scope receive individual deps from it, never the scope object itself.
 
 ### Spec Reference
+
 - Foundation §5 (Pure DI — Composition Root Pattern)
 - Blueprint §6 (Container — Complete)
 - Foundation §16 ADR-001
@@ -786,6 +811,7 @@ grep -n "createMock\|interface Mock" apps/client/src/modules/__test-utils__/mock
 ```
 
 ### Expected
+
 - **6 port files**: `engine.ts`, `input.ts`, `audio.ts`, `physics.ts`, `network.ts`, `storage.ts`
 - Each port exports `I`-prefixed interfaces (see Port Interface Reference below)
 - **3 adapter files** (Phase 1): `phaser-clock.ts`, `phaser-input.ts`, `phaser-physics.ts`
@@ -817,6 +843,7 @@ The input provider has an explicit `update()` method that must be called once pe
 ### Design Decision: `IBody` as a Full Physics API
 
 `IBody` exposes the complete set of physics operations a game object needs:
+
 - **Read**: `position`, `velocity`, `blocked`, `isOnGround`, `isTouchingWall`, `isTouchingCeiling`
 - **Write**: `setVelocity(X/Y)`, `setAcceleration(X)`, `setGravityY()`, `setDrag()`, `setMaxVelocity()`, `setBounce()`, `setSize()`, `setOffset()`, `setEnable()`
 
@@ -825,6 +852,7 @@ This interface is richer than the original Foundation spec because PlayerControl
 ### Mock Factory Pattern
 
 `modules/__test-utils__/mocks.ts` provides mock implementations for testing:
+
 - `createMockClock(delta?)` → `IGameClock`
 - `createMockInput()` → `MockInput extends IInputProvider` (exposes `_pressed`, `_justPressed`, `_justReleased` sets)
 - `createMockBody(options?)` → `MockBody extends IBody` (exposes `_velocity`, `_position`, `_blocked`, `_gravityY`, `_enabled`)
@@ -834,6 +862,7 @@ This interface is richer than the original Foundation spec because PlayerControl
 **Important mock pattern**: Primitive fields (`_gravityY`, `_enabled`) must use getter/setter pairs referencing the closure state, not spread-copied values. Object fields (`_velocity`, `_position`, `_blocked`) are safe as direct references.
 
 ### Spec Reference
+
 - Foundation §6 (Port Interfaces)
 - Blueprint §5 (Port Interfaces — Expanded)
 
@@ -899,6 +928,7 @@ cat apps/client/src/scenes/base-scene.ts 2>/dev/null || echo "base-scene.ts not 
 ```
 
 ### Expected
+
 - Scene files follow `{name}-scene.ts` naming
 - `SceneKeys` constant exists in `modules/navigation/scene-keys.ts` (pure TS, not in scenes/)
 - Scenes extend `Phaser.Scene` (or a local `BaseScene`)
@@ -908,6 +938,7 @@ cat apps/client/src/scenes/base-scene.ts 2>/dev/null || echo "base-scene.ts not 
 - Game config uses `Phaser.AUTO` (not `Phaser.WEBGL` / `Phaser.CANVAS` v3 constants)
 
 ### Spec Reference
+
 - Foundation §9 (Platformer Architecture — Scene Lifecycle)
 - Blueprint §2 (Scene Graph — Complete)
 - Blueprint §9 (Scene Implementation Patterns)
@@ -974,11 +1005,13 @@ ls docs/adr/*.md 2>/dev/null | sort || echo "No ADRs"
 ### Expected
 
 **Required (🔴 if missing):**
+
 - `CLAUDE.md` at repo root, references Phaser 4 contract and investigation-first rule
 - `core/container.ts` and `main.ts` (covered in Gate 8)
 - ESLint zones and dep-cruiser (covered in Gate 5)
 
 **Expected (🟡 if missing):**
+
 - `AGENTS.md` at repo root
 - `.claude/settings.json` with hooks and permissions
 - `docs/PHASER_EVIDENCE.md`
@@ -986,12 +1019,14 @@ ls docs/adr/*.md 2>/dev/null | sort || echo "No ADRs"
 - At least `/investigate` and `/zone-check` commands
 
 **Optional (🔵 if missing):**
+
 - Local Phaser docs mirror
 - Skills beyond `fix-issue`
 - Subagent definitions
 - Hook scripts (telemetry)
 
 ### Spec Reference
+
 - Agentic Setup (entire document)
 - Telemetry & Enforcement §3–§7
 
@@ -1056,6 +1091,7 @@ grep "exclude:" vitest.workspace.ts 2>/dev/null || echo "No explicit exclude pat
 ```
 
 ### Expected
+
 - Zero references to "aether", "@aether/", or "beam"
 - Zero references to tsyringe/inversify/jest
 - No stale config files from previous toolchains (.babelrc, .prettierrc, webpack, jest)
@@ -1064,6 +1100,7 @@ grep "exclude:" vitest.workspace.ts 2>/dev/null || echo "No explicit exclude pat
 - `vitest.workspace.ts` uses named project objects (not simple string array) with `include: ['src/**/*.test.ts']` and `exclude: ['**/dist/**', '**/node_modules/**']` patterns
 
 ### Spec Reference
+
 - Foundation (entire project was renamed from Aether)
 - Foundation §16 ADR-001 (Pure DI, not tsyringe)
 

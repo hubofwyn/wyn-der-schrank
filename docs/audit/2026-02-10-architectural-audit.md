@@ -117,15 +117,18 @@ No unexpected production dependencies.
 ### Gate 4: Directory Structure & Naming ✅
 
 All zone directories exist:
+
 - `core/`, `core/ports/`, `core/adapters/`, `core/services/`, `modules/`, `scenes/` ✓
 - `packages/shared/src/schema/`, `packages/shared/src/types/` ✓
 - `apps/server/src/routes/`, `apps/server/src/services/` ✓ (with `.gitkeep`)
 - `docs/`, `docs/adr/`, `docs/adr/template.md` ✓
 
 Key files:
+
 - `main.ts`, `container.ts`, `env.d.ts`, `__test-utils__/mocks.ts` all present ✓
 
 File naming:
+
 - All module files follow `{domain}-{role}.ts` kebab-case ✓
 - All adapter files follow `phaser-{domain}.ts` ✓
 - Test file: `player-controller.test.ts` follows `{module}.test.ts` ✓
@@ -146,6 +149,7 @@ File naming:
 ### Gate 6: Zone Violation Scan ✅
 
 All 8 scans clean:
+
 - 6.1: Zero Phaser imports in modules/ ✓
 - 6.2: Zero browser globals in modules/ ✓
 - 6.3: Zero scene imports in modules/ ✓

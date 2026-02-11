@@ -12,10 +12,10 @@
 		"lineWidth": 100
 	},
 	"linter": {
-		"enabled": true,
-		"rules": {
-			"recommended": true
-		}
+		"enabled": false
+	},
+	"assist": {
+		"enabled": true
 	},
 	"javascript": {
 		"formatter": {

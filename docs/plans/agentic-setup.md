@@ -8,7 +8,7 @@
 
 ## File Map
 
-```
+```text
 wyn-der-schrank/
 ├── AGENTS.md                          # Canonical project contract (tool-agnostic)
 ├── CLAUDE.md                          # Claude Code shim (short, imports AGENTS.md)
@@ -59,6 +59,7 @@ docs/adr/            → Architectural Decision Records
 ```
 
 ## Setup & common commands
+
 - Install: `bun install`
 - Dev server: `bun run dev`
 - Typecheck: `bun run typecheck`
@@ -71,6 +72,7 @@ docs/adr/            → Architectural Decision Records
 - **Full verification: `bun run check`** (typecheck + lint:zones + deps:check + test:run)
 
 ## Definition of done
+
 - [ ] `bun run check` passes (zero warnings, zero errors)
 - [ ] New/changed domain logic has co-located tests in `__tests__/`
 - [ ] No zone violations (modules/ imports only ports/ and @wds/shared)
@@ -79,6 +81,7 @@ docs/adr/            → Architectural Decision Records
 - [ ] ADR written for architectural changes (use `docs/adr/template.md`)
 
 ## Workflow rules
+
 - **Investigate first.** Before writing code: grep for existing patterns, read relevant ADRs, check `core/ports/` and `core/container.ts`. Show evidence. Code without investigation evidence is rejected.
 - **Explore → plan → implement.** For non-trivial tasks, write a short plan with file paths before coding.
 - **Verify after every change.** Run `bun run check`. Never `--no-verify`.
@@ -87,6 +90,7 @@ docs/adr/            → Architectural Decision Records
 ## Boundaries
 
 ### Always
+
 - Respect the three zones. `modules/` is pure TS — no Phaser, no `window`, no `document`.
 - Wire new services through `core/container.ts` (Pure DI Composition Root in `main.ts`).
 - Infer types from Zod schemas in `@wds/shared`. Never hand-write types that Zod can generate.
@@ -94,6 +98,7 @@ docs/adr/            → Architectural Decision Records
 - Use port interfaces (`core/ports/`) — never import Phaser directly in domain code.
 
 ### Ask first
+
 - New dependencies (runtime or dev)
 - New port interfaces or changes to existing ports
 - Changes to `eslint.config.mjs`, `.dependency-cruiser.cjs`, or `tsconfig.*.json`
@@ -102,6 +107,7 @@ docs/adr/            → Architectural Decision Records
 - Refactors touching >10 files
 
 ### Never
+
 - Import `phaser`, `window`, `document`, or `requestAnimationFrame` in `modules/`
 - Import `server/` or `hono` in `scenes/` (use `core/services/network-manager`)
 - Hand-write types that should be `z.infer<>`
@@ -114,6 +120,7 @@ docs/adr/            → Architectural Decision Records
 ## Architecture (quick reference)
 
 ### Zone dependency law
+
 ```text
 modules/ → core/ports/    (interfaces only)
 modules/ → @wds/shared    (schemas + types)
@@ -128,17 +135,20 @@ shared/  ✗ any app dependency except Zod
 ```
 
 ### Pure DI pattern
+
 - `core/container.ts` — Container interface (all services declared here)
 - `main.ts` — Composition Root (all services wired here, nowhere else)
 - Modules receive dependencies via constructor params (port interfaces only)
 - Tests use plain mock objects that satisfy port interfaces
 
 ### Phaser 4 renderer
+
 - WebGL renderer (WebGL2-class). Not WebGPU.
 - SpriteGPULayer for instanced rendering
 - GPU-accelerated tilemaps: orthographic only
 
 ## Code style
+
 - Biome handles formatting. No manual style debates.
 - `isolatedDeclarations` is on — all exported functions need explicit return types.
 - Relative imports only (no path aliases in Phase 0).
@@ -146,6 +156,7 @@ shared/  ✗ any app dependency except Zod
 - Zod schemas in `packages/shared/src/schema/`, types in `packages/shared/src/types/` (re-exports only).
 
 ## Where to look first
+
 - Player mechanics: `apps/client/src/modules/player/`
 - Physics/collision: `apps/client/src/modules/physics/`
 - Enemy behavior: `apps/client/src/modules/enemy/`
@@ -159,7 +170,8 @@ shared/  ✗ any app dependency except Zod
 - Server API: `apps/server/src/`
 - Architecture docs: `docs/adr/`
 - Current plan: `docs/plans/active-plan.md`
-```
+
+```text
 
 ---
 
@@ -325,7 +337,8 @@ MOCK PATTERN:
 import { createMockInput, createMockPhysics, createMockClock } from '../../__test-utils__/mocks';
 const controller = new PlayerController(createMockInput(), createMockPhysics(), createMockClock());
 ```
-```
+
+```text
 
 ### `.claude/agents/security-reviewer.md`
 
@@ -460,6 +473,7 @@ modules/<name>/
 ```
 
 ## Checklist
+
 1. **Schema first.** If the module introduces new data shapes, define Zod schemas in
    `packages/shared/src/schema/` and export inferred types from `packages/shared/src/types/index.ts`.
 2. **Port check.** Does the module need engine capabilities (input, physics, audio, time)?
@@ -472,7 +486,8 @@ modules/<name>/
 5. **Tests.** Write tests using mock ports from `modules/__test-utils__/mocks.ts`.
 6. **Zone verify.** `bun run lint:zones` — must pass with zero warnings.
 7. **Full verify.** `bun run check`.
-```
+
+```text
 
 ### `.claude/skills/add-minigame/SKILL.md`
 
@@ -492,26 +507,29 @@ Minigames live in `modules/minigame/games/<name>/` and are registered via the Mi
    export const MinigameIdSchema = z.enum(['dice-duel', '<new-name>']);
    ```
 
-2. **Create logic module.** `modules/minigame/games/<name>/logic.ts` implementing `MinigameLogic`:
+1. **Create logic module.** `modules/minigame/games/<name>/logic.ts` implementing `MinigameLogic`:
+
    ```typescript
    import type { MinigameLogic } from '../../minigame-logic';
    // Pure TS — no Phaser, no browser globals
    ```
 
-3. **Create tests.** `modules/minigame/games/<name>/__tests__/logic.test.ts`
+2. **Create tests.** `modules/minigame/games/<name>/__tests__/logic.test.ts`
    Test start, update, handleInput, getState, and cleanup.
 
-4. **Register factory.** In the MinigameRegistry setup (called from `main.ts`):
+3. **Register factory.** In the MinigameRegistry setup (called from `main.ts`):
+
    ```typescript
    registry.register('<new-name>', () => new NewNameLogic());
    ```
 
-5. **Scene rendering** (if the minigame needs unique visuals beyond MinigameScene):
+4. **Scene rendering** (if the minigame needs unique visuals beyond MinigameScene):
    Add a rendering helper in `scenes/` that reads `MinigameLogic.getState()` and draws sprites.
    Keep it thin — zero game logic in the scene.
 
-6. **Verify.** `bun run check`.
-```
+5. **Verify.** `bun run check`.
+
+```text
 
 ### `.claude/skills/review-diff/SKILL.md`
 
@@ -637,7 +655,7 @@ bun run check
 
 ### Starting a new session
 
-```
+```bash
 claude                          # Opens Claude Code CLI
 > @AGENTS.md                    # Agent reads project contract
 > /investigate player physics   # Runs investigation skill
@@ -645,7 +663,7 @@ claude                          # Opens Claude Code CLI
 
 ### Common workflows
 
-```
+```bash
 > /investigate <topic>          # Before any code (mandatory)
 > /zone-check                   # Quick zone validation
 > /implement-feature <spec>     # Guided 4-gate implementation
@@ -653,7 +671,7 @@ claude                          # Opens Claude Code CLI
 
 ### Delegating to subagents
 
-```
+```bash
 > @architect review this diff   # Architecture review
 > @tester write tests for modules/camera/
 > @security-reviewer audit apps/server/src/routes/
@@ -664,7 +682,7 @@ claude                          # Opens Claude Code CLI
 Skills load automatically when the agent encounters a matching workflow.
 They can also be referenced explicitly:
 
-```
+```bash
 > Follow the fix-issue skill for this bug
 > Use the add-minigame skill to add a "coin-flip" game
 > Run the review-diff checklist before we merge

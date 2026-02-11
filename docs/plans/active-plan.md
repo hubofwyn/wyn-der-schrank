@@ -9,6 +9,7 @@ last_updated: 2026-02-10
 ## Phase 0 — Scaffold (COMPLETE)
 
 ### Completed
+
 - [x] Monorepo structure (Bun workspaces)
 - [x] Root toolchain configs (tsconfig, biome, eslint, dependency-cruiser, bunfig.toml)
 - [x] Shared package with Zod schemas (full game domain: 13 schema files, 40+ types)
@@ -26,6 +27,7 @@ last_updated: 2026-02-10
 ## Current Phase: 1 — Core Infrastructure (IN PROGRESS)
 
 ### Completed
+
 - [x] PlatformerConfig schema (MovementConfig, JumpConfig, FastFallConfig, BodyDimensions)
 - [x] Expanded port interfaces (IBody with full physics API, IInputProvider with update/down, IPhysicsWorld with collide/overlap/gravity)
 - [x] Phaser 4 adapters (PhaserClock, PhaserInput, PhaserBody, PhaserPhysics)
@@ -37,6 +39,7 @@ last_updated: 2026-02-10
 - [x] All verification gates green: typecheck + lint:zones + deps:check + test:run (32/32) + format:check
 
 ### Next
+
 - [ ] Local Phaser 4 docs mirror (docs/vendor/phaser-4.0.0-rc.6/)
 - [ ] Composition Root functional (main.ts wiring)
 - [ ] Boot -> Preload -> Title -> MainMenu scene chain
@@ -50,6 +53,7 @@ last_updated: 2026-02-10
 - [ ] `bun run check` green with all adapters wired
 
 ### Phase 2: Platformer Core
+
 - [ ] player/, physics/, enemy/, level/, camera/, collectible/ modules
 - [ ] Full PlatformerScene + HudScene + PauseScene
 - [ ] Tilemap rendering from Tiled JSON
@@ -59,6 +63,7 @@ last_updated: 2026-02-10
 - [ ] Tests for every module
 
 ### Phase 3: Minigame System
+
 - [ ] MinigameRegistry + MinigameManager + MinigameLogic interface
 - [ ] MinigameScene + MinigameHudScene
 - [ ] Portal detection + scene transition
@@ -66,6 +71,7 @@ last_updated: 2026-02-10
 - [ ] Minigame rewards -> player state
 
 ### Phase 4: Progression & Polish
+
 - [ ] Character/world/level select screens with unlock visualization
 - [ ] progression/ module: save/load, unlock tracking
 - [ ] Leaderboard (client + server)
