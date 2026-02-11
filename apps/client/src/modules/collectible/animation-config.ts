@@ -3,21 +3,13 @@
  * Zone-safe: pure data, the scene creates engine animation objects.
  */
 
-export interface CollectibleAnimationDef {
-	readonly key: string;
-	readonly textureKey: string;
-	readonly startFrame: number;
-	readonly endFrame: number;
-	readonly frameRate: number;
-	/** -1 = loop forever, 0 = play once */
-	readonly repeat: number;
-}
+import type { AnimationDef } from '../animation/animation-def.js';
 
 /**
  * Coin collectible animation definition.
  * Spritesheet: 64x16 = 4 frames at 16x16, spinning animation.
  */
-export function getCoinAnimationDefs(): CollectibleAnimationDef[] {
+export function getCoinAnimationDefs(): AnimationDef[] {
 	return [
 		{
 			key: 'coin-spin',

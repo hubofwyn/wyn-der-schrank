@@ -3,15 +3,7 @@
  * Zone-safe: pure data, the scene creates engine animation objects.
  */
 
-export interface EnemyAnimationDef {
-	readonly key: string;
-	readonly textureKey: string;
-	readonly startFrame: number;
-	readonly endFrame: number;
-	readonly frameRate: number;
-	/** -1 = loop forever, 0 = play once */
-	readonly repeat: number;
-}
+import type { AnimationDef } from '../animation/animation-def.js';
 
 /**
  * Skeleton enemy animation definitions.
@@ -20,7 +12,7 @@ export interface EnemyAnimationDef {
  *   enemy-skeleton-idle (192x32, 6 frames at 32x32)
  *   enemy-skeleton-walk (320x32, 10 frames at 32x32)
  */
-export function getSkeletonAnimationDefs(): EnemyAnimationDef[] {
+export function getSkeletonAnimationDefs(): AnimationDef[] {
 	return [
 		{
 			key: 'skeleton-idle',

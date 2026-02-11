@@ -1,9 +1,9 @@
 import type { AssetEntry } from '@wds/shared';
+import type { AnimationDef } from '../modules/animation/animation-def.js';
 import { parseManifest } from '../modules/assets/manifest-parser.js';
 import { getCoinAnimationDefs } from '../modules/collectible/animation-config.js';
 import { getSkeletonAnimationDefs } from '../modules/enemy/animation-config.js';
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
-import type { AnimationDef } from '../modules/player/animation-config.js';
 import { getPlayerAnimationDefs } from '../modules/player/animation-config.js';
 import { BaseScene } from './base-scene.js';
 
