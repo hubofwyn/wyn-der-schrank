@@ -11,6 +11,7 @@ import type { IInputProvider } from './core/ports/input.js';
 import type { IPhysicsWorld } from './core/ports/physics.js';
 import { BootScene } from './scenes/boot-scene.js';
 import { PlatformerScene } from './scenes/platformer-scene.js';
+import { PreloadScene } from './scenes/preload-scene.js';
 
 /**
  * Build the DI container with all infrastructure services.
@@ -107,7 +108,7 @@ const game = new Phaser.Game({
 		mode: Phaser.Scale.FIT,
 		autoCenter: Phaser.Scale.CENTER_BOTH,
 	},
-	scene: [BootScene, PlatformerScene],
+	scene: [BootScene, PreloadScene, PlatformerScene],
 });
 
 game.registry.set('container', createContainer());

@@ -3,8 +3,8 @@ import { BaseScene } from './base-scene.js';
 
 /**
  * BootScene — first scene to run.
- * Transitions immediately to the PlatformerScene for MVP.
- * In the full game this will hand off to Preload -> Title -> MainMenu.
+ * Transitions to PreloadScene to load all game assets.
+ * In the full game, boot assets (logo, loading bar sprites) load here.
  */
 export class BootScene extends BaseScene {
 	constructor() {
@@ -12,6 +12,6 @@ export class BootScene extends BaseScene {
 	}
 
 	create(): void {
-		this.navigateTo(SceneKeys.PLATFORMER);
+		this.navigateTo(SceneKeys.PRELOAD);
 	}
 }
