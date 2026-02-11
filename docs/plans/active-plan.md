@@ -1,17 +1,17 @@
 ---
 title: Active Plan
-last_updated: 2026-02-12
+last_updated: 2026-02-11
 ---
 
 # Active Plan
 
 ## Snapshot
 
-- __Active:__ G2 — Visual Identity [feat/visual-identity]
+- __Active:__ G3, G4 ready (no goal in-progress)
 - __Next ready:__ G3, G4
 - __Blocked:__ none
-- __Last milestone:__ 2026-02-11 — G1 Scene Infrastructure (48 tests) [feat/scene-infrastructure]
-- __Gates:__ all green (65 tests)
+- __Last milestone:__ 2026-02-11 — G2 Visual Identity (73 tests) [feat/visual-identity]
+- __Gates:__ all green (73 tests)
 
 ## Goals
 
@@ -33,19 +33,19 @@ BaseScene with container access, full Container wiring, camera module, PreloadSc
 
 ### G2: Visual Identity
 
-> __Status:__ in-progress
+> __Status:__ done
 > __Requires:__ G1
 > __Benefits from:__ none
 > __Unlocks:__ G3, G4, G5
-> __Branch:__ feat/visual-identity
+> __Branch:__ merged
 
 Sprites, animation, and tile rendering replace colored rectangles. The game looks like a game.
 
 - [x] Sprite-based player replacing colored rectangle
 - [x] Player animation state machine (idle, run, jump, fall)
-- [ ] Tilemap rendering from Tiled JSON
-- [ ] Enemy sprites with idle/walk display animation (domain AI is G4)
-- [ ] Collectible sprites with idle display animation (domain pickup logic is G3)
+- [x] Tilemap rendering from Tiled JSON
+- [x] Enemy sprites with idle/walk display animation (domain AI is G4)
+- [x] Collectible sprites with idle display animation (domain pickup logic is G3)
 
 ### G3: Gameplay Loop
 
@@ -129,5 +129,6 @@ Title screen, pause, game-over screen, settings, and persistence make the game s
 
 ## Completed Log
 
+- __2026-02-11__ — G2: Visual Identity — Sprite player + animation, Tiled tilemap, enemy/collectible sprites (73 tests) [feat/visual-identity]
 - __2026-02-11__ — G1: Scene Infrastructure — BaseScene, container wiring, CameraController, PreloadScene, scene chain (48 tests) [feat/scene-infrastructure]
 - __2026-02-11__ — MVP: colored-rect platformer with PlayerController, hexagonal architecture (ports/adapters), full CI pipeline (6 gates), 32 tests [feat/minimal-playable-game]
