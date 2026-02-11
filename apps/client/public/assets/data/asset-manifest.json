@@ -23,6 +23,13 @@
 			"frameHeight": 32
 		},
 		{
+			"key": "collectible-coin",
+			"type": "spritesheet",
+			"url": "assets/sprites/items/coin.png",
+			"frameWidth": 16,
+			"frameHeight": 16
+		},
+		{
 			"key": "tiles-dungeon",
 			"type": "image",
 			"url": "assets/tilemaps/tilesets/dungeon-tileset.png"

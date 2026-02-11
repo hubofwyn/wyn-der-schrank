@@ -3,6 +3,7 @@ import { PlatformerConfigSchema, SettingsSchema } from '@wds/shared';
 import { PhaserInput } from '../core/adapters/phaser-input.js';
 import { PhaserBody } from '../core/adapters/phaser-physics.js';
 import type { IGameClock } from '../core/ports/engine.js';
+import { getCoinDefaultAnim } from '../modules/collectible/animation-config.js';
 import { getSkeletonDefaultAnim } from '../modules/enemy/animation-config.js';
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
 import { getAnimKeyForState } from '../modules/player/animation-config.js';
@@ -92,6 +93,9 @@ export class PlatformerScene extends BaseScene {
 		// ── Enemies (visual only — domain AI is G4) ──
 		this.placeEnemies(map);
 
+		// ── Collectibles (visual only — pickup logic is G3) ──
+		this.placeCollectibles(map);
+
 		// ── Collisions ──
 		this.physics.add.collider(this.playerSprite, groundLayer);
 
@@ -113,6 +117,20 @@ export class PlatformerScene extends BaseScene {
 		const animKey = getAnimKeyForState(snap.state);
 		this.playerSprite.play(animKey, true);
 		this.playerSprite.flipX = snap.facing === 'left';
+	}
+
+	private placeCollectibles(map: Phaser.Tilemaps.Tilemap): void {
+		const objectLayer = map.getObjectLayer('Objects');
+		if (!objectLayer) return;
+
+		for (const obj of objectLayer.objects) {
+			if (obj.type !== 'collectible') continue;
+			if (obj.x == null || obj.y == null) continue;
+
+			const sprite = this.add.sprite(obj.x, obj.y, 'collectible-coin');
+			sprite.setDisplaySize(16, 16);
+			sprite.play(getCoinDefaultAnim());
+		}
 	}
 
 	private placeEnemies(map: Phaser.Tilemaps.Tilemap): void {

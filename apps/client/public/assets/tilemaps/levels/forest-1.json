@@ -11,7 +11,7 @@
 	"version": "1.10",
 	"tiledversion": "1.11.2",
 	"nextlayerid": 3,
-	"nextobjectid": 6,
+	"nextobjectid": 20,
 	"layers": [
 		{
 			"data": [
@@ -441,6 +441,160 @@
 							"value": "skeleton"
 						}
 					]
+				},
+				{
+					"id": 6,
+					"name": "coin",
+					"type": "collectible",
+					"x": 350,
+					"y": 620,
+					"width": 0,
+					"height": 0,
+					"rotation": 0,
+					"visible": true
+				},
+				{
+					"id": 7,
+					"name": "coin",
+					"type": "collectible",
+					"x": 400,
+					"y": 620,
+					"width": 0,
+					"height": 0,
+					"rotation": 0,
+					"visible": true
+				},
+				{
+					"id": 8,
+					"name": "coin",
+					"type": "collectible",
+					"x": 450,
+					"y": 620,
+					"width": 0,
+					"height": 0,
+					"rotation": 0,
+					"visible": true
+				},
+				{
+					"id": 9,
+					"name": "coin",
+					"type": "collectible",
+					"x": 700,
+					"y": 530,
+					"width": 0,
+					"height": 0,
+					"rotation": 0,
+					"visible": true
+				},
+				{
+					"id": 10,
+					"name": "coin",
+					"type": "collectible",
+					"x": 1000,
+					"y": 450,
+					"width": 0,
+					"height": 0,
+					"rotation": 0,
+					"visible": true
+				},
+				{
+					"id": 11,
+					"name": "coin",
+					"type": "collectible",
+					"x": 1050,
+					"y": 450,
+					"width": 0,
+					"height": 0,
+					"rotation": 0,
+					"visible": true
+				},
+				{
+					"id": 12,
+					"name": "coin",
+					"type": "collectible",
+					"x": 1350,
+					"y": 490,
+					"width": 0,
+					"height": 0,
+					"rotation": 0,
+					"visible": true
+				},
+				{
+					"id": 13,
+					"name": "coin",
+					"type": "collectible",
+					"x": 1650,
+					"y": 410,
+					"width": 0,
+					"height": 0,
+					"rotation": 0,
+					"visible": true
+				},
+				{
+					"id": 14,
+					"name": "coin",
+					"type": "collectible",
+					"x": 1950,
+					"y": 330,
+					"width": 0,
+					"height": 0,
+					"rotation": 0,
+					"visible": true
+				},
+				{
+					"id": 15,
+					"name": "coin",
+					"type": "collectible",
+					"x": 2000,
+					"y": 330,
+					"width": 0,
+					"height": 0,
+					"rotation": 0,
+					"visible": true
+				},
+				{
+					"id": 16,
+					"name": "coin",
+					"type": "collectible",
+					"x": 2300,
+					"y": 420,
+					"width": 0,
+					"height": 0,
+					"rotation": 0,
+					"visible": true
+				},
+				{
+					"id": 17,
+					"name": "coin",
+					"type": "collectible",
+					"x": 2600,
+					"y": 320,
+					"width": 0,
+					"height": 0,
+					"rotation": 0,
+					"visible": true
+				},
+				{
+					"id": 18,
+					"name": "coin",
+					"type": "collectible",
+					"x": 2900,
+					"y": 250,
+					"width": 0,
+					"height": 0,
+					"rotation": 0,
+					"visible": true
+				},
+				{
+					"id": 19,
+					"name": "coin",
+					"type": "collectible",
+					"x": 2950,
+					"y": 250,
+					"width": 0,
+					"height": 0,
+					"rotation": 0,
+					"visible": true
 				}
 			]
 		}
