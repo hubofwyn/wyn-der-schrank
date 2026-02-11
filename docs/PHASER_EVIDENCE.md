@@ -45,6 +45,7 @@ Do not duplicate entries — if a symbol is already listed, additional usages do
 | `Body.setOffset()` | `/classes/Phaser.Physics.Arcade.Body.html#setOffset` | `core/adapters/phaser-physics.ts` | 2026-02-10 | type-verified |
 | `Body.setMass()` | `/classes/Phaser.Physics.Arcade.Body.html#setMass` | `core/adapters/phaser-physics.ts` | 2026-02-10 | type-verified |
 | `scene.add.zone()` | `/classes/Phaser.GameObjects.GameObjectFactory.html#zone` | `core/adapters/phaser-physics.ts` | 2026-02-10 | type-verified |
+| `scene.add.rectangle()` | `/classes/Phaser.GameObjects.GameObjectFactory.html#rectangle` | `scenes/platformer-scene.ts` | 2026-02-11 | type-verified |
 | `scene.add.text()` | `/classes/Phaser.GameObjects.GameObjectFactory.html#text` | `scenes/platformer-scene.ts` | 2026-02-10 | type-verified |
 | `scene.physics.overlap()` | `/classes/Phaser.Physics.Arcade.ArcadePhysics.html#overlap` | `core/adapters/phaser-physics.ts` | 2026-02-10 | type-verified |
 | `scene.physics.collide()` | `/classes/Phaser.Physics.Arcade.ArcadePhysics.html#collide` | `core/adapters/phaser-physics.ts` | 2026-02-10 | type-verified |
