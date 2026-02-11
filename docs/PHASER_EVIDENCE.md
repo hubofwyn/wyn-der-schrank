@@ -78,6 +78,13 @@ Do not duplicate entries — if a symbol is already listed, additional usages do
 | `scene.anims.exists()` | `/classes/Phaser.Animations.AnimationManager.html#exists` | `scenes/preload-scene.ts` | 2026-02-12 | type-verified |
 | `Sprite.play()` | `/classes/Phaser.GameObjects.Sprite.html#play` | `scenes/platformer-scene.ts` | 2026-02-12 | type-verified |
 | `Sprite.flipX` | `/classes/Phaser.GameObjects.Components.Flip.html#flipX` | `scenes/platformer-scene.ts` | 2026-02-12 | type-verified |
+| `scene.make.tilemap()` | `/classes/Phaser.GameObjects.GameObjectCreator.html#tilemap` | `scenes/platformer-scene.ts` | 2026-02-12 | type-verified |
+| `Tilemap.addTilesetImage()` | `/classes/Phaser.Tilemaps.Tilemap.html#addTilesetImage` | `scenes/platformer-scene.ts` | 2026-02-12 | type-verified |
+| `Tilemap.createLayer()` | `/classes/Phaser.Tilemaps.Tilemap.html#createLayer` | `scenes/platformer-scene.ts` | 2026-02-12 | type-verified |
+| `TilemapLayer.setCollisionByExclusion()` | `/classes/Phaser.Tilemaps.TilemapLayer.html#setCollisionByExclusion` | `scenes/platformer-scene.ts` | 2026-02-12 | type-verified |
+| `Tilemap.getObjectLayer()` | `/classes/Phaser.Tilemaps.Tilemap.html#getObjectLayer` | `scenes/platformer-scene.ts` | 2026-02-12 | type-verified |
+| `Tilemap.widthInPixels` | `/classes/Phaser.Tilemaps.Tilemap.html#widthInPixels` | `scenes/platformer-scene.ts` | 2026-02-12 | type-verified |
+| `Tilemap.heightInPixels` | `/classes/Phaser.Tilemaps.Tilemap.html#heightInPixels` | `scenes/platformer-scene.ts` | 2026-02-12 | type-verified |
 | `SpriteGPULayer` | `/classes/Phaser.GameObjects.SpriteGPULayer.html` | (planned) | — | — |
 | `Texture#setWrap` | `/classes/Phaser.Textures.Texture.html#setWrap` | (planned) | — | — |
 

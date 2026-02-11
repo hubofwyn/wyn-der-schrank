@@ -3,7 +3,6 @@ import { PlatformerConfigSchema, SettingsSchema } from '@wds/shared';
 import { PhaserInput } from '../core/adapters/phaser-input.js';
 import { PhaserBody } from '../core/adapters/phaser-physics.js';
 import type { IGameClock } from '../core/ports/engine.js';
-import { getFirstStepsLevel } from '../modules/level/level-data.js';
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
 import { getAnimKeyForState } from '../modules/player/animation-config.js';
 import { PlayerController } from '../modules/player/player-controller.js';
@@ -12,10 +11,10 @@ import { BaseScene } from './base-scene.js';
 /**
  * PlatformerScene — the core gameplay scene.
  *
- * Wires PlayerController through ports to Phaser rendering.
- * Game-scoped services (clock, audio, network, storage) come from the
- * DI container. Scene-scoped adapters (input, body) are created here
- * because they require a live Phaser scene.
+ * Renders a Tiled tilemap for level geometry and collision.
+ * Wires PlayerController through ports to sprite rendering.
+ * Game-scoped services come from the DI container; scene-scoped
+ * adapters (input, body) are created here because they need a live scene.
  */
 export class PlatformerScene extends BaseScene {
 	private clock!: IGameClock;
@@ -28,8 +27,6 @@ export class PlatformerScene extends BaseScene {
 	}
 
 	create(): void {
-		const level = getFirstStepsLevel();
-
 		// ── Game-scoped services from container ──
 		this.clock = this.container.clock;
 
@@ -44,15 +41,27 @@ export class PlatformerScene extends BaseScene {
 			}),
 		);
 
-		// ── Platforms ──
-		const platforms = this.physics.add.staticGroup();
-		for (const p of level.platforms) {
-			const rect = this.add.rectangle(p.x, p.y, p.width, p.height, p.color);
-			platforms.add(rect);
+		// ── Tilemap ──
+		const map = this.make.tilemap({ key: 'map-forest-1' });
+		const tileset = map.addTilesetImage('dungeon-tileset', 'tiles-dungeon', 16, 16);
+
+		if (!tileset) {
+			throw new Error('Failed to load dungeon tileset');
 		}
 
+		const groundLayer = map.createLayer('Ground', tileset, 0, 0);
+
+		if (!groundLayer) {
+			throw new Error('Failed to create Ground layer');
+		}
+
+		groundLayer.setCollisionByExclusion([-1]);
+
+		// ── Spawn point from tilemap objects ──
+		const spawn = this.getSpawnPoint(map);
+
 		// ── Player ──
-		this.playerSprite = this.add.sprite(level.spawn.x, level.spawn.y, 'player');
+		this.playerSprite = this.add.sprite(spawn.x, spawn.y, 'player');
 		this.playerSprite.setDisplaySize(32, 48);
 		this.physics.add.existing(this.playerSprite, false);
 
@@ -80,14 +89,14 @@ export class PlatformerScene extends BaseScene {
 		});
 
 		// ── Collisions ──
-		this.physics.add.collider(this.playerSprite, platforms);
+		this.physics.add.collider(this.playerSprite, groundLayer);
 
 		// ── Camera ──
 		this.cameras.main.startFollow(this.playerSprite, true, 0.1, 0.1);
-		this.cameras.main.setBounds(0, 0, level.worldWidth, level.worldHeight);
+		this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
 		// ── World bounds ──
-		this.physics.world.setBounds(0, 0, level.worldWidth, level.worldHeight);
+		this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 	}
 
 	update(time: number, delta: number): void {
@@ -100,5 +109,17 @@ export class PlatformerScene extends BaseScene {
 		const animKey = getAnimKeyForState(snap.state);
 		this.playerSprite.play(animKey, true);
 		this.playerSprite.flipX = snap.facing === 'left';
+	}
+
+	private getSpawnPoint(map: Phaser.Tilemaps.Tilemap): { x: number; y: number } {
+		const objectLayer = map.getObjectLayer('Objects');
+		if (objectLayer) {
+			const spawnObj = objectLayer.objects.find((o) => o.type === 'spawn');
+			if (spawnObj && spawnObj.x != null && spawnObj.y != null) {
+				return { x: spawnObj.x, y: spawnObj.y };
+			}
+		}
+		// Fallback if no spawn object found
+		return { x: 100, y: 700 };
 	}
 }

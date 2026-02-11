@@ -7,6 +7,16 @@
 			"url": "assets/sprites/characters/player.png",
 			"frameWidth": 16,
 			"frameHeight": 16
+		},
+		{
+			"key": "tiles-dungeon",
+			"type": "image",
+			"url": "assets/tilemaps/tilesets/dungeon-tileset.png"
+		},
+		{
+			"key": "map-forest-1",
+			"type": "tilemapTiledJSON",
+			"url": "assets/tilemaps/levels/forest-1.json"
 		}
 	]
 }
