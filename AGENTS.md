@@ -18,7 +18,7 @@ docs/
   PHASER_EVIDENCE.md     → Verified Phaser 4.0.0-rc.6 API usage log
   adr/template.md        → ADR template
   plans/
-    active-plan.md       → Current phase + next steps
+    active-plan.md       → Goal roadmap, status tracking, update protocol
     game-blueprint.md    → Scenes, schemas, modules, assets, data flow
     telemetry.md         → Phaser 4 enforcement, hooks, observability
     agentic-setup.md     → Design of .claude/ infrastructure
@@ -294,4 +294,4 @@ shared/  X any app dependency except Zod
 | Phaser API evidence | `docs/PHASER_EVIDENCE.md` |
 | Architecture docs | `docs/FOUNDATION.md` |
 | Game blueprint | `docs/plans/game-blueprint.md` |
-| Current plan | `docs/plans/active-plan.md` |
+| Roadmap & status | `docs/plans/active-plan.md` |

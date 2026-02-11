@@ -1,85 +1,130 @@
 ---
 title: Active Plan
-status: Phase 1 — Core Infrastructure (in progress)
 last_updated: 2026-02-11
 ---
 
 # Active Plan
 
-## Phase 0 — Scaffold (COMPLETE)
+## Snapshot
 
-### Completed
+- __Active:__ none
+- __Next ready:__ G1 — Scene Infrastructure
+- __Blocked:__ none
+- __Last milestone:__ 2026-02-11 — MVP colored-rect platformer (32 tests) [feat/minimal-playable-game]
+- __Gates:__ all green (32 tests)
 
-- [x] Monorepo structure (Bun workspaces)
-- [x] Root toolchain configs (tsconfig, biome, eslint, dependency-cruiser, bunfig.toml)
-- [x] Shared package with Zod schemas (full game domain: 13 schema files, 40+ types)
-- [x] Server stub (Hono with safeParse validation)
-- [x] Client stub (Phaser 4 + Vite)
-- [x] Port interfaces (engine, input, audio, physics, network, storage)
-- [x] Container interface with PlatformerScope and MinigameScope factories
-- [x] Scene key registry (modules/navigation/scene-keys.ts)
-- [x] Agentic infrastructure (AGENTS.md, CLAUDE.md, commands, skills, agents)
-- [x] Phaser 4 enforcement (docs-first contract, evidence file, hooks)
-- [x] Telemetry infrastructure (6 hooks, JSONL events, drift reports)
-- [x] Full directory structure per game blueprint (modules, scenes, assets, server)
-- [x] All verification gates green: typecheck + lint:zones + deps:check + test:run + format:check
+## Goals
 
-## Current Phase: 1 — Core Infrastructure (IN PROGRESS)
+### G1: Scene Infrastructure
 
-### Completed
+> __Status:__ ready
+> __Requires:__ none
+> __Benefits from:__ none
+> __Unlocks:__ G2, G3, G4
+> __Branch:__ --
 
-- [x] PlatformerConfig schema (MovementConfig, JumpConfig, FastFallConfig, BodyDimensions)
-- [x] Expanded port interfaces (IBody with full physics API, IInputProvider with update/down, IPhysicsWorld with collide/overlap/gravity)
-- [x] Phaser 4 adapters (PhaserClock, PhaserInput, PhaserBody, PhaserPhysics)
-- [x] PlayerController — single composable controller with jump, double jump, coyote time, jump buffer, fast fall, variable jump height, state machine, health
-- [x] PlayerController test suite (32 tests covering all mechanics, edge cases, state transitions)
-- [x] Shared mock factories (__test-utils__/mocks.ts) for consistent module testing
-- [x] Vitest workspace properly excludes dist/ compiled output
-- [x] tsconfig.test.json for ESLint type-aware linting of test files
-- [x] All verification gates green: typecheck + lint:zones + deps:check + test:run (32/32) + format:check
-- [x] No-op adapter stubs (NoopAudio, NoopNetwork, NoopStorage) for MVP
-- [x] Hardcoded level geometry (modules/level/level-data.ts — pure TS, zone-clean)
-- [x] Composition Root functional (main.ts with Phaser.Game config)
-- [x] BootScene -> PlatformerScene scene chain
-- [x] __MVP milestone: minimal playable game__ — colored-rectangle player moving and jumping across platforms with camera follow, double jump, coyote time, jump buffer, fast fall
+BaseScene with container access, full Container wiring, camera module, PreloadScene with asset manifest. The platform everything else builds on.
 
-### Next
+- [ ] BaseScene class with typed container access pattern
+- [ ] Full Container wiring in main.ts (all ports resolved)
+- [ ] Camera module (modules/camera/) with port interface
+- [ ] PreloadScene with asset manifest loading
+- [ ] Full scene chain: Boot -> Preload -> Platformer
 
-- [ ] Local Phaser 4 docs mirror (docs/vendor/phaser-4.0.0-rc.6/)
-- [ ] Full scene chain: Boot -> Preload -> Title -> MainMenu -> Platformer
-- [ ] BaseScene class with container access pattern
-- [ ] Full Container wiring in main.ts (deferred from MVP)
-- [ ] NetworkManager with Hono RPC client
-- [ ] LocalStorageAdapter implementing IStorageProvider
-- [ ] Settings persistence round-trip
-- [ ] Profile creation / loading
-- [ ] Asset manifest loading in PreloadScene
-- [ ] Catalog loaders (character, enemy, collectible, world)
+### G2: Visual Identity
+
+> __Status:__ not-started
+> __Requires:__ G1
+> __Benefits from:__ none
+> __Unlocks:__ G3, G4, G5
+> __Branch:__ --
+
+Sprites, animation, and tile rendering replace colored rectangles. The game looks like a game.
+
 - [ ] Sprite-based player replacing colored rectangle
-
-### Phase 2: Platformer Core
-
-- [ ] player/, physics/, enemy/, level/, camera/, collectible/ modules
-- [ ] Full PlatformerScene + HudScene + PauseScene
+- [ ] Player animation state machine (idle, run, jump, fall)
 - [ ] Tilemap rendering from Tiled JSON
-- [ ] One complete world with 2-3 levels
-- [ ] Enemy behaviors: patrol, chase
-- [ ] Scoring + star rating
-- [ ] Tests for every module
+- [ ] Enemy sprites and patrol animation
+- [ ] Collectible sprites and pickup animation
 
-### Phase 3: Minigame System
+### G3: Gameplay Loop
 
-- [ ] MinigameRegistry + MinigameManager + MinigameLogic interface
-- [ ] MinigameScene + MinigameHudScene
-- [ ] Portal detection + scene transition
-- [ ] First minigame: dice-duel
-- [ ] Minigame rewards -> player state
+> __Status:__ not-started
+> __Requires:__ G1
+> __Benefits from:__ G2
+> __Unlocks:__ G5
+> __Branch:__ --
 
-### Phase 4: Progression & Polish
+Collectibles, HUD, level-end trigger, and scoring give the player a goal.
 
-- [ ] Character/world/level select screens with unlock visualization
-- [ ] progression/ module: save/load, unlock tracking
-- [ ] Leaderboard (client + server)
-- [ ] GameOverScene + LevelCompleteScene
-- [ ] Audio crossfading, screen shake, particle effects
-- [ ] Additional minigames: coin-catch, memory-match
+- [ ] Collectible module (modules/collectible/) with pickup logic
+- [ ] HUD scene (score, health, level indicator)
+- [ ] Level-end trigger and level-complete flow
+- [ ] Scoring module with star rating calculation
+- [ ] At least one complete world with 2-3 levels
+
+### G4: Hazards
+
+> __Status:__ not-started
+> __Requires:__ G1
+> __Benefits from:__ G2
+> __Unlocks:__ G5
+> __Branch:__ --
+
+Enemy patrol, damage, death/respawn, and game-over add risk to the platforming.
+
+- [ ] Enemy module (modules/enemy/) with patrol AI
+- [ ] Damage and health system (player takes hits)
+- [ ] Death and respawn mechanic
+- [ ] Game-over trigger when health reaches zero
+- [ ] Enemy-player collision detection via physics port
+
+### G5: Menu and Flow
+
+> __Status:__ not-started
+> __Requires:__ G3, G4
+> __Benefits from:__ G2
+> __Unlocks:__ none
+> __Branch:__ --
+
+Title screen, pause, game-over screen, settings, and persistence make the game self-contained.
+
+- [ ] Title screen and main menu scene
+- [ ] Pause scene (overlay)
+- [ ] Game-over scene with retry/quit options
+- [ ] Settings scene with LocalStorageAdapter persistence
+- [ ] Level-complete scene connecting to next level or menu
+
+## Update Protocol
+
+### When to read
+
+- __Session start.__ Every agent session begins by reading this file.
+- __implement-feature Gate 0.__ Before investigating, confirm work aligns with the current goal.
+
+### When to update
+
+| Trigger | Action |
+|---------|--------|
+| Start work on a goal | Set status to `in-progress`, set branch name, update Snapshot |
+| Complete a deliverable | Check the box: `- [ ]` -> `- [x]` |
+| All deliverables done | Set status to `done`, branch to `merged`, move to Completed Log, update Snapshot |
+| A `requires` dependency completes | Set dependent goal from `not-started` -> `ready` |
+| Hit a blocker | Set status to `blocked(reason)`, update Snapshot |
+| Blocker resolved | Set status back to previous state, clear reason |
+| Checked deliverable fails gates in later session | Uncheck it, add `blocked(reason)` to goal, do not proceed until resolved |
+
+### Rules
+
+1. __Work top-down.__ Start with the lowest-numbered `ready` goal.
+2. __One active goal at a time.__ Only one goal may be `in-progress`.
+3. __Never add, remove, or reorder goals.__ Only the human modifies the goal list.
+4. __Respect requires.__ Do not start a goal whose `requires` dependencies are not `done`.
+5. __Update Snapshot.__ After any status change, update the Snapshot section to match.
+6. __Update last_updated.__ Set the frontmatter date on any edit.
+7. __Decompose large deliverables.__ If a deliverable will touch more than 8 files, stop and split it into sub-deliverables before implementing.
+8. __Reprioritization.__ If the Snapshot's active goal doesn't match the first `in-progress` goal in the list, the human has reprioritized. Read the new Snapshot and adjust.
+
+## Completed Log
+
+- __2026-02-11__ — MVP: colored-rect platformer with PlayerController, hexagonal architecture (ports/adapters), full CI pipeline (6 gates), 32 tests [feat/minimal-playable-game]
