@@ -1,6 +1,8 @@
 import type { AssetEntry } from '@wds/shared';
 import { parseManifest } from '../modules/assets/manifest-parser.js';
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
+import type { AnimationDef } from '../modules/player/animation-config.js';
+import { getPlayerAnimationDefs } from '../modules/player/animation-config.js';
 import { BaseScene } from './base-scene.js';
 
 /**
@@ -47,6 +49,7 @@ export class PreloadScene extends BaseScene {
 		});
 
 		this.load.once('complete', () => {
+			this.createAnimations();
 			this.navigateTo(SceneKeys.PLATFORMER);
 		});
 
@@ -75,6 +78,26 @@ export class PreloadScene extends BaseScene {
 			if (this.progressFill) {
 				this.progressFill.width = this.progressBarWidth * value;
 			}
+		});
+	}
+
+	private createAnimations(): void {
+		const playerDefs = getPlayerAnimationDefs('player');
+		for (const def of playerDefs) {
+			this.registerAnimation(def);
+		}
+	}
+
+	private registerAnimation(def: AnimationDef): void {
+		if (this.anims.exists(def.key)) return;
+		this.anims.create({
+			key: def.key,
+			frames: this.anims.generateFrameNumbers(def.textureKey, {
+				start: def.startFrame,
+				end: def.endFrame,
+			}),
+			frameRate: def.frameRate,
+			repeat: def.repeat,
 		});
 	}
 

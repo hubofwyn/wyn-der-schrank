@@ -73,6 +73,11 @@ Do not duplicate entries — if a symbol is already listed, additional usages do
 | `scene.add.sprite()` | `/classes/Phaser.GameObjects.GameObjectFactory.html#sprite` | `scenes/platformer-scene.ts` | 2026-02-12 | type-verified |
 | `Sprite.setDisplaySize()` | `/classes/Phaser.GameObjects.Components.Size.html#setDisplaySize` | `scenes/platformer-scene.ts` | 2026-02-12 | type-verified |
 | `Loader.once('complete')` | `/classes/Phaser.Loader.LoaderPlugin.html` | `scenes/preload-scene.ts` | 2026-02-12 | type-verified |
+| `scene.anims.create()` | `/classes/Phaser.Animations.AnimationManager.html#create` | `scenes/preload-scene.ts` | 2026-02-12 | type-verified |
+| `scene.anims.generateFrameNumbers()` | `/classes/Phaser.Animations.AnimationManager.html#generateFrameNumbers` | `scenes/preload-scene.ts` | 2026-02-12 | type-verified |
+| `scene.anims.exists()` | `/classes/Phaser.Animations.AnimationManager.html#exists` | `scenes/preload-scene.ts` | 2026-02-12 | type-verified |
+| `Sprite.play()` | `/classes/Phaser.GameObjects.Sprite.html#play` | `scenes/platformer-scene.ts` | 2026-02-12 | type-verified |
+| `Sprite.flipX` | `/classes/Phaser.GameObjects.Components.Flip.html#flipX` | `scenes/platformer-scene.ts` | 2026-02-12 | type-verified |
 | `SpriteGPULayer` | `/classes/Phaser.GameObjects.SpriteGPULayer.html` | (planned) | — | — |
 | `Texture#setWrap` | `/classes/Phaser.Textures.Texture.html#setWrap` | (planned) | — | — |
 

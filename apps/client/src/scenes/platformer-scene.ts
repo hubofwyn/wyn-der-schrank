@@ -5,6 +5,7 @@ import { PhaserBody } from '../core/adapters/phaser-physics.js';
 import type { IGameClock } from '../core/ports/engine.js';
 import { getFirstStepsLevel } from '../modules/level/level-data.js';
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
+import { getAnimKeyForState } from '../modules/player/animation-config.js';
 import { PlayerController } from '../modules/player/player-controller.js';
 import { BaseScene } from './base-scene.js';
 
@@ -93,5 +94,11 @@ export class PlatformerScene extends BaseScene {
 		this.clock.refresh(time, delta);
 		this.phaserInput.update();
 		this.playerController.update();
+
+		// ── Drive sprite from domain state ──
+		const snap = this.playerController.snapshot();
+		const animKey = getAnimKeyForState(snap.state);
+		this.playerSprite.play(animKey, true);
+		this.playerSprite.flipX = snap.facing === 'left';
 	}
 }
