@@ -5,6 +5,11 @@ import { PhaserBody } from '../core/adapters/phaser-physics.js';
 import type { IGameClock } from '../core/ports/engine.js';
 import { getCoinDefaultAnim } from '../modules/collectible/animation-config.js';
 import { getSkeletonDefaultAnim } from '../modules/enemy/animation-config.js';
+import {
+	extractCollectibles,
+	extractEnemies,
+	extractSpawn,
+} from '../modules/level/tilemap-objects.js';
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
 import { getAnimKeyForState } from '../modules/player/animation-config.js';
 import { PlayerController } from '../modules/player/player-controller.js';
@@ -59,8 +64,11 @@ export class PlatformerScene extends BaseScene {
 
 		groundLayer.setCollisionByExclusion([-1]);
 
+		const objectLayer = map.getObjectLayer('Objects');
+		const objects = objectLayer?.objects ?? [];
+
 		// ── Spawn point from tilemap objects ──
-		const spawn = this.getSpawnPoint(map);
+		const spawn = extractSpawn(objects) ?? { x: 100, y: 700 };
 
 		// ── Player ──
 		this.playerSprite = this.add.sprite(spawn.x, spawn.y, 'player');
@@ -91,10 +99,12 @@ export class PlatformerScene extends BaseScene {
 		});
 
 		// ── Enemies (visual only — domain AI is G4) ──
-		this.placeEnemies(map);
+		const enemies = extractEnemies(objects);
+		this.placeEntities(enemies, 'enemy-skeleton-idle', 32, 48, getSkeletonDefaultAnim());
 
 		// ── Collectibles (visual only — pickup logic is G3) ──
-		this.placeCollectibles(map);
+		const collectibles = extractCollectibles(objects);
+		this.placeEntities(collectibles, 'collectible-coin', 16, 16, getCoinDefaultAnim());
 
 		// ── Collisions ──
 		this.physics.add.collider(this.playerSprite, groundLayer);
@@ -119,43 +129,17 @@ export class PlatformerScene extends BaseScene {
 		this.playerSprite.flipX = snap.facing === 'left';
 	}
 
-	private placeCollectibles(map: Phaser.Tilemaps.Tilemap): void {
-		const objectLayer = map.getObjectLayer('Objects');
-		if (!objectLayer) return;
-
-		for (const obj of objectLayer.objects) {
-			if (obj.type !== 'collectible') continue;
-			if (obj.x == null || obj.y == null) continue;
-
-			const sprite = this.add.sprite(obj.x, obj.y, 'collectible-coin');
-			sprite.setDisplaySize(16, 16);
-			sprite.play(getCoinDefaultAnim());
+	private placeEntities(
+		entities: ReadonlyArray<{ x: number; y: number }>,
+		textureKey: string,
+		width: number,
+		height: number,
+		defaultAnim: string,
+	): void {
+		for (const entity of entities) {
+			const sprite = this.add.sprite(entity.x, entity.y, textureKey);
+			sprite.setDisplaySize(width, height);
+			sprite.play(defaultAnim);
 		}
-	}
-
-	private placeEnemies(map: Phaser.Tilemaps.Tilemap): void {
-		const objectLayer = map.getObjectLayer('Objects');
-		if (!objectLayer) return;
-
-		for (const obj of objectLayer.objects) {
-			if (obj.type !== 'enemy') continue;
-			if (obj.x == null || obj.y == null) continue;
-
-			const sprite = this.add.sprite(obj.x, obj.y, 'enemy-skeleton-idle');
-			sprite.setDisplaySize(32, 48);
-			sprite.play(getSkeletonDefaultAnim());
-		}
-	}
-
-	private getSpawnPoint(map: Phaser.Tilemaps.Tilemap): { x: number; y: number } {
-		const objectLayer = map.getObjectLayer('Objects');
-		if (objectLayer) {
-			const spawnObj = objectLayer.objects.find((o) => o.type === 'spawn');
-			if (spawnObj && spawnObj.x != null && spawnObj.y != null) {
-				return { x: spawnObj.x, y: spawnObj.y };
-			}
-		}
-		// Fallback if no spawn object found
-		return { x: 100, y: 700 };
 	}
 }
