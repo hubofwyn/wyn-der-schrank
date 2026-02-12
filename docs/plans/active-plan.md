@@ -7,11 +7,11 @@ last_updated: 2026-02-12
 
 ## Snapshot
 
-- __Active:__ G4 Hazards [feat/enemy-ai]
-- __Next ready:__ none
+- __Active:__ none
+- __Next ready:__ G5
 - __Blocked:__ none
-- __Last milestone:__ 2026-02-12 — G3 Gameplay Loop (110 tests) [feat/gameplay-loop]
-- __Gates:__ all green (110 tests)
+- __Last milestone:__ 2026-02-12 — G4 Hazards (147 tests) [feat/enemy-ai]
+- __Gates:__ all green (147 tests)
 
 ## Goals
 
@@ -65,23 +65,23 @@ Collectibles, HUD, level-end trigger, and scoring give the player a goal. Builds
 
 ### G4: Hazards
 
-> __Status:__ in-progress
+> __Status:__ done
 > __Requires:__ G1
 > __Benefits from:__ G2
 > __Unlocks:__ G5
-> __Branch:__ feat/enemy-ai
+> __Branch:__ merged
 
 Enemy patrol, damage, death/respawn, and game-over add risk to the platforming. Builds on G2 enemy sprites.
 
-- [ ] Enemy module (modules/enemy/) with patrol AI wired to G2 sprites
-- [ ] Damage and health system (PlayerController.takeDamage exists; wire collision → damage → visual feedback)
-- [ ] Death and respawn mechanic (checkpoint system + spawn reset)
-- [ ] Game-over trigger when health reaches zero
-- [ ] Enemy-player collision detection via physics port
+- [x] Enemy module (modules/enemy/) with patrol AI wired to G2 sprites
+- [x] Damage and health system (PlayerController.takeDamage exists; wire collision → damage → visual feedback)
+- [x] Death and respawn mechanic (checkpoint system + spawn reset)
+- [x] Game-over trigger when health reaches zero
+- [x] Enemy-player collision detection via physics port
 
 ### G5: Menu and Flow
 
-> __Status:__ not-started
+> __Status:__ ready
 > __Requires:__ G3, G4
 > __Benefits from:__ G2
 > __Unlocks:__ none
@@ -129,6 +129,7 @@ Title screen, pause, game-over screen, settings, and persistence make the game s
 
 ## Completed Log
 
+- __2026-02-12__ — G4: Hazards — Enemy patrol AI, damage/invincibility, death/respawn, game-over scene (147 tests) [feat/enemy-ai]
 - __2026-02-12__ — G3: Gameplay Loop — Collectible pickup, HUD, level-complete, scoring with star rating, 2-level forest world (110 tests) [feat/gameplay-loop]
 - __2026-02-11__ — G2: Visual Identity — Sprite player + animation, Tiled tilemap, enemy/collectible sprites (83 tests) [feat/visual-identity]
 - __2026-02-11__ — G1: Scene Infrastructure — BaseScene, container wiring, CameraController, PreloadScene, scene chain (48 tests) [feat/scene-infrastructure]
