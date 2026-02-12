@@ -10,7 +10,12 @@ if [[ ! -f "$EVENTS_FILE" ]]; then
   exit 0
 fi
 
-SESSION_ID="${CLAUDE_SESSION_ID:-unknown}"
+# Parse session_id from hook JSON input on stdin
+INPUT=$(cat)
+SESSION_ID=$(echo "$INPUT" | jq -r '.session_id // empty' 2>/dev/null || echo "")
+if [[ -z "$SESSION_ID" ]]; then
+  exit 0
+fi
 
 # Count events for this session
 TOTAL=$(grep -c "\"sessionId\":\"$SESSION_ID\"" "$EVENTS_FILE" 2>/dev/null || echo "0")
@@ -21,7 +26,7 @@ ZONE_EVENTS=$(grep "\"sessionId\":\"$SESSION_ID\"" "$EVENTS_FILE" 2>/dev/null | 
 PHASER_EVENTS=$(grep "\"sessionId\":\"$SESSION_ID\"" "$EVENTS_FILE" 2>/dev/null | grep -c '"category":"phaser"' || echo "0")
 
 if [[ "$TOTAL" -gt 0 ]]; then
-  echo "Session $SESSION_ID: $TOTAL events, $VIOLATIONS violations, $WARNINGS warnings, $BLOCKED blocked" >&2
+  echo "Session ${SESSION_ID:0:8}…: $TOTAL events, $VIOLATIONS violations, $WARNINGS warnings, $BLOCKED blocked" >&2
   if [[ "$VIOLATIONS" -gt 0 ]] || [[ "$BLOCKED" -gt 0 ]]; then
     echo "  Zone events: $ZONE_EVENTS | Phaser events: $PHASER_EVENTS" >&2
   fi

@@ -1,6 +1,6 @@
 ---
 title: Active Plan
-last_updated: 2026-02-12
+last_updated: 2026-02-11
 ---
 
 # Active Plan
@@ -10,7 +10,7 @@ last_updated: 2026-02-12
 - __Active:__ none
 - __Next ready:__ none
 - __Blocked:__ none
-- __Last milestone:__ 2026-02-12 — G5 Menu and Flow (164 tests) [feat/menu-flow]
+- __Last milestone:__ 2026-02-12 — G5 Menu and Flow (164 tests) [merged]
 - __Gates:__ all green (164 tests)
 
 ## Goals
@@ -85,7 +85,7 @@ Enemy patrol, damage, death/respawn, and game-over add risk to the platforming. 
 > __Requires:__ G3, G4
 > __Benefits from:__ G2
 > __Unlocks:__ none
-> __Branch:__ feat/menu-flow
+> __Branch:__ merged
 
 Title screen, pause, game-over screen, settings, and persistence make the game self-contained. Design tokens (colors, spacing, typography) provide consistent UI across all menu scenes. G3 delivered LevelCompleteScene (next-level + replay) and G4 delivered GameOverScene (retry only). Both need menu navigation once TitleScene exists. IStorageProvider port and NoopStorage adapter already exist; G5 replaces NoopStorage with LocalStorageAdapter in main.ts.
 
