@@ -2,6 +2,7 @@
 // All services are wired here and ONLY here.
 // See core/container.ts for the Container interface.
 
+import { ConsoleDiagnostics } from './core/adapters/console-diagnostics.js';
 import { LocalStorageAdapter } from './core/adapters/local-storage-adapter.js';
 import { NoopAudio } from './core/adapters/noop-audio.js';
 import { NoopInput } from './core/adapters/noop-input.js';
@@ -35,6 +36,7 @@ function createContainer(): Container {
 	const network = new NoopNetwork();
 	const storage = new LocalStorageAdapter();
 	const settingsManager = new SettingsManager(storage);
+	const diagnostics = new ConsoleDiagnostics(clock, settingsManager);
 
 	return {
 		clock,
@@ -44,6 +46,7 @@ function createContainer(): Container {
 		network,
 		storage,
 		settingsManager,
+		diagnostics,
 	};
 }
 
