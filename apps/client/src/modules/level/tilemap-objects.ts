@@ -1,3 +1,6 @@
+import type { EnemyType } from '@wds/shared';
+import { EnemyTypeSchema } from '@wds/shared';
+
 export interface TilemapObject {
 	readonly type: string;
 	readonly x?: number;
@@ -6,7 +9,8 @@ export interface TilemapObject {
 	readonly properties?: ReadonlyArray<{ name: string; type: string; value: unknown }>;
 }
 
-const DEFAULT_ENEMY_TYPE = 'skeleton';
+const DEFAULT_ENEMY_TYPE: EnemyType = 'skeleton';
+const DEFAULT_PATROL_RANGE = 100;
 
 const hasCoordinates = (obj: TilemapObject): obj is TilemapObject & { x: number; y: number } =>
 	obj.x != null && obj.y != null;
@@ -27,6 +31,14 @@ const getStringProperty = (
 	return typeof value === 'string' ? value : undefined;
 };
 
+const getNumberProperty = (
+	properties: TilemapObject['properties'],
+	name: string,
+): number | undefined => {
+	const value = getPropertyValue(properties, name);
+	return typeof value === 'number' ? value : undefined;
+};
+
 export function extractSpawn(objects: TilemapObject[]): { x: number; y: number } | null {
 	for (const obj of objects) {
 		if (obj.type !== 'spawn') continue;
@@ -39,15 +51,18 @@ export function extractSpawn(objects: TilemapObject[]): { x: number; y: number }
 
 export function extractEnemies(
 	objects: TilemapObject[],
-): ReadonlyArray<{ x: number; y: number; enemyType: string }> {
-	const enemies: Array<{ x: number; y: number; enemyType: string }> = [];
+): ReadonlyArray<{ x: number; y: number; enemyType: EnemyType; patrolRange: number }> {
+	const enemies: Array<{ x: number; y: number; enemyType: EnemyType; patrolRange: number }> = [];
 
 	for (const obj of objects) {
 		if (obj.type !== 'enemy') continue;
 		if (!hasCoordinates(obj)) continue;
 
-		const enemyType = getStringProperty(obj.properties, 'enemyType') ?? DEFAULT_ENEMY_TYPE;
-		enemies.push({ x: obj.x, y: obj.y, enemyType });
+		const rawType = getStringProperty(obj.properties, 'enemyType');
+		const parsed = rawType ? EnemyTypeSchema.safeParse(rawType) : { success: false as const };
+		const enemyType: EnemyType = parsed.success ? parsed.data : DEFAULT_ENEMY_TYPE;
+		const patrolRange = getNumberProperty(obj.properties, 'patrolRange') ?? DEFAULT_PATROL_RANGE;
+		enemies.push({ x: obj.x, y: obj.y, enemyType, patrolRange });
 	}
 
 	return enemies;
