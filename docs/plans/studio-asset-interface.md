@@ -189,7 +189,9 @@ natural next step. The manifest schema is designed to support this.
   - Major: breaking changes to existing schemas (should be very rare)
 - **Manifest version:** Semver string in `asset-manifest.json`.
   - Bump when manifest structure changes (not on individual asset updates)
-- **Studio pins @wds/shared:** Uses exact version in `package.json`.
+- **Studio pins @wds/shared:** Uses exact version in `package.json` via
+  `bun add @wds/shared --exact` (the `--exact`/`-E` flag prevents the
+  default `^` range and writes the literal version string).
   Updates deliberately via `bun update @wds/shared` followed by
   `wds-studio validate-all` to confirm no regressions.
 
@@ -244,7 +246,7 @@ bun link @wds/shared
 
 # Switch to published (prod/CI): install from npm
 bun unlink
-bun add @wds/shared@1.0.0
+bun add @wds/shared@1.0.0 --exact
 ```
 
 **When to publish vs link:**
@@ -260,6 +262,79 @@ bun add @wds/shared@1.0.0
 # In the studio repo — check if @wds/shared has a newer published version
 bun outdated @wds/shared
 ```
+
+### 10. Package Management Conventions
+
+Both repos use Bun as the package manager. The following conventions ensure
+consistent, reproducible builds across local development and CI.
+
+**Lockfile:**
+
+Both repos commit `bun.lock` to version control. This is required for
+`bun ci` (reproducible CI installs). The game repo already commits its
+lockfile; the studio must do the same from its first commit.
+
+**CI installs — `bun ci`:**
+
+CI pipelines use `bun ci` (equivalent to `bun install --frozen-lockfile`)
+instead of `bun install`. This fails the build if `package.json` disagrees
+with the lockfile, preventing accidental dependency drift.
+
+```yaml
+# GitHub Actions pattern for both repos
+steps:
+  - uses: actions/checkout@v4
+  - uses: oven-sh/setup-bun@v2
+  - run: bun ci
+  - run: bun run check
+```
+
+**Peer dependencies — Zod:**
+
+`@wds/shared` declares Zod as a `peerDependency` (`"zod": "^4.0.0"`).
+Bun auto-installs peer dependencies during `bun install`, so the studio
+does not need to manually `bun add zod` — Bun resolves it automatically.
+However, if the studio wants to pin a specific Zod version, it can add
+Zod explicitly: `bun add zod@4.3.6 --exact`.
+
+**Trusted dependencies — lifecycle scripts:**
+
+Bun does not run postinstall scripts by default. Packages that need them
+(e.g., `sharp` in the studio for native binaries) must be listed in
+`trustedDependencies` in the consuming repo's `package.json`:
+
+```jsonc
+{
+  "trustedDependencies": ["sharp"]
+}
+```
+
+Alternatively, use `bun add sharp --trust` which adds to
+`trustedDependencies` and installs in one step.
+
+**Exact version pinning:**
+
+The studio pins `@wds/shared` with `bun add @wds/shared@1.0.0 --exact`
+(the `-E` flag). This writes `"1.0.0"` instead of `"^1.0.0"`, preventing
+unintended minor/patch upgrades. Updates are deliberate:
+`bun update @wds/shared` followed by validation.
+
+**Installation strategy:**
+
+- **Game repo** (workspace): defaults to `isolated` linker (pnpm-style
+  strict dependency isolation, prevents phantom dependencies)
+- **Studio** (single-package): defaults to `hoisted` linker (traditional
+  npm flat node_modules)
+
+Both defaults are correct for their project structures. No `bunfig.toml`
+override is needed.
+
+**Publishing gate:**
+
+`@wds/shared` has `prepublishOnly: "bun run typecheck"` which runs
+automatically before `bun publish`. This prevents publishing with type
+errors. The studio can verify the publish preview with
+`bun publish --dry-run` from `packages/shared/`.
 
 ---
 
@@ -529,7 +604,9 @@ Key changes from current:
 - Wildcard exports replaced with explicit subpath entries
 - `files` field limits what gets published
 - `publishConfig` sets public access
-- Zod moved to `peerDependencies` (kept in devDependencies for local dev)
+- Zod moved to `peerDependencies` (kept in `devDependencies` for local dev).
+  CLI: `bun add zod --peer` adds to peerDependencies; Bun auto-installs
+  peer deps for consumers, so the studio gets Zod without explicit install.
 - `prepublishOnly` script gates publication on type checking
 
 ---
@@ -654,7 +731,8 @@ Not needed now, but the additive schema pattern supports it.
 - Bump version to `1.0.0`
 - Add `files`, `publishConfig`, `prepublishOnly`
 - Replace wildcard exports with explicit subpaths
-- Move Zod to `peerDependencies` (keep in `devDependencies`)
+- Move Zod to `peerDependencies` via `bun add zod --peer` (keep in
+  `devDependencies` for local workspace dev)
 - Verify workspace resolution still works: `bun run check`
 
 ### Commit 3: Verify export self-containment
