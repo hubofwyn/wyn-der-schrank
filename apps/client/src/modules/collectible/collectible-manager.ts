@@ -5,10 +5,10 @@ export interface CollectiblePosition {
 
 export interface CollectResult {
 	readonly collected: boolean;
-	readonly value: number;
+	readonly coinCount: number;
 }
 
-const DEFAULT_COIN_VALUE = 1;
+const DEFAULT_COIN_COUNT = 1;
 
 export class CollectibleManager {
 	private collected: boolean[] = [];
@@ -33,16 +33,16 @@ export class CollectibleManager {
 
 	collect(index: number): CollectResult {
 		if (index < 0 || index >= this.collected.length) {
-			return { collected: false, value: 0 };
+			return { collected: false, coinCount: 0 };
 		}
 
 		if (this.collected[index]) {
-			return { collected: false, value: 0 };
+			return { collected: false, coinCount: 0 };
 		}
 
 		this.collected[index] = true;
 		this._count++;
-		return { collected: true, value: DEFAULT_COIN_VALUE };
+		return { collected: true, coinCount: DEFAULT_COIN_COUNT };
 	}
 
 	isCollected(index: number): boolean {

@@ -20,12 +20,12 @@ describe('CollectibleManager', () => {
 		expect(mgr.collectedCount).toBe(0);
 	});
 
-	it('collects an item and returns value', () => {
+	it('collects an item and returns coin count', () => {
 		const mgr = new CollectibleManager();
 		mgr.init([{ x: 10, y: 20 }]);
 
 		const result = mgr.collect(0);
-		expect(result).toEqual({ collected: true, value: 1 });
+		expect(result).toEqual({ collected: true, coinCount: 1 });
 		expect(mgr.collectedCount).toBe(1);
 		expect(mgr.isCollected(0)).toBe(true);
 	});
@@ -36,7 +36,7 @@ describe('CollectibleManager', () => {
 
 		mgr.collect(0);
 		const result = mgr.collect(0);
-		expect(result).toEqual({ collected: false, value: 0 });
+		expect(result).toEqual({ collected: false, coinCount: 0 });
 		expect(mgr.collectedCount).toBe(1);
 	});
 
@@ -45,7 +45,7 @@ describe('CollectibleManager', () => {
 		mgr.init([{ x: 10, y: 20 }]);
 
 		const result = mgr.collect(-1);
-		expect(result).toEqual({ collected: false, value: 0 });
+		expect(result).toEqual({ collected: false, coinCount: 0 });
 	});
 
 	it('rejects out-of-bounds high index', () => {
@@ -53,7 +53,7 @@ describe('CollectibleManager', () => {
 		mgr.init([{ x: 10, y: 20 }]);
 
 		const result = mgr.collect(5);
-		expect(result).toEqual({ collected: false, value: 0 });
+		expect(result).toEqual({ collected: false, coinCount: 0 });
 	});
 
 	it('tracks allCollected correctly', () => {

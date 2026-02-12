@@ -12,7 +12,8 @@
  */
 
 import { mkdirSync, writeFileSync } from 'node:fs';
-import { dirname } from 'node:path';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const WIDTH = 150;
 const HEIGHT = 40;
@@ -208,8 +209,8 @@ const tilemap = {
 // ---------------------------------------------------------------------------
 // Write to disk
 // ---------------------------------------------------------------------------
-const outPath =
-	'/Users/verlyn13/Development/hubofwyn/wyn-der-schrank/apps/client/public/assets/tilemaps/levels/forest-2.json';
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const outPath = resolve(__dirname, '../apps/client/public/assets/tilemaps/levels/forest-2.json');
 
 mkdirSync(dirname(outPath), { recursive: true });
 

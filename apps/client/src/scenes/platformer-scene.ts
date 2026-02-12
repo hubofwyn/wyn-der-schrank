@@ -213,7 +213,7 @@ export class PlatformerScene extends BaseScene {
 		const result = this.collectibleManager.collect(index);
 		if (!result.collected) return;
 
-		this.scoreTracker.addCoins(result.value);
+		this.scoreTracker.addCoins(result.coinCount);
 		const sprite = this.collectibleSprites[index];
 		if (sprite) {
 			sprite.destroy();

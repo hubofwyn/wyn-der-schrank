@@ -46,7 +46,7 @@ function formatTime(ms: number): string {
  * LevelCompleteScene — shown after the player reaches the exit.
  *
  * Reads final GameplayState from registry to display score, stars,
- * coins, and time. Offers "Next Level" and "Menu" navigation.
+ * coins, and time. Offers "Next Level" and "Replay" navigation.
  */
 export class LevelCompleteScene extends BaseScene {
 	constructor() {
