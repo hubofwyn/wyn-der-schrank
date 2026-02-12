@@ -36,7 +36,9 @@ export class PreloadScene extends BaseScene {
 		const assets = parseManifest(raw);
 
 		if (assets.length === 0) {
-			this.navigateTo(SceneKeys.PLATFORMER);
+			this.container.settingsManager.load().then(() => {
+				this.navigateTo(SceneKeys.TITLE);
+			});
 			return;
 		}
 
@@ -46,7 +48,9 @@ export class PreloadScene extends BaseScene {
 
 		this.load.once('complete', () => {
 			this.createAnimations();
-			this.navigateTo(SceneKeys.PLATFORMER);
+			this.container.settingsManager.load().then(() => {
+				this.navigateTo(SceneKeys.TITLE);
+			});
 		});
 
 		this.load.start();

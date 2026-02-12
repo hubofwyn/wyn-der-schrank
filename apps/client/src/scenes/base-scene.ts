@@ -27,4 +27,18 @@ export abstract class BaseScene extends Phaser.Scene {
 	protected stopParallel(key: SceneKey): void {
 		this.scene.stop(key);
 	}
+
+	/** Pause a scene. No argument pauses this scene. */
+	protected pauseScene(key?: SceneKey): void {
+		if (key) {
+			this.scene.pause(key);
+		} else {
+			this.scene.pause();
+		}
+	}
+
+	/** Resume a paused scene. */
+	protected resumeScene(key: SceneKey): void {
+		this.scene.resume(key);
+	}
 }

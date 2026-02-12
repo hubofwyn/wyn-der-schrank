@@ -56,11 +56,14 @@ BootScene
 PreloadScene
   │  (load all assets with progress bar, parse asset manifests)
   ▼
-TitleScene
-  │  (animated title screen, "Press any key" / "Tap to start")
-  │  first user interaction here unlocks AudioContext
-  ▼
-MainMenuScene ◄──────────────────────────────────┐
+TitleScene ◄─────────────────────────────────────┐
+  │  (title + Play / Settings buttons)            │
+  │  NOTE: MainMenu deferred — TitleScene serves  │
+  │  as entry point for G5. MainMenuScene reserved │
+  │  for future character/world/level select flow. │
+  ├──▶ SettingsScene ────────────────────────────▶┤
+  ▼                                                │
+MainMenuScene (DEFERRED) ◄───────────────────────┤
   │  Play / Settings / Leaderboard / Credits      │
   ├──▶ SettingsScene ────────────────────────────▶┤
   ├──▶ LeaderboardScene ─────────────────────────▶┤

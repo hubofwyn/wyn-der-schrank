@@ -96,6 +96,10 @@ Do not duplicate entries — if a symbol is already listed, additional usages do
 | `Sprite.alpha` | `/classes/Phaser.GameObjects.Components.Alpha.html#alpha` | `scenes/platformer-scene.ts` | 2026-02-12 | type-verified |
 | `Sprite.x` | `/classes/Phaser.GameObjects.Components.Transform.html#x` | `scenes/platformer-scene.ts` | 2026-02-12 | type-verified |
 | `Scene.scale` (ScaleManager) | `/classes/Phaser.Scale.ScaleManager.html` | `scenes/preload-scene.ts` | 2026-02-12 | type-verified |
+| `ScenePlugin.pause()` | `/classes/Phaser.Scenes.ScenePlugin.html#pause` — `phaser.d.ts:109195` | `scenes/base-scene.ts` | 2026-02-12 | type-verified |
+| `ScenePlugin.resume()` | `/classes/Phaser.Scenes.ScenePlugin.html#resume` — `phaser.d.ts:109205` | `scenes/base-scene.ts` | 2026-02-12 | type-verified |
+| `Camera.setBackgroundColor()` | `/classes/Phaser.Cameras.Scene2D.Camera.html#setBackgroundColor` — `phaser.d.ts:3178` | `scenes/title-scene.ts` | 2026-02-12 | type-verified |
+| `GameObject.setDepth()` | `/classes/Phaser.GameObjects.Components.Depth.html#setDepth` — `phaser.d.ts:14009` | `scenes/pause-scene.ts` | 2026-02-12 | type-verified |
 | `SpriteGPULayer` | `/classes/Phaser.GameObjects.SpriteGPULayer.html` | (planned) | — | — |
 | `Texture#setWrap` | `/classes/Phaser.Textures.Texture.html#setWrap` | (planned) | — | — |
 

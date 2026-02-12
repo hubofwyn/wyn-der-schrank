@@ -16,6 +16,7 @@ import { HudScene } from './scenes/hud-scene.js';
 import { LevelCompleteScene } from './scenes/level-complete-scene.js';
 import { PlatformerScene } from './scenes/platformer-scene.js';
 import { PreloadScene } from './scenes/preload-scene.js';
+import { TitleScene } from './scenes/title-scene.js';
 
 /**
  * Build the DI container with all infrastructure services.
@@ -63,7 +64,15 @@ const game = new Phaser.Game({
 		mode: Phaser.Scale.FIT,
 		autoCenter: Phaser.Scale.CENTER_BOTH,
 	},
-	scene: [BootScene, PreloadScene, PlatformerScene, HudScene, LevelCompleteScene, GameOverScene],
+	scene: [
+		BootScene,
+		PreloadScene,
+		TitleScene,
+		PlatformerScene,
+		HudScene,
+		LevelCompleteScene,
+		GameOverScene,
+	],
 });
 
 game.registry.set('container', createContainer());
