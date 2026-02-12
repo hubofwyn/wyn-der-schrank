@@ -69,7 +69,7 @@ Collectibles, HUD, level-end trigger, and scoring give the player a goal. Builds
 > __Requires:__ G1
 > __Benefits from:__ G2
 > __Unlocks:__ G5
-> __Branch:__ feat/enemy-ai
+> __Branch:__ merged
 
 Enemy patrol, damage, death/respawn, and game-over add risk to the platforming. Builds on G2 enemy sprites.
 
