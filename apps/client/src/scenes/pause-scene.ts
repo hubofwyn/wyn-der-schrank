@@ -9,6 +9,8 @@ import { BaseScene } from './base-scene.js';
  * is paused (no update) but still renders underneath the overlay.
  */
 export class PauseScene extends BaseScene {
+	private escHandler: (() => void) | null = null;
+
 	constructor() {
 		super({ key: SceneKeys.PAUSE });
 	}
@@ -72,12 +74,16 @@ export class PauseScene extends BaseScene {
 			this.navigateTo(SceneKeys.TITLE);
 		});
 
-		// ── Escape key to resume ──
-		this.input.keyboard?.once('keydown-ESC', () => this.resumeGame());
+		// ── Escape key to resume (stored for targeted cleanup) ──
+		this.escHandler = () => this.resumeGame();
+		this.input.keyboard?.once('keydown-ESC', this.escHandler);
 
-		// ── Cleanup on shutdown ──
+		// ── Cleanup: remove only our ESC handler if scene shuts down before it fires ──
 		this.events.once('shutdown', () => {
-			this.input.keyboard?.removeAllListeners();
+			if (this.escHandler) {
+				this.input.keyboard?.off('keydown-ESC', this.escHandler);
+				this.escHandler = null;
+			}
 		});
 	}
 
