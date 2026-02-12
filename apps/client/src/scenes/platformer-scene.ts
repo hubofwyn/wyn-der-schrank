@@ -6,6 +6,7 @@ import type { IGameClock } from '../core/ports/engine.js';
 import { getCoinDefaultAnim } from '../modules/collectible/animation-config.js';
 import { CollectibleManager } from '../modules/collectible/collectible-manager.js';
 import { getSkeletonDefaultAnim } from '../modules/enemy/animation-config.js';
+import { EnemyManager } from '../modules/enemy/enemy-manager.js';
 import type { GameplayState } from '../modules/game-state/gameplay-state.js';
 import { GAMEPLAY_STATE_KEY } from '../modules/game-state/gameplay-state.js';
 import {
@@ -19,6 +20,10 @@ import { getAnimKeyForState } from '../modules/player/animation-config.js';
 import { PlayerController } from '../modules/player/player-controller.js';
 import { ScoreTracker } from '../modules/scoring/score-tracker.js';
 import { BaseScene } from './base-scene.js';
+
+const DEFAULT_ENEMY_DAMAGE = 20;
+const DEFAULT_ENEMY_HEALTH = 50;
+const DEFAULT_ENEMY_SPEED = 60;
 
 /**
  * PlatformerScene — the core gameplay scene.
@@ -35,10 +40,15 @@ export class PlatformerScene extends BaseScene {
 	private playerSprite!: Phaser.GameObjects.Sprite;
 	private collectibleManager!: CollectibleManager;
 	private scoreTracker!: ScoreTracker;
+	private enemyManager!: EnemyManager;
 	private collectibleSprites: Phaser.GameObjects.Sprite[] = [];
+	private enemySprites: Phaser.GameObjects.Sprite[] = [];
 	private levelStartMs = 0;
 	private mapKey = 'map-forest-1';
 	private levelCompleted = false;
+	private deathHandled = false;
+	private lives = 3;
+	private spawnPoint = { x: 100, y: 700 };
 
 	constructor() {
 		super({ key: SceneKeys.PLATFORMER });
@@ -95,6 +105,9 @@ export class PlatformerScene extends BaseScene {
 
 		// ── Spawn point from tilemap objects ──
 		const spawn = extractSpawn(objects) ?? { x: 100, y: 700 };
+		this.spawnPoint = spawn;
+		this.lives = 3;
+		this.deathHandled = false;
 
 		// ── Player ──
 		this.playerSprite = this.add.sprite(spawn.x, spawn.y, 'player');
@@ -124,9 +137,30 @@ export class PlatformerScene extends BaseScene {
 			stats,
 		});
 
-		// ── Enemies (visual only — domain AI is G4) ──
+		// ── Enemies with patrol AI ──
 		const enemies = extractEnemies(objects);
-		this.placeEntities(enemies, 'enemy-skeleton-idle', 32, 48, getSkeletonDefaultAnim());
+		this.enemyManager = new EnemyManager();
+		this.enemyManager.init(
+			enemies.map((e) => ({
+				damage: DEFAULT_ENEMY_DAMAGE,
+				health: DEFAULT_ENEMY_HEALTH,
+				speed: DEFAULT_ENEMY_SPEED,
+				patrolLeftBound: e.x - e.patrolRange,
+				patrolRightBound: e.x + e.patrolRange,
+			})),
+		);
+
+		this.enemySprites = [];
+		for (const enemy of enemies) {
+			const sprite = this.add.sprite(enemy.x, enemy.y, 'enemy-skeleton-idle');
+			sprite.setDisplaySize(32, 48);
+			sprite.play(getSkeletonDefaultAnim());
+			this.physics.add.existing(sprite, false);
+			const enemyBody = sprite.body as Phaser.Physics.Arcade.Body;
+			enemyBody.setCollideWorldBounds(true);
+			enemyBody.setMaxVelocity(DEFAULT_ENEMY_SPEED, 600);
+			this.enemySprites.push(sprite);
+		}
 
 		// ── Collectibles (with physics for pickup) ──
 		const collectibles = extractCollectibles(objects);
@@ -164,6 +198,17 @@ export class PlatformerScene extends BaseScene {
 		// ── Collisions ──
 		this.physics.add.collider(this.playerSprite, groundLayer);
 
+		// ── Enemy collisions + overlap ──
+		for (let i = 0; i < this.enemySprites.length; i++) {
+			const enemySprite = this.enemySprites[i];
+			if (!enemySprite) continue;
+			this.physics.add.collider(enemySprite, groundLayer);
+			const idx = i;
+			this.physics.add.overlap(this.playerSprite, enemySprite, () => {
+				this.onEnemyOverlap(idx);
+			});
+		}
+
 		// ── Camera ──
 		this.cameras.main.startFollow(this.playerSprite, true, 0.1, 0.1);
 		this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
@@ -192,6 +237,26 @@ export class PlatformerScene extends BaseScene {
 		this.playerSprite.play(animKey, true);
 		this.playerSprite.flipX = snap.facing === 'left';
 
+		// ── Invincibility flash ──
+		if (snap.isInvincible) {
+			this.playerSprite.alpha = Math.sin(this.clock.elapsed * 0.01) > 0 ? 1 : 0.3;
+		} else {
+			this.playerSprite.alpha = 1;
+		}
+
+		// ── Enemy AI updates ──
+		const positions = this.enemySprites.map((s) => ({ x: s.x }));
+		const intents = this.enemyManager.updateAll(positions);
+		for (let i = 0; i < this.enemySprites.length; i++) {
+			const sprite = this.enemySprites[i];
+			const intent = intents[i];
+			if (!sprite || !intent) continue;
+			const enemyBody = sprite.body as Phaser.Physics.Arcade.Body;
+			enemyBody.setVelocityX(intent.velocityX);
+			sprite.flipX = intent.facing === 'left';
+			sprite.play(intent.velocityX !== 0 ? 'skeleton-walk' : 'skeleton-idle', true);
+		}
+
 		// ── Write gameplay state to registry ──
 		const timeElapsedMs = this.clock.elapsed - this.levelStartMs;
 		const state: GameplayState = {
@@ -205,8 +270,15 @@ export class PlatformerScene extends BaseScene {
 			timeElapsedMs,
 			stars: 0,
 			completed: false,
+			lives: this.lives,
 		};
 		this.registry.set(GAMEPLAY_STATE_KEY, state);
+
+		// ── Death detection ──
+		if (snap.state === 'dead' && !this.deathHandled) {
+			this.deathHandled = true;
+			this.handlePlayerDeath();
+		}
 	}
 
 	private onCollectibleOverlap(index: number): void {
@@ -244,6 +316,7 @@ export class PlatformerScene extends BaseScene {
 			timeElapsedMs,
 			stars,
 			completed: true,
+			lives: this.lives,
 		};
 		this.registry.set(GAMEPLAY_STATE_KEY, finalState);
 
@@ -251,17 +324,44 @@ export class PlatformerScene extends BaseScene {
 		this.navigateTo(SceneKeys.LEVEL_COMPLETE);
 	}
 
-	private placeEntities(
-		entities: ReadonlyArray<{ x: number; y: number }>,
-		textureKey: string,
-		width: number,
-		height: number,
-		defaultAnim: string,
-	): void {
-		for (const entity of entities) {
-			const sprite = this.add.sprite(entity.x, entity.y, textureKey);
-			sprite.setDisplaySize(width, height);
-			sprite.play(defaultAnim);
+	private handlePlayerDeath(): void {
+		this.lives--;
+
+		// Update registry so game-over scene reads correct data
+		const timeElapsedMs = this.clock.elapsed - this.levelStartMs;
+		const snap = this.playerController.snapshot();
+		const deathState: GameplayState = {
+			health: snap.health,
+			maxHealth: snap.maxHealth,
+			score: this.scoreTracker.score,
+			coins: this.collectibleManager.collectedCount,
+			coinsTotal: this.collectibleManager.total,
+			levelId: this.mapKey,
+			levelName: this.mapKey.replace('map-', '').replace(/-/g, ' '),
+			timeElapsedMs,
+			stars: 0,
+			completed: false,
+			lives: this.lives,
+		};
+		this.registry.set(GAMEPLAY_STATE_KEY, deathState);
+
+		if (this.lives > 0) {
+			// Respawn at spawn point — collected coins persist across respawns
+			this.playerSprite.setPosition(this.spawnPoint.x, this.spawnPoint.y);
+			this.playerController.respawn();
+			this.deathHandled = false;
+		} else {
+			// Game over
+			this.stopParallel(SceneKeys.HUD);
+			this.navigateTo(SceneKeys.GAME_OVER);
 		}
+	}
+
+	private onEnemyOverlap(index: number): void {
+		const enemy = this.enemyManager.getEnemy(index);
+		if (!enemy) return;
+		const enemySnap = enemy.snapshot();
+		if (!enemySnap.isAlive) return;
+		this.playerController.takeDamage(enemySnap.damage);
 	}
 }

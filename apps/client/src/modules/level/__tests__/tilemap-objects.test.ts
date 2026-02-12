@@ -43,10 +43,12 @@ describe('extractSpawn', () => {
 });
 
 describe('extractEnemies', () => {
-	it('extracts enemy positions with default enemy type', () => {
+	it('extracts enemy positions with default enemy type and patrol range', () => {
 		const objects: TilemapObject[] = [{ type: 'enemy', x: 15, y: 25 }];
 
-		expect(extractEnemies(objects)).toEqual([{ x: 15, y: 25, enemyType: 'skeleton' }]);
+		expect(extractEnemies(objects)).toEqual([
+			{ x: 15, y: 25, enemyType: 'skeleton', patrolRange: 100 },
+		]);
 	});
 
 	it('reads enemyType from object properties', () => {
@@ -59,7 +61,7 @@ describe('extractEnemies', () => {
 			},
 		];
 
-		expect(extractEnemies(objects)).toEqual([{ x: 30, y: 45, enemyType: 'bat' }]);
+		expect(extractEnemies(objects)).toEqual([{ x: 30, y: 45, enemyType: 'bat', patrolRange: 100 }]);
 	});
 
 	it('skips objects that are not enemies', () => {
@@ -68,7 +70,9 @@ describe('extractEnemies', () => {
 			{ type: 'collectible', x: 7, y: 8 },
 		];
 
-		expect(extractEnemies(objects)).toEqual([{ x: 5, y: 6, enemyType: 'skeleton' }]);
+		expect(extractEnemies(objects)).toEqual([
+			{ x: 5, y: 6, enemyType: 'skeleton', patrolRange: 100 },
+		]);
 	});
 
 	it('skips enemies missing coordinates', () => {
@@ -77,7 +81,52 @@ describe('extractEnemies', () => {
 			{ type: 'enemy', x: 20, y: 30 },
 		];
 
-		expect(extractEnemies(objects)).toEqual([{ x: 20, y: 30, enemyType: 'skeleton' }]);
+		expect(extractEnemies(objects)).toEqual([
+			{ x: 20, y: 30, enemyType: 'skeleton', patrolRange: 100 },
+		]);
+	});
+
+	it('reads patrolRange from object properties', () => {
+		const objects: TilemapObject[] = [
+			{
+				type: 'enemy',
+				x: 50,
+				y: 60,
+				properties: [{ name: 'patrolRange', type: 'float', value: 200 }],
+			},
+		];
+
+		expect(extractEnemies(objects)).toEqual([
+			{ x: 50, y: 60, enemyType: 'skeleton', patrolRange: 200 },
+		]);
+	});
+
+	it('falls back to skeleton for invalid enemyType', () => {
+		const objects: TilemapObject[] = [
+			{
+				type: 'enemy',
+				x: 10,
+				y: 20,
+				properties: [{ name: 'enemyType', type: 'string', value: 'invalid-monster' }],
+			},
+		];
+
+		expect(extractEnemies(objects)).toEqual([
+			{ x: 10, y: 20, enemyType: 'skeleton', patrolRange: 100 },
+		]);
+	});
+
+	it('validates EnemyType via schema', () => {
+		const objects: TilemapObject[] = [
+			{
+				type: 'enemy',
+				x: 10,
+				y: 20,
+				properties: [{ name: 'enemyType', type: 'string', value: 'spider' }],
+			},
+		];
+
+		expect(extractEnemies(objects)[0]!.enemyType).toBe('spider');
 	});
 });
 

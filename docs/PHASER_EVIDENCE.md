@@ -92,6 +92,10 @@ Do not duplicate entries — if a symbol is already listed, additional usages do
 | `Text.setOrigin()` | `/classes/Phaser.GameObjects.Components.Origin.html#setOrigin` | `scenes/hud-scene.ts` | 2026-02-12 | type-verified |
 | `GameObject.setInteractive()` | `/classes/Phaser.GameObjects.GameObject.html#setInteractive` | `scenes/level-complete-scene.ts` | 2026-02-12 | type-verified |
 | `EventEmitter.on()` | `/classes/Phaser.Events.EventEmitter.html#on` | `scenes/level-complete-scene.ts` | 2026-02-12 | type-verified |
+| `Sprite.setPosition()` | `/classes/Phaser.GameObjects.Components.Transform.html#setPosition` | `scenes/platformer-scene.ts` | 2026-02-12 | type-verified |
+| `Sprite.alpha` | `/classes/Phaser.GameObjects.Components.Alpha.html#alpha` | `scenes/platformer-scene.ts` | 2026-02-12 | type-verified |
+| `Sprite.x` | `/classes/Phaser.GameObjects.Components.Transform.html#x` | `scenes/platformer-scene.ts` | 2026-02-12 | type-verified |
+| `Scene.scale` (ScaleManager) | `/classes/Phaser.Scale.ScaleManager.html` | `scenes/preload-scene.ts` | 2026-02-12 | type-verified |
 | `SpriteGPULayer` | `/classes/Phaser.GameObjects.SpriteGPULayer.html` | (planned) | — | — |
 | `Texture#setWrap` | `/classes/Phaser.Textures.Texture.html#setWrap` | (planned) | — | — |
 

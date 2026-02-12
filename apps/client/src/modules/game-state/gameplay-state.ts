@@ -11,6 +11,7 @@ export interface GameplayState {
 	readonly timeElapsedMs: number;
 	readonly stars: number;
 	readonly completed: boolean;
+	readonly lives: number;
 }
 
 export function createInitialGameplayState(): GameplayState {
@@ -25,5 +26,6 @@ export function createInitialGameplayState(): GameplayState {
 		timeElapsedMs: 0,
 		stars: 0,
 		completed: false,
+		lives: 3,
 	};
 }

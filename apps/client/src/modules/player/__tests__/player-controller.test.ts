@@ -16,6 +16,32 @@ function createMockClock(delta = 16.67): IGameClock {
 	};
 }
 
+function createMutableMockClock(delta = 16.67): IGameClock & { _elapsed: number; _delta: number } {
+	const state = { _elapsed: 0, _delta: delta };
+	return {
+		now: 0,
+		get delta() {
+			return state._delta;
+		},
+		frame: 0,
+		get elapsed() {
+			return state._elapsed;
+		},
+		get _elapsed() {
+			return state._elapsed;
+		},
+		set _elapsed(v: number) {
+			state._elapsed = v;
+		},
+		get _delta() {
+			return state._delta;
+		},
+		set _delta(v: number) {
+			state._delta = v;
+		},
+	};
+}
+
 function createMockInput(): IInputProvider & {
 	_pressed: Set<ActionKey>;
 	_justPressed: Set<ActionKey>;
@@ -521,19 +547,153 @@ describe('PlayerController', () => {
 
 	describe('health', () => {
 		it('reduces health on damage', () => {
-			controller.takeDamage(30);
+			const result = controller.takeDamage(30);
 			expect(controller.snapshot().health).toBe(70);
+			expect(result.damaged).toBe(true);
+			expect(result.newHealth).toBe(70);
+			expect(result.isDead).toBe(false);
 		});
 
 		it('does not go below zero', () => {
-			controller.takeDamage(999);
+			const result = controller.takeDamage(999);
 			expect(controller.snapshot().health).toBe(0);
+			expect(result.isDead).toBe(true);
 		});
 
 		it('heals up to max', () => {
 			controller.takeDamage(50);
 			controller.heal(999);
 			expect(controller.snapshot().health).toBe(100);
+		});
+	});
+
+	describe('invincibility', () => {
+		it('blocks damage during invincibility window', () => {
+			const mClock = createMutableMockClock();
+			const ctrl = new PlayerController({ input, body, clock: mClock, config, stats });
+
+			ctrl.takeDamage(20);
+			expect(ctrl.snapshot().health).toBe(80);
+
+			// Still within invincibility window
+			mClock._elapsed = 500;
+			const result = ctrl.takeDamage(20);
+			expect(result.damaged).toBe(false);
+			expect(ctrl.snapshot().health).toBe(80);
+		});
+
+		it('allows damage after invincibility expires', () => {
+			const mClock = createMutableMockClock();
+			const ctrl = new PlayerController({ input, body, clock: mClock, config, stats });
+
+			ctrl.takeDamage(20);
+			expect(ctrl.snapshot().health).toBe(80);
+
+			// Past invincibility window (1500ms)
+			mClock._elapsed = 2000;
+			const result = ctrl.takeDamage(20);
+			expect(result.damaged).toBe(true);
+			expect(ctrl.snapshot().health).toBe(60);
+		});
+
+		it('reports isInvincible in snapshot', () => {
+			const mClock = createMutableMockClock();
+			const ctrl = new PlayerController({ input, body, clock: mClock, config, stats });
+
+			expect(ctrl.snapshot().isInvincible).toBe(false);
+			ctrl.takeDamage(20);
+			expect(ctrl.snapshot().isInvincible).toBe(true);
+
+			mClock._elapsed = 2000;
+			expect(ctrl.snapshot().isInvincible).toBe(false);
+		});
+
+		it('returns no-op result for zero damage', () => {
+			const result = controller.takeDamage(0);
+			expect(result.damaged).toBe(false);
+			expect(result.newHealth).toBe(100);
+		});
+
+		it('returns no-op result for negative damage', () => {
+			const result = controller.takeDamage(-5);
+			expect(result.damaged).toBe(false);
+			expect(result.newHealth).toBe(100);
+		});
+
+		it('returns already-dead result when health is zero', () => {
+			controller.takeDamage(100);
+			const mClock = createMutableMockClock();
+			mClock._elapsed = 5000; // past invincibility
+			const ctrl = new PlayerController({ input, body, clock: mClock, config, stats });
+			ctrl.takeDamage(100);
+			mClock._elapsed = 10000;
+			const result = ctrl.takeDamage(10);
+			expect(result.damaged).toBe(false);
+			expect(result.isDead).toBe(true);
+		});
+	});
+
+	describe('hurt state', () => {
+		it('transitions to hurt after taking damage', () => {
+			const mClock = createMutableMockClock();
+			const ctrl = new PlayerController({ input, body, clock: mClock, config, stats });
+			ctrl.takeDamage(20);
+			ctrl.update();
+			expect(ctrl.snapshot().state).toBe('hurt');
+		});
+
+		it('exits hurt state after duration expires', () => {
+			const mClock = createMutableMockClock();
+			const ctrl = new PlayerController({ input, body, clock: mClock, config, stats });
+			ctrl.takeDamage(20);
+			ctrl.update();
+			expect(ctrl.snapshot().state).toBe('hurt');
+
+			// Advance enough frames to expire hurt timer (300ms / 16.67ms ≈ 18 frames)
+			for (let i = 0; i < 20; i++) {
+				ctrl.update();
+			}
+			expect(ctrl.snapshot().state).not.toBe('hurt');
+		});
+	});
+
+	describe('respawn', () => {
+		it('resets health to max', () => {
+			controller.takeDamage(60);
+			controller.respawn();
+			expect(controller.snapshot().health).toBe(100);
+		});
+
+		it('resets state to idle', () => {
+			controller.takeDamage(100);
+			controller.update();
+			expect(controller.snapshot().state).toBe('dead');
+			controller.respawn();
+			controller.update();
+			expect(controller.snapshot().state).toBe('idle');
+		});
+
+		it('grants respawn invincibility', () => {
+			const mClock = createMutableMockClock();
+			const ctrl = new PlayerController({ input, body, clock: mClock, config, stats });
+			ctrl.respawn();
+			expect(ctrl.snapshot().isInvincible).toBe(true);
+
+			// Still invincible within 2000ms
+			mClock._elapsed = 1000;
+			expect(ctrl.snapshot().isInvincible).toBe(true);
+
+			// Past 2000ms
+			mClock._elapsed = 3000;
+			expect(ctrl.snapshot().isInvincible).toBe(false);
+		});
+
+		it('resets velocity to zero', () => {
+			body._velocity.x = 200;
+			body._velocity.y = -300;
+			controller.respawn();
+			expect(body._velocity.x).toBe(0);
+			expect(body._velocity.y).toBe(0);
 		});
 	});
 
