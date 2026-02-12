@@ -17,6 +17,7 @@ import { LevelCompleteScene } from './scenes/level-complete-scene.js';
 import { PauseScene } from './scenes/pause-scene.js';
 import { PlatformerScene } from './scenes/platformer-scene.js';
 import { PreloadScene } from './scenes/preload-scene.js';
+import { SettingsScene } from './scenes/settings-scene.js';
 import { TitleScene } from './scenes/title-scene.js';
 
 /**
@@ -72,6 +73,7 @@ const game = new Phaser.Game({
 		PlatformerScene,
 		HudScene,
 		PauseScene,
+		SettingsScene,
 		LevelCompleteScene,
 		GameOverScene,
 	],
