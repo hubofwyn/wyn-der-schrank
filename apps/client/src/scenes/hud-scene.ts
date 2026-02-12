@@ -26,6 +26,7 @@ export class HudScene extends BaseScene {
 	private healthText!: Phaser.GameObjects.Text;
 	private scoreText!: Phaser.GameObjects.Text;
 	private coinsText!: Phaser.GameObjects.Text;
+	private livesText!: Phaser.GameObjects.Text;
 	private levelText!: Phaser.GameObjects.Text;
 
 	constructor() {
@@ -36,6 +37,7 @@ export class HudScene extends BaseScene {
 		this.healthText = this.add.text(HUD_PADDING, HUD_PADDING, '', HUD_STYLE);
 		this.scoreText = this.add.text(HUD_PADDING, HUD_PADDING + 24, '', HUD_STYLE);
 		this.coinsText = this.add.text(HUD_PADDING, HUD_PADDING + 48, '', HUD_STYLE);
+		this.livesText = this.add.text(HUD_PADDING, HUD_PADDING + 72, '', HUD_STYLE);
 
 		const { width } = this.scale;
 		this.levelText = this.add.text(width - HUD_PADDING, HUD_PADDING, '', HUD_STYLE);
@@ -47,6 +49,7 @@ export class HudScene extends BaseScene {
 		this.healthText.setText(`HP: ${state.health}/${state.maxHealth}`);
 		this.scoreText.setText(`Score: ${state.score}`);
 		this.coinsText.setText(`Coins: ${state.coins}/${state.coinsTotal}`);
+		this.livesText.setText(`Lives: ${state.lives}`);
 		this.levelText.setText(state.levelName);
 	}
 

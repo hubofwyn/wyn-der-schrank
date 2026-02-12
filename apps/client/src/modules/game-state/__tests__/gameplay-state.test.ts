@@ -16,6 +16,7 @@ describe('GameplayState', () => {
 		expect(state.timeElapsedMs).toBe(0);
 		expect(state.stars).toBe(0);
 		expect(state.completed).toBe(false);
+		expect(state.lives).toBe(3);
 	});
 
 	it('returns a new object each call', () => {

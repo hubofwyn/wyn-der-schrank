@@ -39,6 +39,7 @@ export class PlatformerScene extends BaseScene {
 	private levelStartMs = 0;
 	private mapKey = 'map-forest-1';
 	private levelCompleted = false;
+	private lives = 3;
 
 	constructor() {
 		super({ key: SceneKeys.PLATFORMER });
@@ -95,6 +96,7 @@ export class PlatformerScene extends BaseScene {
 
 		// ── Spawn point from tilemap objects ──
 		const spawn = extractSpawn(objects) ?? { x: 100, y: 700 };
+		this.lives = 3;
 
 		// ── Player ──
 		this.playerSprite = this.add.sprite(spawn.x, spawn.y, 'player');
@@ -205,6 +207,7 @@ export class PlatformerScene extends BaseScene {
 			timeElapsedMs,
 			stars: 0,
 			completed: false,
+			lives: this.lives,
 		};
 		this.registry.set(GAMEPLAY_STATE_KEY, state);
 	}
@@ -244,6 +247,7 @@ export class PlatformerScene extends BaseScene {
 			timeElapsedMs,
 			stars,
 			completed: true,
+			lives: this.lives,
 		};
 		this.registry.set(GAMEPLAY_STATE_KEY, finalState);
 
