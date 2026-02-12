@@ -1,7 +1,7 @@
 ---
 title: Game Runtime Diagnostics
 last_updated: 2026-02-11
-status: PLAN — pending implementation
+status: IMPLEMENTED — feat/diagnostics branch
 scope: Port interface, adapters, container wiring, domain integration
 ---
 
