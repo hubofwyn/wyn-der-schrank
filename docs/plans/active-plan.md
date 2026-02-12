@@ -1,17 +1,17 @@
 ---
 title: Active Plan
-last_updated: 2026-02-11
+last_updated: 2026-02-12
 ---
 
 # Active Plan
 
 ## Snapshot
 
-- __Active:__ G3 in-progress [feat/gameplay-loop]
+- __Active:__ none
 - __Next ready:__ G4
 - __Blocked:__ none
-- __Last milestone:__ 2026-02-11 — G2 Visual Identity (83 tests) [feat/visual-identity]
-- __Gates:__ all green (83 tests)
+- __Last milestone:__ 2026-02-12 — G3 Gameplay Loop (110 tests) [feat/gameplay-loop]
+- __Gates:__ all green (110 tests)
 
 ## Goals
 
@@ -49,19 +49,19 @@ Sprites, animation, and tile rendering replace colored rectangles. The game look
 
 ### G3: Gameplay Loop
 
-> __Status:__ in-progress
+> __Status:__ done
 > __Requires:__ G1
 > __Benefits from:__ G2
 > __Unlocks:__ G5
-> __Branch:__ feat/gameplay-loop
+> __Branch:__ merged
 
 Collectibles, HUD, level-end trigger, and scoring give the player a goal. Builds on G2 sprites and tilemaps.
 
-- [ ] Collectible module (modules/collectible/) with pickup logic wired to G2 sprites
-- [ ] HUD scene (score, health, level indicator) — PlayerController already exposes health via snapshot
-- [ ] Level-end trigger and level-complete flow (exit object in tilemap)
-- [ ] Scoring module with star rating calculation
-- [ ] At least one complete world with 2-3 Tiled levels (requires G2 tilemap infrastructure)
+- [x] Collectible module (modules/collectible/) with pickup logic wired to G2 sprites
+- [x] HUD scene (score, health, level indicator) — PlayerController already exposes health via snapshot
+- [x] Level-end trigger and level-complete flow (exit object in tilemap)
+- [x] Scoring module with star rating calculation
+- [x] At least one complete world with 2-3 Tiled levels (requires G2 tilemap infrastructure)
 
 ### G4: Hazards
 
@@ -129,6 +129,7 @@ Title screen, pause, game-over screen, settings, and persistence make the game s
 
 ## Completed Log
 
+- __2026-02-12__ — G3: Gameplay Loop — Collectible pickup, HUD, level-complete, scoring with star rating, 2-level forest world (110 tests) [feat/gameplay-loop]
 - __2026-02-11__ — G2: Visual Identity — Sprite player + animation, Tiled tilemap, enemy/collectible sprites (83 tests) [feat/visual-identity]
 - __2026-02-11__ — G1: Scene Infrastructure — BaseScene, container wiring, CameraController, PreloadScene, scene chain (48 tests) [feat/scene-infrastructure]
 - __2026-02-11__ — MVP: colored-rect platformer with PlayerController, hexagonal architecture (ports/adapters), full CI pipeline (6 gates), 32 tests [feat/minimal-playable-game]
