@@ -346,7 +346,7 @@ export class PlatformerScene extends BaseScene {
 		this.registry.set(GAMEPLAY_STATE_KEY, deathState);
 
 		if (this.lives > 0) {
-			// Respawn at spawn point — coins persist (A10)
+			// Respawn at spawn point — collected coins persist across respawns
 			this.playerSprite.setPosition(this.spawnPoint.x, this.spawnPoint.y);
 			this.playerController.respawn();
 			this.deathHandled = false;

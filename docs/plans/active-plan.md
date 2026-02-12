@@ -69,7 +69,7 @@ Collectibles, HUD, level-end trigger, and scoring give the player a goal. Builds
 > __Requires:__ G1
 > __Benefits from:__ G2
 > __Unlocks:__ G5
-> __Branch:__ merged
+> __Branch:__ feat/enemy-ai
 
 Enemy patrol, damage, death/respawn, and game-over add risk to the platforming. Builds on G2 enemy sprites.
 
@@ -87,14 +87,14 @@ Enemy patrol, damage, death/respawn, and game-over add risk to the platforming. 
 > __Unlocks:__ none
 > __Branch:__ --
 
-Title screen, pause, game-over screen, settings, and persistence make the game self-contained. Design tokens (colors, spacing, typography) provide consistent UI across all menu scenes.
+Title screen, pause, game-over screen, settings, and persistence make the game self-contained. Design tokens (colors, spacing, typography) provide consistent UI across all menu scenes. G3 delivered LevelCompleteScene (next-level + replay) and G4 delivered GameOverScene (retry only). Both need menu navigation once TitleScene exists. IStorageProvider port and NoopStorage adapter already exist; G5 replaces NoopStorage with LocalStorageAdapter in main.ts.
 
 - [ ] Design tokens module (modules/ui/design-tokens.ts) — color palette, spacing scale, z-index layers (pure TS, zone-safe)
-- [ ] Title screen and main menu scene
-- [ ] Pause scene (overlay)
-- [ ] Game-over scene with retry/quit options
-- [ ] Settings scene with LocalStorageAdapter persistence
-- [ ] Level-complete scene connecting to next level or menu
+- [ ] Title screen and main menu scene (SceneKeys.TITLE already defined)
+- [ ] Pause scene (overlay, SceneKeys.PAUSE already defined)
+- [ ] Game-over scene with retry/quit options (enhance existing GameOverScene — add Menu button once TitleScene exists)
+- [ ] Settings scene with LocalStorageAdapter persistence (SceneKeys.SETTINGS defined; replace NoopStorage in main.ts)
+- [ ] Level-complete scene connecting to next level or menu (enhance existing LevelCompleteScene — add Menu button)
 
 ## Update Protocol
 
