@@ -7,8 +7,8 @@ last_updated: 2026-02-11
 
 ## Snapshot
 
-- __Active:__ G3, G4 ready (no goal in-progress)
-- __Next ready:__ G3, G4
+- __Active:__ G3 in-progress [feat/gameplay-loop]
+- __Next ready:__ G4
 - __Blocked:__ none
 - __Last milestone:__ 2026-02-11 — G2 Visual Identity (83 tests) [feat/visual-identity]
 - __Gates:__ all green (83 tests)
@@ -49,11 +49,11 @@ Sprites, animation, and tile rendering replace colored rectangles. The game look
 
 ### G3: Gameplay Loop
 
-> __Status:__ ready
+> __Status:__ in-progress
 > __Requires:__ G1
 > __Benefits from:__ G2
 > __Unlocks:__ G5
-> __Branch:__ --
+> __Branch:__ feat/gameplay-loop
 
 Collectibles, HUD, level-end trigger, and scoring give the player a goal. Builds on G2 sprites and tilemaps.
 
