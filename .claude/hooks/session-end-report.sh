@@ -97,3 +97,15 @@ jq -cn \
     echo "Violations trending within acceptable range."
   fi
 } > "$DRIFT_FILE"
+
+# ── Log rotation ──
+# When events.jsonl exceeds 10,000 lines, rotate to preserve history
+# without unbounded growth. Keep one rotated generation.
+MAX_EVENTS=10000
+if [[ -f "$EVENTS_FILE" ]]; then
+  LINE_COUNT=$(wc -l < "$EVENTS_FILE" 2>/dev/null || echo "0")
+  if [[ "$LINE_COUNT" -gt "$MAX_EVENTS" ]]; then
+    mv "$EVENTS_FILE" "${EVENTS_FILE}.1"
+    touch "$EVENTS_FILE"
+  fi
+fi

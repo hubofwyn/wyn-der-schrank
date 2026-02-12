@@ -32,7 +32,10 @@ elif [[ "$TOOL_NAME" == "Bash" ]]; then
   CATEGORY="command"
 fi
 
-RESULT="${TELEMETRY_RESULT:-ok}"
+# This hook records tool-use events only (result is always "ok").
+# Violations and warnings are emitted DIRECTLY by zone-lint-on-edit.sh
+# and phaser-version-guard.sh — they do not pass through this hook.
+RESULT="ok"
 
 # Append event — compact single-line JSONL (jq -cn)
 jq -cn \
