@@ -13,6 +13,12 @@ import type {
 } from '../schema/collectible.js';
 import type { EntityIdSchema, RangeSchema, RectSchema, Vec2Schema } from '../schema/common.js';
 import type {
+	DiagnosticChannelConfigSchema,
+	DiagnosticChannelSchema,
+	DiagnosticLevelSchema,
+	DiagnosticsConfigSchema,
+} from '../schema/diagnostics.js';
+import type {
 	EnemyBehaviorSchema,
 	EnemyDefinitionSchema,
 	EnemyInstanceSchema,
@@ -123,3 +129,9 @@ export type SyncState = z.infer<typeof SyncStateSchema>;
 export type AssetType = z.infer<typeof AssetTypeSchema>;
 export type AssetEntry = z.infer<typeof AssetEntrySchema>;
 export type AssetManifest = z.infer<typeof AssetManifestSchema>;
+
+// Diagnostics
+export type DiagnosticChannel = z.infer<typeof DiagnosticChannelSchema>;
+export type DiagnosticLevel = z.infer<typeof DiagnosticLevelSchema>;
+export type DiagnosticChannelConfig = z.infer<typeof DiagnosticChannelConfigSchema>;
+export type DiagnosticsConfig = z.infer<typeof DiagnosticsConfigSchema>;
