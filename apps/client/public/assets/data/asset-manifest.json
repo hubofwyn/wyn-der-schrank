@@ -38,6 +38,11 @@
 			"key": "map-forest-1",
 			"type": "tilemapTiledJSON",
 			"url": "assets/tilemaps/levels/forest-1.json"
+		},
+		{
+			"key": "map-forest-2",
+			"type": "tilemapTiledJSON",
+			"url": "assets/tilemaps/levels/forest-2.json"
 		}
 	]
 }

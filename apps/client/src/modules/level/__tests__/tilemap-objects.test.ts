@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import type { TilemapObject } from '../tilemap-objects.js';
-import { extractCollectibles, extractEnemies, extractSpawn } from '../tilemap-objects.js';
+import {
+	extractCollectibles,
+	extractEnemies,
+	extractExit,
+	extractSpawn,
+} from '../tilemap-objects.js';
 
 describe('extractSpawn', () => {
 	it('returns the first valid spawn position', () => {
@@ -90,5 +95,40 @@ describe('extractCollectibles', () => {
 		];
 
 		expect(extractCollectibles(objects)).toEqual([]);
+	});
+});
+
+describe('extractExit', () => {
+	it('returns the first valid exit position', () => {
+		const objects: TilemapObject[] = [{ type: 'exit', x: 3100, y: 700 }];
+
+		expect(extractExit(objects)).toEqual({ x: 3100, y: 700 });
+	});
+
+	it('returns null when no exit object exists', () => {
+		const objects: TilemapObject[] = [
+			{ type: 'spawn', x: 100, y: 200 },
+			{ type: 'collectible', x: 50, y: 60 },
+		];
+
+		expect(extractExit(objects)).toBeNull();
+	});
+
+	it('skips exit objects missing coordinates', () => {
+		const objects: TilemapObject[] = [
+			{ type: 'exit', x: 50 },
+			{ type: 'exit', y: 80 },
+		];
+
+		expect(extractExit(objects)).toBeNull();
+	});
+
+	it('returns later exit entries when earlier ones are invalid', () => {
+		const objects: TilemapObject[] = [
+			{ type: 'exit', x: 50 },
+			{ type: 'exit', x: 3100, y: 700 },
+		];
+
+		expect(extractExit(objects)).toEqual({ x: 3100, y: 700 });
 	});
 });

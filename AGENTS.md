@@ -17,6 +17,7 @@ docs/
   FOUNDATION.md          → Architecture: tech stack, zones, DI, TS config
   PHASER_EVIDENCE.md     → Verified Phaser 4.0.0-rc.6 API usage log
   adr/template.md        → ADR template
+  audit/                 → Architectural audit artifacts
   plans/
     active-plan.md       → Goal roadmap, status tracking, update protocol
     game-blueprint.md    → Scenes, schemas, modules, assets, data flow
@@ -39,24 +40,27 @@ apps/client/             → Phaser 4 game client (@wds/client)
     ports/               → 6 interfaces: engine, input, audio, physics, network, storage
     container.ts         → Container + PlatformerScope + MinigameScope
   src/modules/           → Domain zone (pure TS, NO Phaser/browser globals)
-    navigation/          → Scene keys, flow controller
-    character/           → Character definitions, stats
-    player/              → Player controller, state, abilities
-    physics/             → Platformer physics, collision
-    enemy/               → Enemy catalog, AI, behaviors, spawner
-    level/               → Level data, world catalog, tile registry
+    animation/           → Shared AnimationDef type for entity animations
+    assets/              → Asset manifest parser (Zod-validated)
     camera/              → Camera controller
-    collectible/         → Pickup system, catalog
-    minigame/            → Registry, manager, per-game logic (dice-duel, coin-catch, memory-match)
-    scoring/             → Score calculator, star rating
-    progression/         → Profile, unlocks, session state
-    settings/            → Preferences manager
+    character/           → Character definitions, stats
+    collectible/         → Pickup system, catalog, animation config
+    enemy/               → Enemy catalog, AI, behaviors, animation config
     game-state/          → Global FSM, sync manager
+    level/               → Tilemap objects, world catalog, tile registry
+    minigame/            → Registry, manager, per-game logic (dice-duel, coin-catch, memory-match)
+    navigation/          → Scene keys, flow controller
+    physics/             → Platformer physics, collision
+    player/              → Player controller, state, animation config
+    progression/         → Profile, unlocks, session state
+    scoring/             → Score calculator, star rating
+    settings/            → Preferences manager
   src/scenes/            → View zone (Phaser scenes, thin)
 apps/server/             → Hono API + game server (@wds/server)
   src/routes/            → API route handlers
   src/services/          → Server-side business logic
 scripts/
+  generate-forest-2.mjs → Generates forest-2.json tilemap (Tiled format)
   pre-push-banner.sh    → Cosmetic pre-push header (called by Lefthook)
   telemetry-report.sh   → Human-run telemetry analysis
 .github/workflows/
