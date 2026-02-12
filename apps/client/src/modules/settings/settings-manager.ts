@@ -18,6 +18,7 @@ export class SettingsManager implements ISettingsManager {
 			display: {},
 			controls: {},
 			accessibility: {},
+			diagnostics: {},
 		});
 	}
 
