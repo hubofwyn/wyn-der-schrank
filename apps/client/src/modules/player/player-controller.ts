@@ -16,6 +16,13 @@ export interface PlayerSnapshot {
 	readonly maxHealth: number;
 	readonly isOnGround: boolean;
 	readonly jumpsRemaining: number;
+	readonly isInvincible: boolean;
+}
+
+export interface DamageResult {
+	readonly damaged: boolean;
+	readonly newHealth: number;
+	readonly isDead: boolean;
 }
 
 /**
@@ -44,6 +51,10 @@ export interface PlayerControllerDeps {
  * - Exposed state is readonly via snapshot().
  */
 export class PlayerController {
+	static readonly INVINCIBILITY_DURATION_MS = 1500;
+	static readonly HURT_DURATION_MS = 300;
+	static readonly RESPAWN_INVINCIBILITY_MS = 2000;
+
 	private readonly input: IInputProvider;
 	private readonly body: IBody;
 	private readonly clock: IGameClock;
@@ -55,6 +66,10 @@ export class PlayerController {
 	private _facing: Facing = 'right';
 	private _health: number;
 	private _maxHealth: number;
+
+	// ── Invincibility + hurt ──
+	private _invincibleUntilElapsed = 0;
+	private _hurtTimeRemaining = 0;
 
 	// ── Internal timers (seconds) ──
 	private coyoteTimeRemaining = 0;
@@ -86,6 +101,7 @@ export class PlayerController {
 			maxHealth: this._maxHealth,
 			isOnGround: this.body.isOnGround,
 			jumpsRemaining: this.jumpsRemaining,
+			isInvincible: this.clock.elapsed < this._invincibleUntilElapsed,
 		};
 	}
 
@@ -145,6 +161,9 @@ export class PlayerController {
 		}
 		if (this.jumpBufferRemaining > 0) {
 			this.jumpBufferRemaining -= dt;
+		}
+		if (this._hurtTimeRemaining > 0) {
+			this._hurtTimeRemaining -= dt;
 		}
 	}
 
@@ -232,6 +251,11 @@ export class PlayerController {
 			return;
 		}
 
+		if (this._hurtTimeRemaining > 0) {
+			this._state = 'hurt';
+			return;
+		}
+
 		const vy = this.body.velocity.y;
 		const vx = this.body.velocity.x;
 		const onGround = this.body.isOnGround;
@@ -247,13 +271,44 @@ export class PlayerController {
 		}
 	}
 
-	// ── Health (for future use) ──
+	// ── Health + Damage ──
 
-	takeDamage(amount: number): void {
+	takeDamage(amount: number): DamageResult {
+		if (amount <= 0) {
+			return { damaged: false, newHealth: this._health, isDead: false };
+		}
+
+		if (this._health <= 0) {
+			return { damaged: false, newHealth: 0, isDead: true };
+		}
+
+		if (this.clock.elapsed < this._invincibleUntilElapsed) {
+			return { damaged: false, newHealth: this._health, isDead: false };
+		}
+
 		this._health = Math.max(0, this._health - amount);
+		this._invincibleUntilElapsed = this.clock.elapsed + PlayerController.INVINCIBILITY_DURATION_MS;
+		this._hurtTimeRemaining = PlayerController.HURT_DURATION_MS / 1000;
+
+		return { damaged: true, newHealth: this._health, isDead: this._health <= 0 };
 	}
 
 	heal(amount: number): void {
 		this._health = Math.min(this._maxHealth, this._health + amount);
+	}
+
+	// ── Respawn ──
+
+	respawn(): void {
+		this._health = this._maxHealth;
+		this._state = 'idle';
+		this._invincibleUntilElapsed = this.clock.elapsed + PlayerController.RESPAWN_INVINCIBILITY_MS;
+		this._hurtTimeRemaining = 0;
+		this.body.setVelocity(0, 0);
+		this.jumpsRemaining = this.config.jump.maxJumps;
+		this.coyoteTimeRemaining = 0;
+		this.jumpBufferRemaining = 0;
+		this.wasOnGround = false;
+		this.didJumpFromGround = false;
 	}
 }
