@@ -193,6 +193,74 @@ natural next step. The manifest schema is designed to support this.
   Updates deliberately via `bun update @wds/shared` followed by
   `wds-studio validate-all` to confirm no regressions.
 
+### 9. Development Workflow — `bun link`
+
+During active development across both repos, `bun link` eliminates the
+publish-install cycle. The studio resolves `@wds/shared` to the game's
+live source via symlink.
+
+**Setup (one-time per machine):**
+
+```bash
+# In the game repo — register @wds/shared as linkable
+cd packages/shared
+bun link
+# → "Success! Registered @wds/shared"
+
+# In the studio repo — symlink to the local copy
+cd /path/to/wyn-der-schrank-studio
+bun link @wds/shared
+# → node_modules/@wds/shared → game's packages/shared/
+```
+
+Now schema changes in the game are immediately visible to the studio
+without publishing. TypeScript sees the live `.ts` source files.
+
+**Studio package.json during development:**
+
+```jsonc
+{
+  "dependencies": {
+    "@wds/shared": "link:@wds/shared"  // ← bun link sets this
+  }
+}
+```
+
+**Studio package.json for production/CI:**
+
+```jsonc
+{
+  "dependencies": {
+    "@wds/shared": "1.0.0"  // ← pinned npm version
+  }
+}
+```
+
+**Switching between modes:**
+
+```bash
+# Switch to linked (dev): symlink to local game repo
+bun link @wds/shared
+
+# Switch to published (prod/CI): install from npm
+bun unlink
+bun add @wds/shared@1.0.0
+```
+
+**When to publish vs link:**
+
+- **Link** when iterating on schemas across both repos simultaneously
+- **Publish** when the schema change is finalized and the game repo
+  has merged to main. The studio then pins the published version for
+  reproducible CI builds.
+
+**Version monitoring:**
+
+```bash
+# In the studio repo — check if @wds/shared has a newer published version
+bun outdated @wds/shared
+```
+
 ---
 
 ## Current State
