@@ -48,9 +48,8 @@ The living roadmap is `docs/plans/active-plan.md`. Read it at session start.
 
 Source of truth (in priority order):
 
-1. Local mirror: `docs/vendor/phaser-4.0.0-rc.6/`
-2. Type declarations: `node_modules/phaser/types/*.d.ts`
-3. Online docs: `https://docs.phaser.io/api-documentation/4.0.0-rc.6/`
+1. Type declarations: `node_modules/.bun/phaser@4.0.0-rc.6/node_modules/phaser/types/phaser.d.ts`
+2. Online docs: `https://docs.phaser.io/api-documentation/4.0.0-rc.6/`
 
 Before using ANY Phaser symbol not already in this codebase:
 

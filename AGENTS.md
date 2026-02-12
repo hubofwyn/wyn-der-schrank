@@ -37,7 +37,7 @@ packages/shared/         → Zod schemas + inferred types (@wds/shared)
   src/types/index.ts     → 40+ types, all z.infer<> re-exports
 apps/client/             → Phaser 4 game client (@wds/client)
   src/core/              → Infrastructure zone (ports, adapters, services, container)
-    ports/               → 6 interfaces: engine, input, audio, physics, network, storage
+    ports/               → 7 interfaces: engine, input, audio, physics, network, storage, settings
     container.ts         → Container + PlatformerScope + MinigameScope
   src/modules/           → Domain zone (pure TS, NO Phaser/browser globals)
     animation/           → Shared AnimationDef type for entity animations
@@ -54,7 +54,8 @@ apps/client/             → Phaser 4 game client (@wds/client)
     player/              → Player controller, state, animation config
     progression/         → Profile, unlocks, session state
     scoring/             → Score calculator, star rating
-    settings/            → Preferences manager
+    settings/            → Preferences manager (ISettingsManager + localStorage persistence)
+    ui/                  → Design tokens: colors, spacing, typography, z-index (pure TS, zone-safe)
   src/scenes/            → View zone (Phaser scenes, thin)
 apps/server/             → Hono API + game server (@wds/server)
   src/routes/            → API route handlers
@@ -293,6 +294,8 @@ shared/  X any app dependency except Zod
 | Enemy behavior | `apps/client/src/modules/enemy/` |
 | Minigame system | `apps/client/src/modules/minigame/` |
 | Game state | `apps/client/src/modules/game-state/` |
+| Settings & persistence | `apps/client/src/modules/settings/` + `core/ports/settings.ts` |
+| UI design tokens | `apps/client/src/modules/ui/design-tokens.ts` |
 | Scene navigation | `apps/client/src/modules/navigation/scene-keys.ts` |
 | Engine abstraction | `apps/client/src/core/ports/` |
 | Phaser adapters | `apps/client/src/core/adapters/` |

@@ -4,26 +4,8 @@ import {
 	GAMEPLAY_STATE_KEY,
 } from '../modules/game-state/gameplay-state.js';
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
+import { Colors, Typography } from '../modules/ui/design-tokens.js';
 import { BaseScene } from './base-scene.js';
-
-const TITLE_STYLE: Phaser.Types.GameObjects.Text.TextStyle = {
-	fontSize: '48px',
-	color: '#ffdd44',
-	fontFamily: 'monospace',
-	fontStyle: 'bold',
-};
-
-const STAT_STYLE: Phaser.Types.GameObjects.Text.TextStyle = {
-	fontSize: '24px',
-	color: '#ffffff',
-	fontFamily: 'monospace',
-};
-
-const BUTTON_STYLE: Phaser.Types.GameObjects.Text.TextStyle = {
-	fontSize: '28px',
-	color: '#44ff44',
-	fontFamily: 'monospace',
-};
 
 const LEVEL_MAP: Record<string, string | undefined> = {
 	'map-forest-1': 'map-forest-2',
@@ -46,7 +28,7 @@ function formatTime(ms: number): string {
  * LevelCompleteScene — shown after the player reaches the exit.
  *
  * Reads final GameplayState from registry to display score, stars,
- * coins, and time. Offers "Next Level" and "Replay" navigation.
+ * coins, and time. Offers "Next Level", "Replay", and "Menu" navigation.
  */
 export class LevelCompleteScene extends BaseScene {
 	constructor() {
@@ -58,15 +40,20 @@ export class LevelCompleteScene extends BaseScene {
 		const { width, height } = this.scale;
 		const cx = width / 2;
 
+		this.cameras.main.setBackgroundColor(Colors.background);
+
 		// ── Title ──
-		const title = this.add.text(cx, 100, 'Level Complete!', TITLE_STYLE);
+		const title = this.add.text(cx, 100, 'Level Complete!', {
+			...Typography.title,
+			color: Colors.accent,
+		} as Phaser.Types.GameObjects.Text.TextStyle);
 		title.setOrigin(0.5, 0.5);
 
 		// ── Stars ──
 		const starsText = this.add.text(cx, 180, formatStars(state.stars), {
-			...STAT_STYLE,
-			fontSize: '36px',
-		});
+			...Typography.heading,
+			color: Colors.text,
+		} as Phaser.Types.GameObjects.Text.TextStyle);
 		starsText.setOrigin(0.5, 0.5);
 
 		// ── Stats ──
@@ -75,26 +62,56 @@ export class LevelCompleteScene extends BaseScene {
 			`Coins: ${state.coins}/${state.coinsTotal}`,
 			`Time:  ${formatTime(state.timeElapsedMs)}`,
 		];
-		const statsText = this.add.text(cx, 280, statsLines.join('\n'), STAT_STYLE);
+		const statsText = this.add.text(cx, 280, statsLines.join('\n'), {
+			...Typography.body,
+			color: Colors.text,
+		} as Phaser.Types.GameObjects.Text.TextStyle);
 		statsText.setOrigin(0.5, 0.5);
 
 		// ── Buttons ──
+		let buttonY = height - 200;
 		const nextMapKey = LEVEL_MAP[state.levelId];
 
 		if (nextMapKey) {
-			const nextBtn = this.add.text(cx, height - 160, 'Next Level', BUTTON_STYLE);
+			const nextBtn = this.add.text(cx, buttonY, 'Next Level', {
+				...Typography.button,
+				color: Colors.button,
+			} as Phaser.Types.GameObjects.Text.TextStyle);
 			nextBtn.setOrigin(0.5, 0.5);
 			nextBtn.setInteractive({ useHandCursor: true });
+			nextBtn.on('pointerover', () => nextBtn.setColor(Colors.buttonHover));
+			nextBtn.on('pointerout', () => nextBtn.setColor(Colors.button));
 			nextBtn.on('pointerdown', () => {
 				this.scene.start(SceneKeys.PLATFORMER, { mapKey: nextMapKey });
 			});
+			buttonY += 60;
 		}
 
-		const menuBtn = this.add.text(cx, height - 100, 'Replay', BUTTON_STYLE);
+		const replayBtn = this.add.text(cx, buttonY, 'Replay', {
+			...Typography.button,
+			color: Colors.button,
+		} as Phaser.Types.GameObjects.Text.TextStyle);
+		replayBtn.setOrigin(0.5, 0.5);
+		replayBtn.setInteractive({ useHandCursor: true });
+		replayBtn.on('pointerover', () => replayBtn.setColor(Colors.buttonHover));
+		replayBtn.on('pointerout', () => replayBtn.setColor(Colors.button));
+		replayBtn.on('pointerdown', () => {
+			this.scene.start(SceneKeys.PLATFORMER, { mapKey: state.levelId || 'map-forest-1' });
+		});
+
+		// ── Menu button ──
+		const menuBtn = this.add.text(cx, buttonY + 60, 'Menu', {
+			...Typography.button,
+			color: Colors.button,
+		} as Phaser.Types.GameObjects.Text.TextStyle);
 		menuBtn.setOrigin(0.5, 0.5);
 		menuBtn.setInteractive({ useHandCursor: true });
+		menuBtn.on('pointerover', () => menuBtn.setColor(Colors.buttonHover));
+		menuBtn.on('pointerout', () => menuBtn.setColor(Colors.button));
 		menuBtn.on('pointerdown', () => {
-			this.scene.start(SceneKeys.PLATFORMER, { mapKey: state.levelId || 'map-forest-1' });
+			this.scene.stop(SceneKeys.HUD);
+			this.scene.stop(SceneKeys.PAUSE);
+			this.navigateTo(SceneKeys.TITLE);
 		});
 	}
 

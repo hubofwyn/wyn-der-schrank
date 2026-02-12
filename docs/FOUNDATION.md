@@ -580,6 +580,26 @@ export interface INetworkClient {
   sendEvent(event: GameEvent): Promise<void>;
   onSync(callback: (state: SyncState) => void): () => void; // returns unsubscribe
 }
+
+// core/ports/storage.ts
+export interface IStorageProvider {
+  get<T>(key: string): Promise<T | null>;
+  set<T>(key: string, value: T): Promise<void>;
+  remove(key: string): Promise<void>;
+  has(key: string): Promise<boolean>;
+  keys(prefix?: string): Promise<string[]>;
+}
+
+// core/ports/settings.ts
+export interface ISettingsManager {
+  readonly current: Settings;           // Settings from @wds/shared
+  load(): Promise<Settings>;
+  save(settings: Settings): Promise<void>;
+  updateSection<K extends keyof Settings>(
+    section: K,
+    patch: Partial<Settings[K]>,
+  ): Promise<Settings>;
+}
 ```
 
 ---
