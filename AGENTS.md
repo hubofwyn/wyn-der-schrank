@@ -60,6 +60,7 @@ apps/server/             → Hono API + game server (@wds/server)
   src/routes/            → API route handlers
   src/services/          → Server-side business logic
 scripts/
+  generate-forest-2.mjs → Generates forest-2.json tilemap (Tiled format)
   pre-push-banner.sh    → Cosmetic pre-push header (called by Lefthook)
   telemetry-report.sh   → Human-run telemetry analysis
 .github/workflows/
