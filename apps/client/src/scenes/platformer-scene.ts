@@ -4,15 +4,20 @@ import { PhaserInput } from '../core/adapters/phaser-input.js';
 import { PhaserBody } from '../core/adapters/phaser-physics.js';
 import type { IGameClock } from '../core/ports/engine.js';
 import { getCoinDefaultAnim } from '../modules/collectible/animation-config.js';
+import { CollectibleManager } from '../modules/collectible/collectible-manager.js';
 import { getSkeletonDefaultAnim } from '../modules/enemy/animation-config.js';
+import type { GameplayState } from '../modules/game-state/gameplay-state.js';
+import { GAMEPLAY_STATE_KEY } from '../modules/game-state/gameplay-state.js';
 import {
 	extractCollectibles,
 	extractEnemies,
+	extractExit,
 	extractSpawn,
 } from '../modules/level/tilemap-objects.js';
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
 import { getAnimKeyForState } from '../modules/player/animation-config.js';
 import { PlayerController } from '../modules/player/player-controller.js';
+import { ScoreTracker } from '../modules/scoring/score-tracker.js';
 import { BaseScene } from './base-scene.js';
 
 /**
@@ -28,12 +33,29 @@ export class PlatformerScene extends BaseScene {
 	private phaserInput!: PhaserInput;
 	private playerController!: PlayerController;
 	private playerSprite!: Phaser.GameObjects.Sprite;
+	private collectibleManager!: CollectibleManager;
+	private scoreTracker!: ScoreTracker;
+	private collectibleSprites: Phaser.GameObjects.Sprite[] = [];
+	private levelStartMs = 0;
+	private mapKey = 'map-forest-1';
+	private levelCompleted = false;
 
 	constructor() {
 		super({ key: SceneKeys.PLATFORMER });
 	}
 
-	create(): void {
+	create(data?: Record<string, unknown>): void {
+		this.levelCompleted = false;
+
+		// ── Level parameterization ──
+		const settingsData = this.scene.settings.data as Record<string, unknown> | undefined;
+		const rawKey = data?.mapKey ?? settingsData?.mapKey;
+		if (typeof rawKey === 'string') {
+			this.mapKey = rawKey;
+		} else {
+			this.mapKey = 'map-forest-1';
+		}
+
 		// ── Game-scoped services from container ──
 		this.clock = this.container.clock;
 
@@ -48,8 +70,12 @@ export class PlatformerScene extends BaseScene {
 			}),
 		);
 
+		// ── Domain modules ──
+		this.collectibleManager = new CollectibleManager();
+		this.scoreTracker = new ScoreTracker();
+
 		// ── Tilemap ──
-		const map = this.make.tilemap({ key: 'map-forest-1' });
+		const map = this.make.tilemap({ key: this.mapKey });
 		const tileset = map.addTilesetImage('dungeon-tileset', 'tiles-dungeon', 16, 16);
 
 		if (!tileset) {
@@ -102,9 +128,38 @@ export class PlatformerScene extends BaseScene {
 		const enemies = extractEnemies(objects);
 		this.placeEntities(enemies, 'enemy-skeleton-idle', 32, 48, getSkeletonDefaultAnim());
 
-		// ── Collectibles (visual only — pickup logic is G3) ──
+		// ── Collectibles (with physics for pickup) ──
 		const collectibles = extractCollectibles(objects);
-		this.placeEntities(collectibles, 'collectible-coin', 16, 16, getCoinDefaultAnim());
+		this.collectibleManager.init(collectibles);
+		this.collectibleSprites = [];
+
+		for (const pos of collectibles) {
+			const sprite = this.add.sprite(pos.x, pos.y, 'collectible-coin');
+			sprite.setDisplaySize(16, 16);
+			sprite.play(getCoinDefaultAnim());
+			this.physics.add.existing(sprite, true);
+			this.collectibleSprites.push(sprite);
+		}
+
+		// ── Collectible overlap ──
+		for (let i = 0; i < this.collectibleSprites.length; i++) {
+			const coinSprite = this.collectibleSprites[i];
+			if (!coinSprite) continue;
+			const index = i;
+			this.physics.add.overlap(this.playerSprite, coinSprite, () => {
+				this.onCollectibleOverlap(index);
+			});
+		}
+
+		// ── Exit zone ──
+		const exitPos = extractExit(objects);
+		if (exitPos) {
+			const exitZone = this.add.zone(exitPos.x, exitPos.y, 32, 64);
+			this.physics.add.existing(exitZone, true);
+			this.physics.add.overlap(this.playerSprite, exitZone, () => {
+				this.onExitReached();
+			});
+		}
 
 		// ── Collisions ──
 		this.physics.add.collider(this.playerSprite, groundLayer);
@@ -115,6 +170,15 @@ export class PlatformerScene extends BaseScene {
 
 		// ── World bounds ──
 		this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+
+		// ── Level time tracking ──
+		this.levelStartMs = this.clock.elapsed;
+
+		// ── HUD ──
+		this.launchParallel(SceneKeys.HUD);
+		this.events.once('shutdown', () => {
+			this.stopParallel(SceneKeys.HUD);
+		});
 	}
 
 	update(time: number, delta: number): void {
@@ -127,6 +191,64 @@ export class PlatformerScene extends BaseScene {
 		const animKey = getAnimKeyForState(snap.state);
 		this.playerSprite.play(animKey, true);
 		this.playerSprite.flipX = snap.facing === 'left';
+
+		// ── Write gameplay state to registry ──
+		const timeElapsedMs = this.clock.elapsed - this.levelStartMs;
+		const state: GameplayState = {
+			health: snap.health,
+			maxHealth: snap.maxHealth,
+			score: this.scoreTracker.score,
+			coins: this.collectibleManager.collectedCount,
+			coinsTotal: this.collectibleManager.total,
+			levelId: this.mapKey,
+			levelName: this.mapKey.replace('map-', '').replace(/-/g, ' '),
+			timeElapsedMs,
+			stars: 0,
+			completed: false,
+		};
+		this.registry.set(GAMEPLAY_STATE_KEY, state);
+	}
+
+	private onCollectibleOverlap(index: number): void {
+		const result = this.collectibleManager.collect(index);
+		if (!result.collected) return;
+
+		this.scoreTracker.addCoins(result.value);
+		const sprite = this.collectibleSprites[index];
+		if (sprite) {
+			sprite.destroy();
+		}
+	}
+
+	private onExitReached(): void {
+		if (this.levelCompleted) return;
+		this.levelCompleted = true;
+
+		const timeElapsedMs = this.clock.elapsed - this.levelStartMs;
+		const finalScore = this.scoreTracker.finalScore(timeElapsedMs);
+		const stars = this.scoreTracker.calculateStarRating(finalScore, {
+			oneStar: 30,
+			twoStar: 80,
+			threeStar: 140,
+		});
+
+		const snap = this.playerController.snapshot();
+		const finalState: GameplayState = {
+			health: snap.health,
+			maxHealth: snap.maxHealth,
+			score: finalScore,
+			coins: this.collectibleManager.collectedCount,
+			coinsTotal: this.collectibleManager.total,
+			levelId: this.mapKey,
+			levelName: this.mapKey.replace('map-', '').replace(/-/g, ' '),
+			timeElapsedMs,
+			stars,
+			completed: true,
+		};
+		this.registry.set(GAMEPLAY_STATE_KEY, finalState);
+
+		this.stopParallel(SceneKeys.HUD);
+		this.navigateTo(SceneKeys.LEVEL_COMPLETE);
 	}
 
 	private placeEntities(
