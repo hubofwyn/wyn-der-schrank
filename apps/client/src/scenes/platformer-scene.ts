@@ -46,7 +46,9 @@ export class PlatformerScene extends BaseScene {
 	private levelStartMs = 0;
 	private mapKey = 'map-forest-1';
 	private levelCompleted = false;
+	private deathHandled = false;
 	private lives = 3;
+	private spawnPoint = { x: 100, y: 700 };
 
 	constructor() {
 		super({ key: SceneKeys.PLATFORMER });
@@ -103,7 +105,9 @@ export class PlatformerScene extends BaseScene {
 
 		// ── Spawn point from tilemap objects ──
 		const spawn = extractSpawn(objects) ?? { x: 100, y: 700 };
+		this.spawnPoint = spawn;
 		this.lives = 3;
+		this.deathHandled = false;
 
 		// ── Player ──
 		this.playerSprite = this.add.sprite(spawn.x, spawn.y, 'player');
@@ -269,6 +273,12 @@ export class PlatformerScene extends BaseScene {
 			lives: this.lives,
 		};
 		this.registry.set(GAMEPLAY_STATE_KEY, state);
+
+		// ── Death detection ──
+		if (snap.state === 'dead' && !this.deathHandled) {
+			this.deathHandled = true;
+			this.handlePlayerDeath();
+		}
 	}
 
 	private onCollectibleOverlap(index: number): void {
@@ -312,6 +322,39 @@ export class PlatformerScene extends BaseScene {
 
 		this.stopParallel(SceneKeys.HUD);
 		this.navigateTo(SceneKeys.LEVEL_COMPLETE);
+	}
+
+	private handlePlayerDeath(): void {
+		this.lives--;
+
+		// Update registry so game-over scene reads correct data
+		const timeElapsedMs = this.clock.elapsed - this.levelStartMs;
+		const snap = this.playerController.snapshot();
+		const deathState: GameplayState = {
+			health: snap.health,
+			maxHealth: snap.maxHealth,
+			score: this.scoreTracker.score,
+			coins: this.collectibleManager.collectedCount,
+			coinsTotal: this.collectibleManager.total,
+			levelId: this.mapKey,
+			levelName: this.mapKey.replace('map-', '').replace(/-/g, ' '),
+			timeElapsedMs,
+			stars: 0,
+			completed: false,
+			lives: this.lives,
+		};
+		this.registry.set(GAMEPLAY_STATE_KEY, deathState);
+
+		if (this.lives > 0) {
+			// Respawn at spawn point — coins persist (A10)
+			this.playerSprite.setPosition(this.spawnPoint.x, this.spawnPoint.y);
+			this.playerController.respawn();
+			this.deathHandled = false;
+		} else {
+			// Game over
+			this.stopParallel(SceneKeys.HUD);
+			this.navigateTo(SceneKeys.GAME_OVER);
+		}
 	}
 
 	private onEnemyOverlap(index: number): void {
