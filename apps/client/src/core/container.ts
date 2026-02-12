@@ -4,6 +4,7 @@ import type { IGameClock } from './ports/engine.js';
 import type { IInputProvider } from './ports/input.js';
 import type { INetworkClient } from './ports/network.js';
 import type { IBody, IPhysicsWorld } from './ports/physics.js';
+import type { ISettingsManager } from './ports/settings.js';
 import type { IStorageProvider } from './ports/storage.js';
 
 /**
@@ -23,6 +24,7 @@ export interface Container {
 	readonly physics: IPhysicsWorld;
 	readonly network: INetworkClient;
 	readonly storage: IStorageProvider;
+	readonly settingsManager: ISettingsManager;
 
 	// ── Scoped Factories (per-scene lifecycle) ──
 	// Optional until wired — TypeScript enforces callers check before use.

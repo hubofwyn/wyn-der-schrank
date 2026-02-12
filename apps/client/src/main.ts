@@ -2,13 +2,14 @@
 // All services are wired here and ONLY here.
 // See core/container.ts for the Container interface.
 
+import { LocalStorageAdapter } from './core/adapters/local-storage-adapter.js';
 import { NoopAudio } from './core/adapters/noop-audio.js';
 import { NoopInput } from './core/adapters/noop-input.js';
 import { NoopNetwork } from './core/adapters/noop-network.js';
 import { NoopPhysics } from './core/adapters/noop-physics.js';
-import { NoopStorage } from './core/adapters/noop-storage.js';
 import { PhaserClock } from './core/adapters/phaser-clock.js';
 import type { Container } from './core/container.js';
+import { SettingsManager } from './modules/settings/settings-manager.js';
 import { BootScene } from './scenes/boot-scene.js';
 import { GameOverScene } from './scenes/game-over-scene.js';
 import { HudScene } from './scenes/hud-scene.js';
@@ -29,7 +30,8 @@ function createContainer(): Container {
 	const audio = new NoopAudio();
 	const physics = new NoopPhysics();
 	const network = new NoopNetwork();
-	const storage = new NoopStorage();
+	const storage = new LocalStorageAdapter();
+	const settingsManager = new SettingsManager(storage);
 
 	return {
 		clock,
@@ -38,6 +40,7 @@ function createContainer(): Container {
 		physics,
 		network,
 		storage,
+		settingsManager,
 	};
 }
 
