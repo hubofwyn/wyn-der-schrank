@@ -7,8 +7,8 @@ last_updated: 2026-02-12
 
 ## Snapshot
 
-- __Active:__ none
-- __Next ready:__ G5
+- __Active:__ G5 Menu and Flow [feat/menu-flow]
+- __Next ready:__ none
 - __Blocked:__ none
 - __Last milestone:__ 2026-02-12 — G4 Hazards (147 tests) [feat/enemy-ai]
 - __Gates:__ all green (147 tests)
@@ -81,11 +81,11 @@ Enemy patrol, damage, death/respawn, and game-over add risk to the platforming. 
 
 ### G5: Menu and Flow
 
-> __Status:__ ready
+> __Status:__ in-progress
 > __Requires:__ G3, G4
 > __Benefits from:__ G2
 > __Unlocks:__ none
-> __Branch:__ --
+> __Branch:__ feat/menu-flow
 
 Title screen, pause, game-over screen, settings, and persistence make the game self-contained. Design tokens (colors, spacing, typography) provide consistent UI across all menu scenes. G3 delivered LevelCompleteScene (next-level + replay) and G4 delivered GameOverScene (retry only). Both need menu navigation once TitleScene exists. IStorageProvider port and NoopStorage adapter already exist; G5 replaces NoopStorage with LocalStorageAdapter in main.ts.
 
