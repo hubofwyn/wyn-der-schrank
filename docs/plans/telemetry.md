@@ -14,7 +14,18 @@
 > - JSONL output uses `jq -cn` for compact single-line format (was pretty-printed, 10x file bloat)
 > - PostToolUse matcher extended to cover `Bash` tool use (was Edit/Write only)
 > - SessionEnd hook has canary debug file (`.claude/telemetry/.session-end-canary`) to verify firing
-> - Stale events.jsonl (5280 lines of `sessionId: "unknown"`) reset to fresh start
+> - Zone-lint and phaser-guard hooks now emit telemetry events DIRECTLY (inline `_emit_telemetry`)
+>   instead of relying on `TELEMETRY_RESULT` env var passing between chained hooks (which never worked
+>   because hooks run as separate processes and don't share environment)
+> - telemetry-log.sh now records tool-use events only (result always "ok"); violations and warnings
+>   are recorded by the hooks that detect them
+> - SessionEnd hook includes log rotation: events.jsonl rotated to events.jsonl.1 when exceeding
+>   10,000 lines, preventing unbounded growth while preserving one generation of history
+>
+> **Format break (2026-02-11):** Pre-fix events.jsonl (5280 lines, pretty-printed JSON,
+> all `sessionId: "unknown"`) was reset. New events use compact single-line JSONL with
+> real session IDs from hook JSON stdin. The pre-fix data had zero analytical value due
+> to the format and session ID issues.
 >
 > The local docs mirror (`docs/vendor/phaser-4.0.0-rc.6/`) described in sections 2-3
 > was never created. The project uses `node_modules/.bun/phaser@4.0.0-rc.6/node_modules/phaser/types/phaser.d.ts`
