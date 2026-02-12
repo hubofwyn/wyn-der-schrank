@@ -1,9 +1,26 @@
 # Wyn der Schrank — Agentic Telemetry & Phaser Version Enforcement
 
 **Companion to:** `docs/FOUNDATION.md` (architecture), `docs/plans/agentic-setup.md` (tooling), `docs/plans/game-blueprint.md` (domain)
+**See also:** `docs/plans/diagnostics.md` — Game runtime diagnostics (separate system, different consumer)
 **Date:** February 10, 2026
+**Last updated:** February 11, 2026
 **Status:** CANONICAL — Defines observability, drift prevention, and docs-first enforcement
 **Scope:** All agentic development sessions across Claude Code CLI, subagents, and CI
+
+> **Implementation note (2026-02-11):** Agentic telemetry hooks are operational
+> but had several bugs fixed on this date:
+>
+> - `session_id` now parsed from hook JSON stdin (was using nonexistent `CLAUDE_SESSION_ID` env var)
+> - JSONL output uses `jq -cn` for compact single-line format (was pretty-printed, 10x file bloat)
+> - PostToolUse matcher extended to cover `Bash` tool use (was Edit/Write only)
+> - SessionEnd hook has canary debug file (`.claude/telemetry/.session-end-canary`) to verify firing
+> - Stale events.jsonl (5280 lines of `sessionId: "unknown"`) reset to fresh start
+>
+> The local docs mirror (`docs/vendor/phaser-4.0.0-rc.6/`) described in sections 2-3
+> was never created. The project uses `node_modules/.bun/phaser@4.0.0-rc.6/node_modules/phaser/types/phaser.d.ts`
+> as the authoritative type reference and the online docs at
+> `https://docs.phaser.io/api-documentation/4.0.0-rc.6/` as the secondary source.
+> References to the vendor mirror in this doc are aspirational, not current state.
 
 ---
 

@@ -9,8 +9,14 @@ mkdir -p "$TELEMETRY_DIR"
 
 # Read hook input
 INPUT=$(cat)
-SESSION_ID="${CLAUDE_SESSION_ID:-unknown}"
-EVENT_TYPE="${1:-PostToolUse}"
+SESSION_ID=$(echo "$INPUT" | jq -r '.session_id // empty' 2>/dev/null || echo "unknown")
+if [[ -z "$SESSION_ID" ]]; then
+  SESSION_ID="unknown"
+fi
+EVENT_TYPE=$(echo "$INPUT" | jq -r '.hook_event_name // empty' 2>/dev/null || echo "${1:-PostToolUse}")
+if [[ -z "$EVENT_TYPE" ]]; then
+  EVENT_TYPE="${1:-PostToolUse}"
+fi
 TOOL_NAME=$(echo "$INPUT" | jq -r '.tool_name // empty' 2>/dev/null || echo "")
 FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // .tool_input.command // empty' 2>/dev/null || echo "")
 
@@ -28,8 +34,8 @@ fi
 
 RESULT="${TELEMETRY_RESULT:-ok}"
 
-# Append event
-jq -n \
+# Append event — compact single-line JSONL (jq -cn)
+jq -cn \
   --arg ts "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
   --arg sid "$SESSION_ID" \
   --arg et "$EVENT_TYPE" \

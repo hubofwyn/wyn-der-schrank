@@ -7,13 +7,23 @@ TELEMETRY_DIR=".claude/telemetry"
 EVENTS_FILE="$TELEMETRY_DIR/events.jsonl"
 SESSIONS_FILE="$TELEMETRY_DIR/sessions.jsonl"
 DRIFT_FILE="$TELEMETRY_DIR/drift-report.md"
+CANARY_FILE="$TELEMETRY_DIR/.session-end-canary"
+
+mkdir -p "$TELEMETRY_DIR"
+
+# Canary: prove this hook fires. Write timestamp + input shape for debugging.
+INPUT=$(cat)
+echo "$(date -u +%Y-%m-%dT%H:%M:%SZ) | keys: $(echo "$INPUT" | jq -r 'keys | join(",")' 2>/dev/null || echo 'parse-failed')" >> "$CANARY_FILE"
+
+SESSION_ID=$(echo "$INPUT" | jq -r '.session_id // empty' 2>/dev/null || echo "")
+if [[ -z "$SESSION_ID" ]]; then
+  # Fallback: summarize all "unknown" session events
+  SESSION_ID="unknown"
+fi
 
 if [[ ! -f "$EVENTS_FILE" ]]; then
   exit 0
 fi
-
-SESSION_ID="${CLAUDE_SESSION_ID:-unknown}"
-mkdir -p "$TELEMETRY_DIR"
 
 EVENTS=$(grep "\"sessionId\":\"$SESSION_ID\"" "$EVENTS_FILE" 2>/dev/null || true)
 TOTAL=$(echo "$EVENTS" | grep -c . 2>/dev/null || echo "0")
@@ -30,8 +40,8 @@ FILES_TOUCHED=$(echo "$EVENTS" | jq -r '.filePath // empty' 2>/dev/null | sort -
 FIRST_TS=$(echo "$EVENTS" | head -1 | jq -r '.timestamp' 2>/dev/null || echo "unknown")
 LAST_TS=$(echo "$EVENTS" | tail -1 | jq -r '.timestamp' 2>/dev/null || echo "unknown")
 
-# Append to sessions log
-jq -n \
+# Append to sessions log — compact single-line JSONL (jq -cn)
+jq -cn \
   --arg sid "$SESSION_ID" \
   --arg start "$FIRST_TS" \
   --arg end "$LAST_TS" \
