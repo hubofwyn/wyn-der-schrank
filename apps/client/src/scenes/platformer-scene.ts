@@ -141,7 +141,7 @@ export class PlatformerScene extends BaseScene {
 
 		// ── Enemies with patrol AI ──
 		const enemies = extractEnemies(objects);
-		this.enemyManager = new EnemyManager();
+		this.enemyManager = new EnemyManager(this.container.diagnostics);
 		this.enemyManager.init(
 			enemies.map((e) => ({
 				damage: DEFAULT_ENEMY_DAMAGE,

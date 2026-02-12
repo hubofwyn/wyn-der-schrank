@@ -36,7 +36,11 @@ function createContainer(): Container {
 	const network = new NoopNetwork();
 	const storage = new LocalStorageAdapter();
 	const settingsManager = new SettingsManager(storage);
-	const diagnostics = new ConsoleDiagnostics(clock, settingsManager);
+	const diagnostics = new ConsoleDiagnostics(
+		clock,
+		settingsManager,
+		settingsManager.current.diagnostics.ringBufferSize,
+	);
 
 	return {
 		clock,
