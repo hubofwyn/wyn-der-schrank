@@ -67,3 +67,13 @@ export function extractCollectibles(
 
 	return collectibles;
 }
+
+export function extractExit(objects: TilemapObject[]): { x: number; y: number } | null {
+	for (const obj of objects) {
+		if (obj.type !== 'exit') continue;
+		if (!hasCoordinates(obj)) continue;
+		return { x: obj.x, y: obj.y };
+	}
+
+	return null;
+}
