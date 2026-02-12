@@ -1,5 +1,24 @@
 import { beforeEach, describe, expect, it } from 'vitest';
+import type { DiagnosticEvent, IDiagnostics } from '../../../core/ports/diagnostics.js';
 import { type CameraConfig, CameraController } from '../camera-controller.js';
+
+function createSpyDiagnostics(): IDiagnostics & { events: DiagnosticEvent[] } {
+	const events: DiagnosticEvent[] = [];
+	return {
+		events,
+		isEnabled: () => true,
+		emit: (channel, level, label, data) => {
+			events.push({ frame: 0, timestamp: 0, channel, level, label, data });
+		},
+		query: (filter) => {
+			let result = events;
+			if (filter?.channel) result = result.filter((e) => e.channel === filter.channel);
+			if (filter?.level) result = result.filter((e) => e.level === filter.level);
+			if (filter?.last) result = result.slice(-filter.last);
+			return result;
+		},
+	};
+}
 
 function defaultConfig(overrides: Partial<CameraConfig> = {}): CameraConfig {
 	return {
@@ -200,6 +219,34 @@ describe('CameraController', () => {
 			const state = cam.getState();
 			expect(state.x).toBe(640);
 			expect(state.y).toBe(360);
+		});
+	});
+
+	describe('diagnostics', () => {
+		it('emits bounds-clamp event when position is clamped', () => {
+			const spy = createSpyDiagnostics();
+			const diagCam = new CameraController(defaultConfig({ lerpX: 1, lerpY: 1 }), spy);
+
+			// Target outside bounds — will be clamped
+			diagCam.setTarget(0, 0);
+			diagCam.update(FRAME);
+
+			const clampEvents = spy.events.filter((e) => e.label === 'bounds-clamp');
+			expect(clampEvents.length).toBeGreaterThanOrEqual(1);
+			expect(clampEvents[0].channel).toBe('camera');
+			expect(clampEvents[0].level).toBe('state');
+		});
+
+		it('emits debug lerp events when enabled', () => {
+			const spy = createSpyDiagnostics();
+			const diagCam = new CameraController(defaultConfig(), spy);
+
+			diagCam.setTarget(1000, 500);
+			diagCam.update(FRAME);
+
+			const debugEvents = spy.events.filter((e) => e.level === 'debug');
+			expect(debugEvents.length).toBeGreaterThanOrEqual(1);
+			expect(debugEvents[0].label).toBe('lerp');
 		});
 	});
 });

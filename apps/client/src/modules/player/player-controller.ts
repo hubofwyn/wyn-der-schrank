@@ -1,7 +1,19 @@
 import type { CharacterStats, Facing, PlatformerConfig, PlayerState, Vec2 } from '@wds/shared';
+import type { IDiagnostics } from '../../core/ports/diagnostics.js';
 import type { IGameClock } from '../../core/ports/engine.js';
 import type { IInputProvider } from '../../core/ports/input.js';
 import type { IBody } from '../../core/ports/physics.js';
+
+/** Module-local noop — avoids importing core/adapters/ (zone rule). */
+const NOOP_DIAGNOSTICS: IDiagnostics = {
+	emit() {},
+	isEnabled() {
+		return false;
+	},
+	query() {
+		return [];
+	},
+};
 
 /**
  * Readonly snapshot of the player's current state.
@@ -35,6 +47,7 @@ export interface PlayerControllerDeps {
 	readonly clock: IGameClock;
 	readonly config: PlatformerConfig;
 	readonly stats: CharacterStats;
+	readonly diagnostics?: IDiagnostics;
 }
 
 /**
@@ -60,6 +73,7 @@ export class PlayerController {
 	private readonly clock: IGameClock;
 	private readonly config: PlatformerConfig;
 	private readonly stats: CharacterStats;
+	private readonly diagnostics: IDiagnostics;
 
 	// ── State machine ──
 	private _state: PlayerState = 'idle';
@@ -84,6 +98,7 @@ export class PlayerController {
 		this.clock = deps.clock;
 		this.config = deps.config;
 		this.stats = deps.stats;
+		this.diagnostics = deps.diagnostics ?? NOOP_DIAGNOSTICS;
 
 		this._health = deps.stats.maxHealth;
 		this._maxHealth = deps.stats.maxHealth;
@@ -120,6 +135,16 @@ export class PlayerController {
 		this.handleHorizontalMovement();
 		this.handleFastFall();
 		this.updateStateMachine();
+
+		if (this.diagnostics.isEnabled('player', 'debug')) {
+			this.diagnostics.emit('player', 'debug', 'frame', {
+				state: this._state,
+				velocity: { x: this.body.velocity.x, y: this.body.velocity.y },
+				position: { x: this.body.position.x, y: this.body.position.y },
+				grounded: this.body.isOnGround,
+				coyoteFrames: this.coyoteTimeRemaining,
+			});
+		}
 	}
 
 	// ── Ground tracking ──
@@ -246,28 +271,36 @@ export class PlayerController {
 	// ── State machine ──
 
 	private updateStateMachine(): void {
+		const prevState = this._state;
+
 		if (this._health <= 0) {
 			this._state = 'dead';
-			return;
-		}
-
-		if (this._hurtTimeRemaining > 0) {
+		} else if (this._hurtTimeRemaining > 0) {
 			this._state = 'hurt';
-			return;
+		} else {
+			const vy = this.body.velocity.y;
+			const vx = this.body.velocity.x;
+			const onGround = this.body.isOnGround;
+
+			if (vy < 0 && !onGround) {
+				this._state = 'jumping';
+			} else if (vy > 0 && !onGround) {
+				this._state = 'falling';
+			} else if (Math.abs(vx) > 1 && onGround) {
+				this._state = 'running';
+			} else if (onGround) {
+				this._state = 'idle';
+			}
 		}
 
-		const vy = this.body.velocity.y;
-		const vx = this.body.velocity.x;
-		const onGround = this.body.isOnGround;
-
-		if (vy < 0 && !onGround) {
-			this._state = 'jumping';
-		} else if (vy > 0 && !onGround) {
-			this._state = 'falling';
-		} else if (Math.abs(vx) > 1 && onGround) {
-			this._state = 'running';
-		} else if (onGround) {
-			this._state = 'idle';
+		if (this._state !== prevState) {
+			this.diagnostics.emit('player', 'state', 'state-change', {
+				from: prevState,
+				to: this._state,
+				velocity: { x: this.body.velocity.x, y: this.body.velocity.y },
+				position: { x: this.body.position.x, y: this.body.position.y },
+				grounded: this.body.isOnGround,
+			});
 		}
 	}
 

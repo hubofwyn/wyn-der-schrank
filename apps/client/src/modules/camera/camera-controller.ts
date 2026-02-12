@@ -1,3 +1,16 @@
+import type { IDiagnostics } from '../../core/ports/diagnostics.js';
+
+/** Module-local noop — avoids importing core/adapters/ (zone rule). */
+const NOOP_DIAGNOSTICS: IDiagnostics = {
+	emit() {},
+	isEnabled() {
+		return false;
+	},
+	query() {
+		return [];
+	},
+};
+
 /**
  * Pure domain camera controller.
  *
@@ -36,8 +49,13 @@ export class CameraController {
 	private targetX = 0;
 	private targetY = 0;
 	private facingDirection = 0;
+	private readonly diagnostics: IDiagnostics;
 
-	constructor(private config: CameraConfig) {
+	constructor(
+		private config: CameraConfig,
+		diagnostics?: IDiagnostics,
+	) {
+		this.diagnostics = diagnostics ?? NOOP_DIAGNOSTICS;
 		this.x = config.boundsMinX;
 		this.y = config.boundsMinY;
 		this.clampToBounds();
@@ -71,7 +89,24 @@ export class CameraController {
 		this.x += (goalX - this.x) * factorX;
 		this.y += (goalY - this.y) * factorY;
 
+		const preClampX = this.x;
+		const preClampY = this.y;
 		this.clampToBounds();
+
+		if (this.x !== preClampX || this.y !== preClampY) {
+			this.diagnostics.emit('camera', 'state', 'bounds-clamp', {
+				requested: { x: preClampX, y: preClampY },
+				clamped: { x: this.x, y: this.y },
+			});
+		}
+
+		if (this.diagnostics.isEnabled('camera', 'debug')) {
+			this.diagnostics.emit('camera', 'debug', 'lerp', {
+				position: { x: this.x, y: this.y },
+				target: { x: goalX, y: goalY },
+				lerpFactor: { x: factorX, y: factorY },
+			});
+		}
 	}
 
 	/** Get current camera state for the scene to apply. */

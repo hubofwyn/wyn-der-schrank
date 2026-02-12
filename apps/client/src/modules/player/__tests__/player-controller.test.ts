@@ -1,5 +1,6 @@
 import type { CharacterStats, PlatformerConfig } from '@wds/shared';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { DiagnosticEvent, IDiagnostics } from '../../../core/ports/diagnostics.js';
 import type { IGameClock } from '../../../core/ports/engine.js';
 import type { ActionKey, IInputProvider } from '../../../core/ports/input.js';
 import type { BlockedState, IBody } from '../../../core/ports/physics.js';
@@ -202,6 +203,24 @@ function createDefaultStats(): CharacterStats {
 		jumpForce: 420,
 		attackPower: 10,
 		defense: 5,
+	};
+}
+
+function createSpyDiagnostics(): IDiagnostics & { events: DiagnosticEvent[] } {
+	const events: DiagnosticEvent[] = [];
+	return {
+		events,
+		isEnabled: () => true,
+		emit: (channel, level, label, data) => {
+			events.push({ frame: 0, timestamp: 0, channel, level, label, data });
+		},
+		query: (filter) => {
+			let result = events;
+			if (filter?.channel) result = result.filter((e) => e.channel === filter.channel);
+			if (filter?.level) result = result.filter((e) => e.level === filter.level);
+			if (filter?.last) result = result.slice(-filter.last);
+			return result;
+		},
 	};
 }
 
@@ -729,6 +748,48 @@ describe('PlayerController', () => {
 			controller.update();
 			// No change (can't jump again)
 			expect(controller.snapshot().jumpsRemaining).toBe(0);
+		});
+	});
+
+	describe('diagnostics', () => {
+		it('emits state-change event on state transition', () => {
+			const spy = createSpyDiagnostics();
+			const ctrl = new PlayerController({ input, body, clock, config, stats, diagnostics: spy });
+
+			// idle → running
+			input._pressed.add('right');
+			ctrl.update();
+
+			const stateEvents = spy.events.filter((e) => e.label === 'state-change');
+			expect(stateEvents).toHaveLength(1);
+			expect(stateEvents[0].channel).toBe('player');
+			expect(stateEvents[0].level).toBe('state');
+			expect(stateEvents[0].data.from).toBe('idle');
+			expect(stateEvents[0].data.to).toBe('running');
+		});
+
+		it('does not emit state-change when state is unchanged', () => {
+			const spy = createSpyDiagnostics();
+			const ctrl = new PlayerController({ input, body, clock, config, stats, diagnostics: spy });
+
+			// idle → idle (no input, on ground)
+			ctrl.update();
+			ctrl.update();
+
+			const stateEvents = spy.events.filter((e) => e.label === 'state-change');
+			expect(stateEvents).toHaveLength(0);
+		});
+
+		it('emits debug frame events when enabled', () => {
+			const spy = createSpyDiagnostics();
+			const ctrl = new PlayerController({ input, body, clock, config, stats, diagnostics: spy });
+
+			ctrl.update();
+
+			const debugEvents = spy.events.filter((e) => e.level === 'debug');
+			expect(debugEvents).toHaveLength(1);
+			expect(debugEvents[0].label).toBe('frame');
+			expect(debugEvents[0].data.state).toBe('idle');
 		});
 	});
 });
