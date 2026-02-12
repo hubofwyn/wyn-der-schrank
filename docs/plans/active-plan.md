@@ -7,8 +7,8 @@ last_updated: 2026-02-12
 
 ## Snapshot
 
-- __Active:__ none
-- __Next ready:__ G4
+- __Active:__ G4 Hazards [feat/enemy-ai]
+- __Next ready:__ none
 - __Blocked:__ none
 - __Last milestone:__ 2026-02-12 — G3 Gameplay Loop (110 tests) [feat/gameplay-loop]
 - __Gates:__ all green (110 tests)
@@ -65,11 +65,11 @@ Collectibles, HUD, level-end trigger, and scoring give the player a goal. Builds
 
 ### G4: Hazards
 
-> __Status:__ ready
+> __Status:__ in-progress
 > __Requires:__ G1
 > __Benefits from:__ G2
 > __Unlocks:__ G5
-> __Branch:__ --
+> __Branch:__ feat/enemy-ai
 
 Enemy patrol, damage, death/respawn, and game-over add risk to the platforming. Builds on G2 enemy sprites.
 
