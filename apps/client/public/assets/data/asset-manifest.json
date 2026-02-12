@@ -1,4 +1,43 @@
 {
 	"version": "0.1.0",
-	"assets": []
+	"assets": [
+		{
+			"key": "player",
+			"type": "spritesheet",
+			"url": "assets/sprites/characters/player.png",
+			"frameWidth": 16,
+			"frameHeight": 16
+		},
+		{
+			"key": "enemy-skeleton-idle",
+			"type": "spritesheet",
+			"url": "assets/sprites/enemies/skeleton-idle.png",
+			"frameWidth": 32,
+			"frameHeight": 32
+		},
+		{
+			"key": "enemy-skeleton-walk",
+			"type": "spritesheet",
+			"url": "assets/sprites/enemies/skeleton-walk.png",
+			"frameWidth": 32,
+			"frameHeight": 32
+		},
+		{
+			"key": "collectible-coin",
+			"type": "spritesheet",
+			"url": "assets/sprites/items/coin.png",
+			"frameWidth": 16,
+			"frameHeight": 16
+		},
+		{
+			"key": "tiles-dungeon",
+			"type": "image",
+			"url": "assets/tilemaps/tilesets/dungeon-tileset.png"
+		},
+		{
+			"key": "map-forest-1",
+			"type": "tilemapTiledJSON",
+			"url": "assets/tilemaps/levels/forest-1.json"
+		}
+	]
 }

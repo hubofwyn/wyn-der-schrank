@@ -69,7 +69,22 @@ Do not duplicate entries — if a symbol is already listed, additional usages do
 | `Camera.setScroll()` | `/classes/Phaser.Cameras.Scene2D.BaseCamera.html#setScroll` | (planned) | — | type-verified |
 | `Camera.scrollX` | `/classes/Phaser.Cameras.Scene2D.BaseCamera.html#scrollX` | (planned) | — | type-verified |
 | `Camera.scrollY` | `/classes/Phaser.Cameras.Scene2D.BaseCamera.html#scrollY` | (planned) | — | type-verified |
-| `Phaser.GameObjects.Sprite` | `/classes/Phaser.GameObjects.Sprite.html` | (planned) | — | — |
+| `Phaser.GameObjects.Sprite` | `/classes/Phaser.GameObjects.Sprite.html` | `scenes/platformer-scene.ts` | 2026-02-12 | type-verified |
+| `scene.add.sprite()` | `/classes/Phaser.GameObjects.GameObjectFactory.html#sprite` | `scenes/platformer-scene.ts` | 2026-02-12 | type-verified |
+| `Sprite.setDisplaySize()` | `/classes/Phaser.GameObjects.Components.Size.html#setDisplaySize` | `scenes/platformer-scene.ts` | 2026-02-12 | type-verified |
+| `Loader.once('complete')` | `/classes/Phaser.Loader.LoaderPlugin.html` | `scenes/preload-scene.ts` | 2026-02-12 | type-verified |
+| `scene.anims.create()` | `/classes/Phaser.Animations.AnimationManager.html#create` | `scenes/preload-scene.ts` | 2026-02-12 | type-verified |
+| `scene.anims.generateFrameNumbers()` | `/classes/Phaser.Animations.AnimationManager.html#generateFrameNumbers` | `scenes/preload-scene.ts` | 2026-02-12 | type-verified |
+| `scene.anims.exists()` | `/classes/Phaser.Animations.AnimationManager.html#exists` | `scenes/preload-scene.ts` | 2026-02-12 | type-verified |
+| `Sprite.play()` | `/classes/Phaser.GameObjects.Sprite.html#play` | `scenes/platformer-scene.ts` | 2026-02-12 | type-verified |
+| `Sprite.flipX` | `/classes/Phaser.GameObjects.Components.Flip.html#flipX` | `scenes/platformer-scene.ts` | 2026-02-12 | type-verified |
+| `scene.make.tilemap()` | `/classes/Phaser.GameObjects.GameObjectCreator.html#tilemap` | `scenes/platformer-scene.ts` | 2026-02-12 | type-verified |
+| `Tilemap.addTilesetImage()` | `/classes/Phaser.Tilemaps.Tilemap.html#addTilesetImage` | `scenes/platformer-scene.ts` | 2026-02-12 | type-verified |
+| `Tilemap.createLayer()` | `/classes/Phaser.Tilemaps.Tilemap.html#createLayer` | `scenes/platformer-scene.ts` | 2026-02-12 | type-verified |
+| `TilemapLayer.setCollisionByExclusion()` | `/classes/Phaser.Tilemaps.TilemapLayer.html#setCollisionByExclusion` | `scenes/platformer-scene.ts` | 2026-02-12 | type-verified |
+| `Tilemap.getObjectLayer()` | `/classes/Phaser.Tilemaps.Tilemap.html#getObjectLayer` | `scenes/platformer-scene.ts` | 2026-02-12 | type-verified |
+| `Tilemap.widthInPixels` | `/classes/Phaser.Tilemaps.Tilemap.html#widthInPixels` | `scenes/platformer-scene.ts` | 2026-02-12 | type-verified |
+| `Tilemap.heightInPixels` | `/classes/Phaser.Tilemaps.Tilemap.html#heightInPixels` | `scenes/platformer-scene.ts` | 2026-02-12 | type-verified |
 | `SpriteGPULayer` | `/classes/Phaser.GameObjects.SpriteGPULayer.html` | (planned) | — | — |
 | `Texture#setWrap` | `/classes/Phaser.Textures.Texture.html#setWrap` | (planned) | — | — |
 

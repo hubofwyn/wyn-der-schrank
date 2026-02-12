@@ -1,16 +1,27 @@
 import type { AssetEntry } from '@wds/shared';
-import { AssetManifestSchema } from '@wds/shared';
+import type { AnimationDef } from '../modules/animation/animation-def.js';
+import { parseManifest } from '../modules/assets/manifest-parser.js';
+import { getCoinAnimationDefs } from '../modules/collectible/animation-config.js';
+import { getSkeletonAnimationDefs } from '../modules/enemy/animation-config.js';
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
+import { getPlayerAnimationDefs } from '../modules/player/animation-config.js';
 import { BaseScene } from './base-scene.js';
 
 /**
  * PreloadScene — loads all game assets with a progress bar.
  *
- * Flow: loads asset-manifest.json, then queues every asset from the
- * manifest into the Phaser loader. Displays a simple progress bar
- * while loading. Transitions to Platformer when complete.
+ * Flow:
+ * 1. preload() — loads the asset-manifest.json only.
+ * 2. create()  — parses the manifest, queues every game asset into
+ *    the Phaser loader, and starts a second load pass. When the
+ *    second pass completes, transitions to the next scene.
+ *
+ * If the manifest is empty (no assets), transitions immediately.
  */
 export class PreloadScene extends BaseScene {
+	private progressFill: Phaser.GameObjects.Rectangle | null = null;
+	private progressBarWidth = 400;
+
 	constructor() {
 		super({ key: SceneKeys.PRELOAD });
 	}
@@ -18,31 +29,41 @@ export class PreloadScene extends BaseScene {
 	preload(): void {
 		this.createProgressBar();
 		this.load.json('asset-manifest', 'assets/data/asset-manifest.json');
-		this.load.on('complete', () => this.onManifestLoaded());
 	}
 
 	create(): void {
-		// All assets loaded — transition to Platformer.
-		// Later: transition to Title -> MainMenu.
-		this.navigateTo(SceneKeys.PLATFORMER);
+		const raw = this.cache.json.get('asset-manifest') as unknown;
+		const assets = parseManifest(raw);
+
+		if (assets.length === 0) {
+			this.navigateTo(SceneKeys.PLATFORMER);
+			return;
+		}
+
+		for (const asset of assets) {
+			this.queueAsset(asset);
+		}
+
+		this.load.once('complete', () => {
+			this.createAnimations();
+			this.navigateTo(SceneKeys.PLATFORMER);
+		});
+
+		this.load.start();
 	}
 
 	private createProgressBar(): void {
 		const { width, height } = this.scale;
-		const barWidth = 400;
 		const barHeight = 28;
-		const x = (width - barWidth) / 2;
+		const x = (width - this.progressBarWidth) / 2;
 		const y = height / 2;
 
-		// Background bar
-		const bg = this.add.rectangle(width / 2, y, barWidth, barHeight, 0x222222);
+		const bg = this.add.rectangle(width / 2, y, this.progressBarWidth, barHeight, 0x222222);
 		bg.setOrigin(0.5);
 
-		// Fill bar
-		const fill = this.add.rectangle(x, y, 0, barHeight, 0x3355ff);
-		fill.setOrigin(0, 0.5);
+		this.progressFill = this.add.rectangle(x, y, 0, barHeight, 0x3355ff);
+		this.progressFill.setOrigin(0, 0.5);
 
-		// Loading text
 		const text = this.add.text(width / 2, y - 30, 'Loading...', {
 			fontSize: '18px',
 			color: '#cccccc',
@@ -50,30 +71,35 @@ export class PreloadScene extends BaseScene {
 		text.setOrigin(0.5);
 
 		this.load.on('progress', (value: number) => {
-			fill.width = barWidth * value;
+			if (this.progressFill) {
+				this.progressFill.width = this.progressBarWidth * value;
+			}
 		});
 	}
 
-	private onManifestLoaded(): void {
-		const raw = this.cache.json.get('asset-manifest') as unknown;
-		if (!raw) return;
-
-		const result = AssetManifestSchema.safeParse(raw);
-		if (!result.success) {
-			console.error('Invalid asset manifest:', result.error);
-			return;
+	private createAnimations(): void {
+		for (const def of getPlayerAnimationDefs('player')) {
+			this.registerAnimation(def);
 		}
-
-		const { assets } = result.data;
-		if (assets.length === 0) return;
-
-		// Queue all assets from the manifest
-		for (const asset of assets) {
-			this.queueAsset(asset);
+		for (const def of getSkeletonAnimationDefs()) {
+			this.registerAnimation(def);
 		}
+		for (const def of getCoinAnimationDefs()) {
+			this.registerAnimation(def);
+		}
+	}
 
-		// Start a second load pass for manifest assets
-		this.load.start();
+	private registerAnimation(def: AnimationDef): void {
+		if (this.anims.exists(def.key)) return;
+		this.anims.create({
+			key: def.key,
+			frames: this.anims.generateFrameNumbers(def.textureKey, {
+				start: def.startFrame,
+				end: def.endFrame,
+			}),
+			frameRate: def.frameRate,
+			repeat: def.repeat,
+		});
 	}
 
 	private queueAsset(asset: AssetEntry): void {

@@ -25,8 +25,9 @@ export interface Container {
 	readonly storage: IStorageProvider;
 
 	// ── Scoped Factories (per-scene lifecycle) ──
-	createPlatformerScope(levelId: string): PlatformerScope;
-	createMinigameScope(minigameId: string): MinigameScope;
+	// Optional until wired — TypeScript enforces callers check before use.
+	readonly createPlatformerScope?: (levelId: string) => PlatformerScope;
+	readonly createMinigameScope?: (minigameId: string) => MinigameScope;
 }
 
 /**

@@ -1,35 +1,41 @@
 import type { CharacterStats } from '@wds/shared';
 import { PlatformerConfigSchema, SettingsSchema } from '@wds/shared';
-import type { PhaserClock } from '../core/adapters/phaser-clock.js';
 import { PhaserInput } from '../core/adapters/phaser-input.js';
 import { PhaserBody } from '../core/adapters/phaser-physics.js';
-import { getFirstStepsLevel } from '../modules/level/level-data.js';
+import type { IGameClock } from '../core/ports/engine.js';
+import { getCoinDefaultAnim } from '../modules/collectible/animation-config.js';
+import { getSkeletonDefaultAnim } from '../modules/enemy/animation-config.js';
+import {
+	extractCollectibles,
+	extractEnemies,
+	extractSpawn,
+} from '../modules/level/tilemap-objects.js';
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
+import { getAnimKeyForState } from '../modules/player/animation-config.js';
 import { PlayerController } from '../modules/player/player-controller.js';
 import { BaseScene } from './base-scene.js';
 
 /**
  * PlatformerScene — the core gameplay scene.
  *
- * Wires PlayerController through ports to Phaser rendering.
- * Game-scoped services (clock, audio, network, storage) come from the
- * DI container. Scene-scoped adapters (input, body) are created here
- * because they require a live Phaser scene.
+ * Renders a Tiled tilemap for level geometry and collision.
+ * Wires PlayerController through ports to sprite rendering.
+ * Game-scoped services come from the DI container; scene-scoped
+ * adapters (input, body) are created here because they need a live scene.
  */
 export class PlatformerScene extends BaseScene {
-	private clock!: PhaserClock;
+	private clock!: IGameClock;
 	private phaserInput!: PhaserInput;
 	private playerController!: PlayerController;
+	private playerSprite!: Phaser.GameObjects.Sprite;
 
 	constructor() {
 		super({ key: SceneKeys.PLATFORMER });
 	}
 
 	create(): void {
-		const level = getFirstStepsLevel();
-
 		// ── Game-scoped services from container ──
-		this.clock = this.container.clock as PhaserClock;
+		this.clock = this.container.clock;
 
 		// ── Scene-scoped adapters ──
 		this.phaserInput = new PhaserInput(
@@ -42,18 +48,34 @@ export class PlatformerScene extends BaseScene {
 			}),
 		);
 
-		// ── Platforms ──
-		const platforms = this.physics.add.staticGroup();
-		for (const p of level.platforms) {
-			const rect = this.add.rectangle(p.x, p.y, p.width, p.height, p.color);
-			platforms.add(rect);
+		// ── Tilemap ──
+		const map = this.make.tilemap({ key: 'map-forest-1' });
+		const tileset = map.addTilesetImage('dungeon-tileset', 'tiles-dungeon', 16, 16);
+
+		if (!tileset) {
+			throw new Error('Failed to load dungeon tileset');
 		}
 
-		// ── Player ──
-		const playerRect = this.add.rectangle(level.spawn.x, level.spawn.y, 32, 48, 0x3355ff);
-		this.physics.add.existing(playerRect, false);
+		const groundLayer = map.createLayer('Ground', tileset, 0, 0);
 
-		const arcadeBody = playerRect.body as Phaser.Physics.Arcade.Body;
+		if (!groundLayer) {
+			throw new Error('Failed to create Ground layer');
+		}
+
+		groundLayer.setCollisionByExclusion([-1]);
+
+		const objectLayer = map.getObjectLayer('Objects');
+		const objects = objectLayer?.objects ?? [];
+
+		// ── Spawn point from tilemap objects ──
+		const spawn = extractSpawn(objects) ?? { x: 100, y: 700 };
+
+		// ── Player ──
+		this.playerSprite = this.add.sprite(spawn.x, spawn.y, 'player');
+		this.playerSprite.setDisplaySize(32, 48);
+		this.physics.add.existing(this.playerSprite, false);
+
+		const arcadeBody = this.playerSprite.body as Phaser.Physics.Arcade.Body;
 		arcadeBody.setCollideWorldBounds(true);
 		arcadeBody.setMaxVelocity(300, 600);
 
@@ -76,20 +98,48 @@ export class PlatformerScene extends BaseScene {
 			stats,
 		});
 
+		// ── Enemies (visual only — domain AI is G4) ──
+		const enemies = extractEnemies(objects);
+		this.placeEntities(enemies, 'enemy-skeleton-idle', 32, 48, getSkeletonDefaultAnim());
+
+		// ── Collectibles (visual only — pickup logic is G3) ──
+		const collectibles = extractCollectibles(objects);
+		this.placeEntities(collectibles, 'collectible-coin', 16, 16, getCoinDefaultAnim());
+
 		// ── Collisions ──
-		this.physics.add.collider(playerRect, platforms);
+		this.physics.add.collider(this.playerSprite, groundLayer);
 
 		// ── Camera ──
-		this.cameras.main.startFollow(playerRect, true, 0.1, 0.1);
-		this.cameras.main.setBounds(0, 0, level.worldWidth, level.worldHeight);
+		this.cameras.main.startFollow(this.playerSprite, true, 0.1, 0.1);
+		this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
 		// ── World bounds ──
-		this.physics.world.setBounds(0, 0, level.worldWidth, level.worldHeight);
+		this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 	}
 
 	update(time: number, delta: number): void {
 		this.clock.refresh(time, delta);
 		this.phaserInput.update();
 		this.playerController.update();
+
+		// ── Drive sprite from domain state ──
+		const snap = this.playerController.snapshot();
+		const animKey = getAnimKeyForState(snap.state);
+		this.playerSprite.play(animKey, true);
+		this.playerSprite.flipX = snap.facing === 'left';
+	}
+
+	private placeEntities(
+		entities: ReadonlyArray<{ x: number; y: number }>,
+		textureKey: string,
+		width: number,
+		height: number,
+		defaultAnim: string,
+	): void {
+		for (const entity of entities) {
+			const sprite = this.add.sprite(entity.x, entity.y, textureKey);
+			sprite.setDisplaySize(width, height);
+			sprite.play(defaultAnim);
+		}
 	}
 }
