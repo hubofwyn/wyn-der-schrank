@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { DiagnosticsConfigSchema } from './diagnostics.js';
 
 export const SettingsSchema = z.object({
 	audio: z.object({
@@ -26,5 +27,10 @@ export const SettingsSchema = z.object({
 	accessibility: z.object({
 		highContrast: z.boolean().default(false),
 		largeText: z.boolean().default(false),
+	}),
+	diagnostics: DiagnosticsConfigSchema.default({
+		enabled: false,
+		channels: {},
+		ringBufferSize: 500,
 	}),
 });

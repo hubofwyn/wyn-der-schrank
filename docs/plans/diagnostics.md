@@ -1,7 +1,7 @@
 ---
 title: Game Runtime Diagnostics
 last_updated: 2026-02-11
-status: PLAN — pending implementation
+status: IMPLEMENTED — feat/diagnostics branch
 scope: Port interface, adapters, container wiring, domain integration
 ---
 
@@ -88,7 +88,7 @@ export const DiagnosticChannelConfigSchema = z.object({
 export const DiagnosticsConfigSchema = z.object({
   enabled: z.boolean().default(false),
   channels: z.record(
-    DiagnosticChannelSchema,
+    z.string(),  // sparse record — not all channels need config
     DiagnosticChannelConfigSchema,
   ).default({}),
   ringBufferSize: z.number().int().min(100).max(10000).default(500),
@@ -346,16 +346,19 @@ export interface PlayerControllerDeps {
 private readonly diagnostics: IDiagnostics;
 constructor(deps: PlayerControllerDeps) {
   // ... existing assignments ...
-  this.diagnostics = deps.diagnostics ?? new NoopDiagnostics();
+  // Module-local noop (can't import NoopDiagnostics from core/adapters/ — zone rule)
+  this.diagnostics = deps.diagnostics ?? NOOP_DIAGNOSTICS;
 }
 ```
 
 ```typescript
 // CameraController — add optional 2nd parameter:
+// Uses module-local NOOP_DIAGNOSTICS const (zone-safe, same pattern as PlayerController)
 constructor(
   private config: CameraConfig,
-  private readonly diagnostics: IDiagnostics = new NoopDiagnostics(),
+  diagnostics?: IDiagnostics,
 ) {
+  this.diagnostics = diagnostics ?? NOOP_DIAGNOSTICS;
 ```
 
 Existing tests continue to work unchanged. New tests that want to verify

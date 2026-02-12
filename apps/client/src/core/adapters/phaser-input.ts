@@ -191,6 +191,7 @@ export class PhaserInput implements IInputProvider {
 				ability: 'KeyK',
 			},
 			accessibility: { highContrast: false, largeText: false },
+			diagnostics: { enabled: false, channels: {}, ringBufferSize: 500 },
 		});
 		this.createKeys();
 	}

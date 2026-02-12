@@ -600,6 +600,15 @@ export interface ISettingsManager {
     patch: Partial<Settings[K]>,
   ): Promise<Settings>;
 }
+
+// core/ports/diagnostics.ts
+export interface IDiagnostics {
+  emit(channel: DiagnosticChannel, level: DiagnosticLevel, label: string,
+       data: Record<string, unknown>): void;
+  isEnabled(channel: DiagnosticChannel, level: DiagnosticLevel): boolean;
+  query(filter?: { channel?: DiagnosticChannel; level?: DiagnosticLevel;
+       last?: number }): readonly DiagnosticEvent[];
+}
 ```
 
 ---

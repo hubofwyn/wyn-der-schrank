@@ -77,6 +77,7 @@ export class PlatformerScene extends BaseScene {
 				display: {},
 				controls: {},
 				accessibility: {},
+				diagnostics: {},
 			}),
 		);
 
@@ -135,11 +136,12 @@ export class PlatformerScene extends BaseScene {
 			clock: this.clock,
 			config,
 			stats,
+			diagnostics: this.container.diagnostics,
 		});
 
 		// ── Enemies with patrol AI ──
 		const enemies = extractEnemies(objects);
-		this.enemyManager = new EnemyManager();
+		this.enemyManager = new EnemyManager(this.container.diagnostics);
 		this.enemyManager.init(
 			enemies.map((e) => ({
 				damage: DEFAULT_ENEMY_DAMAGE,
@@ -223,6 +225,12 @@ export class PlatformerScene extends BaseScene {
 		this.launchParallel(SceneKeys.HUD);
 		this.events.once('shutdown', () => {
 			this.stopParallel(SceneKeys.HUD);
+		});
+
+		this.container.diagnostics.emit('scene', 'state', 'lifecycle', {
+			scene: SceneKeys.PLATFORMER,
+			event: 'created',
+			mapKey: this.mapKey,
 		});
 	}
 
@@ -371,6 +379,14 @@ export class PlatformerScene extends BaseScene {
 		if (!enemy) return;
 		const enemySnap = enemy.snapshot();
 		if (!enemySnap.isAlive) return;
-		this.playerController.takeDamage(enemySnap.damage);
+		const result = this.playerController.takeDamage(enemySnap.damage);
+		if (result.damaged) {
+			this.container.diagnostics.emit('scene', 'state', 'collision', {
+				type: 'enemy-damage',
+				enemyIndex: index,
+				damage: enemySnap.damage,
+				playerHealth: result.newHealth,
+			});
+		}
 	}
 }

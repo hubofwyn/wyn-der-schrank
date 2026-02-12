@@ -1,5 +1,6 @@
 import type { PlatformerConfig } from '@wds/shared';
 import type { IAudioPlayer } from './ports/audio.js';
+import type { IDiagnostics } from './ports/diagnostics.js';
 import type { IGameClock } from './ports/engine.js';
 import type { IInputProvider } from './ports/input.js';
 import type { INetworkClient } from './ports/network.js';
@@ -25,6 +26,7 @@ export interface Container {
 	readonly network: INetworkClient;
 	readonly storage: IStorageProvider;
 	readonly settingsManager: ISettingsManager;
+	readonly diagnostics: IDiagnostics;
 
 	// ── Scoped Factories (per-scene lifecycle) ──
 	// Optional until wired — TypeScript enforces callers check before use.

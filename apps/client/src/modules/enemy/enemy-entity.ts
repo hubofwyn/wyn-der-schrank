@@ -1,10 +1,22 @@
 import type { Facing } from '@wds/shared';
+import type { IDiagnostics } from '../../core/ports/diagnostics.js';
 import {
 	createPatrolState,
 	type PatrolConfig,
 	type PatrolState,
 	updatePatrol,
 } from './behaviors/patrol-behavior.js';
+
+/** Module-local noop — avoids importing core/adapters/ (zone rule). */
+const NOOP_DIAGNOSTICS: IDiagnostics = {
+	emit() {},
+	isEnabled() {
+		return false;
+	},
+	query() {
+		return [];
+	},
+};
 
 export interface EnemyConfig {
 	readonly damage: number;
@@ -33,11 +45,13 @@ export class EnemyEntity {
 	private readonly _damage: number;
 	private readonly patrolConfig: PatrolConfig;
 	private readonly patrolState: PatrolState;
+	private readonly diagnostics: IDiagnostics;
 
-	constructor(config: EnemyConfig) {
+	constructor(config: EnemyConfig, diagnostics?: IDiagnostics) {
 		this._health = config.health;
 		this._isAlive = true;
 		this._damage = config.damage;
+		this.diagnostics = diagnostics ?? NOOP_DIAGNOSTICS;
 		this.patrolConfig = {
 			leftBound: config.patrolLeftBound,
 			rightBound: config.patrolRightBound,
@@ -61,6 +75,14 @@ export class EnemyEntity {
 		this._health = Math.max(0, this._health - amount);
 		if (this._health <= 0) {
 			this._isAlive = false;
+			this.diagnostics.emit('enemy', 'state', 'death', {
+				damage: amount,
+			});
+		} else {
+			this.diagnostics.emit('enemy', 'state', 'damage', {
+				amount,
+				remainingHealth: this._health,
+			});
 		}
 	}
 

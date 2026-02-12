@@ -78,6 +78,10 @@ export class PreloadScene extends BaseScene {
 			if (this.progressFill) {
 				this.progressFill.width = this.progressBarWidth * value;
 			}
+			this.container.diagnostics.emit('scene', 'state', 'preload-progress', {
+				loaded: Math.round(value * 100),
+				total: 100,
+			});
 		});
 	}
 

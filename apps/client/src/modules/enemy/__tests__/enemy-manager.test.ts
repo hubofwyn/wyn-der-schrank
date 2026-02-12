@@ -1,6 +1,25 @@
 import { describe, expect, it } from 'vitest';
+import type { DiagnosticEvent, IDiagnostics } from '../../../core/ports/diagnostics.js';
 import type { EnemyConfig } from '../enemy-entity.js';
 import { EnemyManager } from '../enemy-manager.js';
+
+function createSpyDiagnostics(): IDiagnostics & { events: DiagnosticEvent[] } {
+	const events: DiagnosticEvent[] = [];
+	return {
+		events,
+		isEnabled: () => true,
+		emit: (channel, level, label, data) => {
+			events.push({ frame: 0, timestamp: 0, channel, level, label, data });
+		},
+		query: (filter) => {
+			let result = events;
+			if (filter?.channel) result = result.filter((e) => e.channel === filter.channel);
+			if (filter?.level) result = result.filter((e) => e.level === filter.level);
+			if (filter?.last) result = result.slice(-filter.last);
+			return result;
+		},
+	};
+}
 
 function makeConfig(overrides?: Partial<EnemyConfig>): EnemyConfig {
 	return {
@@ -52,5 +71,17 @@ describe('EnemyManager', () => {
 		manager.init([makeConfig()]);
 		manager.reset();
 		expect(manager.count).toBe(0);
+	});
+
+	it('forwards diagnostics to created entities', () => {
+		const spy = createSpyDiagnostics();
+		const manager = new EnemyManager(spy);
+		manager.init([makeConfig({ health: 20 })]);
+		const enemy = manager.getEnemy(0);
+		enemy!.takeDamage(20);
+
+		const deathEvents = spy.events.filter((e) => e.label === 'death');
+		expect(deathEvents).toHaveLength(1);
+		expect(deathEvents[0].channel).toBe('enemy');
 	});
 });

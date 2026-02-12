@@ -38,7 +38,7 @@ packages/shared/         → Zod schemas + inferred types (@wds/shared)
   src/types/index.ts     → 40+ types, all z.infer<> re-exports
 apps/client/             → Phaser 4 game client (@wds/client)
   src/core/              → Infrastructure zone (ports, adapters, services, container)
-    ports/               → 7 interfaces: engine, input, audio, physics, network, storage, settings
+    ports/               → 8 interfaces: engine, input, audio, physics, network, storage, settings, diagnostics
     container.ts         → Container + PlatformerScope + MinigameScope
   src/modules/           → Domain zone (pure TS, NO Phaser/browser globals)
     animation/           → Shared AnimationDef type for entity animations
@@ -310,4 +310,4 @@ shared/  X any app dependency except Zod
 | Game blueprint | `docs/plans/game-blueprint.md` |
 | Roadmap & status | `docs/plans/active-plan.md` |
 | Agentic telemetry | `docs/plans/telemetry.md` + `.claude/hooks/` |
-| Game diagnostics (plan) | `docs/plans/diagnostics.md` |
+| Game diagnostics | `core/ports/diagnostics.ts` + `core/adapters/console-diagnostics.ts` + `docs/plans/diagnostics.md` |
