@@ -21,7 +21,8 @@ docs/
   plans/
     active-plan.md       → Goal roadmap, status tracking, update protocol
     game-blueprint.md    → Scenes, schemas, modules, assets, data flow
-    telemetry.md         → Phaser 4 enforcement, hooks, observability
+    telemetry.md         → Agentic telemetry: Phaser 4 enforcement, hooks, observability
+    diagnostics.md       → Game runtime diagnostics: port interface, adapters, channel filtering
     agentic-setup.md     → Design of .claude/ infrastructure
     lint-format-hooks.md → Tool roles, config, git hook pipeline
 .claude/
@@ -308,3 +309,5 @@ shared/  X any app dependency except Zod
 | Architecture docs | `docs/FOUNDATION.md` |
 | Game blueprint | `docs/plans/game-blueprint.md` |
 | Roadmap & status | `docs/plans/active-plan.md` |
+| Agentic telemetry | `docs/plans/telemetry.md` + `.claude/hooks/` |
+| Game diagnostics (plan) | `docs/plans/diagnostics.md` |
