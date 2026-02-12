@@ -229,6 +229,15 @@ export class PlatformerScene extends BaseScene {
 	update(time: number, delta: number): void {
 		this.clock.refresh(time, delta);
 		this.phaserInput.update();
+
+		// ── Pause detection ──
+		if (this.phaserInput.justPressed('pause') && !this.levelCompleted && !this.deathHandled) {
+			this.pauseScene(SceneKeys.HUD);
+			this.pauseScene();
+			this.launchParallel(SceneKeys.PAUSE);
+			return;
+		}
+
 		this.playerController.update();
 
 		// ── Drive sprite from domain state ──
