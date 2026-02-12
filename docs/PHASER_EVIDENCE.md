@@ -89,6 +89,7 @@ Do not duplicate entries — if a symbol is already listed, additional usages do
 | `GameObject.destroy()` | `/classes/Phaser.GameObjects.GameObject.html#destroy` | `scenes/platformer-scene.ts` | 2026-02-12 | type-verified |
 | `scene.settings.data` | `/classes/Phaser.Scenes.ScenePlugin.html#start` | `scenes/platformer-scene.ts` | 2026-02-12 | type-verified |
 | `scene.events.once()` | `/classes/Phaser.Events.EventEmitter.html#once` | `scenes/platformer-scene.ts` | 2026-02-12 | type-verified |
+| `Text.setOrigin()` | `/classes/Phaser.GameObjects.Components.Origin.html#setOrigin` | `scenes/hud-scene.ts` | 2026-02-12 | type-verified |
 | `SpriteGPULayer` | `/classes/Phaser.GameObjects.SpriteGPULayer.html` | (planned) | — | — |
 | `Texture#setWrap` | `/classes/Phaser.Textures.Texture.html#setWrap` | (planned) | — | — |
 

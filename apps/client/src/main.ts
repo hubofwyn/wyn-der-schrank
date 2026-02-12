@@ -10,6 +10,7 @@ import { NoopStorage } from './core/adapters/noop-storage.js';
 import { PhaserClock } from './core/adapters/phaser-clock.js';
 import type { Container } from './core/container.js';
 import { BootScene } from './scenes/boot-scene.js';
+import { HudScene } from './scenes/hud-scene.js';
 import { PlatformerScene } from './scenes/platformer-scene.js';
 import { PreloadScene } from './scenes/preload-scene.js';
 
@@ -57,7 +58,7 @@ const game = new Phaser.Game({
 		mode: Phaser.Scale.FIT,
 		autoCenter: Phaser.Scale.CENTER_BOTH,
 	},
-	scene: [BootScene, PreloadScene, PlatformerScene],
+	scene: [BootScene, PreloadScene, PlatformerScene, HudScene],
 });
 
 game.registry.set('container', createContainer());
