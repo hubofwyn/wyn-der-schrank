@@ -11,6 +11,7 @@ import { NoopPhysics } from './core/adapters/noop-physics.js';
 import { PhaserClock } from './core/adapters/phaser-clock.js';
 import type { Container, MinigameScope } from './core/container.js';
 import type { IInputProvider } from './core/ports/input.js';
+import { ShakeRushLogic } from './modules/minigame/games/shake-rush/shake-rush-logic.js';
 import { MinigameManager } from './modules/minigame/minigame-manager.js';
 import { MinigameRegistry } from './modules/minigame/minigame-registry.js';
 import { SettingsManager } from './modules/settings/settings-manager.js';
@@ -46,6 +47,7 @@ function createContainer(): Container {
 	);
 
 	const registry = new MinigameRegistry();
+	registry.register('shake-rush', (deps) => new ShakeRushLogic(deps));
 	const manager = new MinigameManager(registry, diagnostics);
 
 	function createMinigameScope(minigameId: string, sceneInput: IInputProvider): MinigameScope {
