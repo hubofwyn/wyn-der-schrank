@@ -1,4 +1,4 @@
-import type { PlatformerConfig } from '@wds/shared';
+import type { PlatformerConfig } from '@hub-of-wyn/shared';
 import type { IAudioPlayer } from './ports/audio.js';
 import type { IDiagnostics } from './ports/diagnostics.js';
 import type { IGameClock } from './ports/engine.js';

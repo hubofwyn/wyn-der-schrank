@@ -1,4 +1,4 @@
-import type { GameEvent, SyncState } from '@wds/shared';
+import type { GameEvent, SyncState } from '@hub-of-wyn/shared';
 import type { INetworkClient } from '../ports/network.js';
 
 /**

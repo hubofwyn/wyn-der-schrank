@@ -1,4 +1,4 @@
-import type { CharacterStats, PlatformerConfig } from '@wds/shared';
+import type { CharacterStats, PlatformerConfig } from '@hub-of-wyn/shared';
 import { vi } from 'vitest';
 import type { IGameClock } from '../../core/ports/engine.js';
 import type { ActionKey, IInputProvider } from '../../core/ports/input.js';

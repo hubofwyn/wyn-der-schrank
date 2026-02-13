@@ -17,7 +17,7 @@ Run through this checklist before declaring a task complete.
 - [ ] New files are in the correct zone directory
 
 ## Contract compliance
-- [ ] New types use `z.infer<>` from @wds/shared (not hand-written)
+- [ ] New types use `z.infer<>` from @hub-of-wyn/shared (not hand-written)
 - [ ] New services are in `Container` interface and wired in `createContainer()`
 - [ ] Scenes remain thin (no game logic, only state-reading + sprite-moving)
 

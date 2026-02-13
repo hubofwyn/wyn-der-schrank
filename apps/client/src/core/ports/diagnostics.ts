@@ -1,4 +1,4 @@
-import type { DiagnosticChannel, DiagnosticLevel } from '@wds/shared';
+import type { DiagnosticChannel, DiagnosticLevel } from '@hub-of-wyn/shared';
 
 /** Serialized diagnostic event — stored in ring buffer, emitted to console. */
 export interface DiagnosticEvent {

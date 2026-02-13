@@ -1,4 +1,4 @@
-import type { Vec2 } from '@wds/shared';
+import type { Vec2 } from '@hub-of-wyn/shared';
 import type {
 	BlockedState,
 	BodyConfig,

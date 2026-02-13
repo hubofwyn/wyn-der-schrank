@@ -25,12 +25,12 @@ bun run check         # full gate: typecheck + zone lint + dep check + tests
 ## Project Structure
 
 ```text
-packages/shared/     Zod schemas + inferred types (@wds/shared)
-apps/client/         Phaser 4 game client (@wds/client)
+packages/shared/     Zod schemas + inferred types (@hub-of-wyn/shared)
+apps/client/         Phaser 4 game client (@hub-of-wyn/client)
   src/core/          Infrastructure: ports, adapters, services, DI container
   src/modules/       Domain logic (pure TS, no Phaser imports)
   src/scenes/        Phaser scenes (thin view layer)
-apps/server/         Hono API server (@wds/server)
+apps/server/         Hono API server (@hub-of-wyn/server)
 docs/                Architecture, plans, Phaser API evidence
 ```
 

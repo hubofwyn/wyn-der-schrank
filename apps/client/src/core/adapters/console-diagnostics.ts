@@ -1,4 +1,4 @@
-import type { DiagnosticChannel, DiagnosticLevel } from '@wds/shared';
+import type { DiagnosticChannel, DiagnosticLevel } from '@hub-of-wyn/shared';
 import type { DiagnosticEvent, IDiagnostics } from '../ports/diagnostics.js';
 import type { IGameClock } from '../ports/engine.js';
 import type { ISettingsManager } from '../ports/settings.js';

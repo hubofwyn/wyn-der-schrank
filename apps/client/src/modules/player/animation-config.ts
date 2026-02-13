@@ -1,4 +1,4 @@
-import type { PlayerState } from '@wds/shared';
+import type { PlayerState } from '@hub-of-wyn/shared';
 import type { AnimationDef } from '../animation/animation-def.js';
 
 /**

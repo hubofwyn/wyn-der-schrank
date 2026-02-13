@@ -6,7 +6,7 @@
 		"apps/*"
 	],
 	"scripts": {
-		"dev": "bun run --filter @wds/client dev",
+		"dev": "bun run --filter @hub-of-wyn/client dev",
 		"build": "bun run --filter '*' build",
 		"typecheck": "tsc --build --force",
 		"lint": "eslint .",

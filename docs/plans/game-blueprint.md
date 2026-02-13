@@ -1635,7 +1635,7 @@ export class PauseScene extends BaseScene {
 | Adapter files | `{impl}-{port}.ts` | `phaser-clock.ts`, `local-storage-adapter.ts` |
 | Asset keys | `{category}-{name}` | `char-knight`, `sfx-jump`, `map-forest-1` |
 | Level IDs | `{world}-{n}` | `forest-1`, `cave-3` |
-| Package names | `@wds/{name}` | `@wds/shared`, `@wds/client`, `@wds/server` |
+| Package names | `@hub-of-wyn/{name}` | `@hub-of-wyn/shared`, `@hub-of-wyn/client`, `@hub-of-wyn/server` |
 
 ---
 

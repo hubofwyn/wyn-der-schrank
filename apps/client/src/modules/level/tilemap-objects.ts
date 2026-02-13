@@ -1,5 +1,5 @@
-import type { EnemyType } from '@wds/shared';
-import { EnemyTypeSchema } from '@wds/shared';
+import type { EnemyType } from '@hub-of-wyn/shared';
+import { EnemyTypeSchema } from '@hub-of-wyn/shared';
 
 export interface TilemapObject {
 	readonly type: string;

@@ -52,7 +52,7 @@ The agent greps for the anomaly instead of reading source and guessing.
 ### 1. Channel Types — Zod-First, Single Source of Truth
 
 **Critical decision:** Channel names are defined ONCE in the Zod schema in
-`@wds/shared`, not independently in the port file. The port file imports the
+`@hub-of-wyn/shared`, not independently in the port file. The port file imports the
 inferred type. This follows the project's Zod-first principle: schemas are the
 source of truth, types are derived.
 
@@ -108,13 +108,13 @@ compile — the type derives from the schema, not the other way around.
 
 ### 2. The Diagnostic Port
 
-Lives in `core/ports/diagnostics.ts`. Imports types from `@wds/shared`
+Lives in `core/ports/diagnostics.ts`. Imports types from `@hub-of-wyn/shared`
 (permitted — shared package, not a module).
 
 ```typescript
 // core/ports/diagnostics.ts
 
-import type { DiagnosticChannel, DiagnosticLevel } from '@wds/shared';
+import type { DiagnosticChannel, DiagnosticLevel } from '@hub-of-wyn/shared';
 
 /** Serialized diagnostic event — stored in ring buffer, emitted to console */
 export interface DiagnosticEvent {
@@ -303,7 +303,7 @@ from idle to jumping when jump was pressed while grounded."
 ### 4. Settings Schema Extension
 
 Add `diagnostics` section to the existing settings schema. This is a schema
-change in `@wds/shared` — "Ask First" per AGENTS.md. This document constitutes
+change in `@hub-of-wyn/shared` — "Ask First" per AGENTS.md. This document constitutes
 the ask.
 
 ```typescript
@@ -502,8 +502,8 @@ screenshot instead of console commands.
 
 | Component | Zone | Import Rule |
 |-----------|------|-------------|
-| `DiagnosticChannel`/`DiagnosticLevel` types | `@wds/shared` | Importable everywhere |
-| `DiagnosticsConfigSchema` | `@wds/shared` | Importable everywhere |
+| `DiagnosticChannel`/`DiagnosticLevel` types | `@hub-of-wyn/shared` | Importable everywhere |
+| `DiagnosticsConfigSchema` | `@hub-of-wyn/shared` | Importable everywhere |
 | `IDiagnostics` port + `DiagnosticEvent` | `core/ports/` | Importable by modules/ and scenes/ |
 | `ConsoleDiagnostics` adapter | `core/adapters/` | Importable by scenes/ and main.ts only |
 | `NoopDiagnostics` adapter | `core/adapters/` | Same |
@@ -525,7 +525,7 @@ No zone rules change. Follows the exact pattern of `IClock`, `IInputProvider`,
 
 ## Implementation Sequence
 
-### Commit 1: Diagnostics schema in @wds/shared
+### Commit 1: Diagnostics schema in @hub-of-wyn/shared
 
 | File | Action |
 |------|--------|
@@ -542,7 +542,7 @@ and level names.
 | `apps/client/src/core/ports/diagnostics.ts` | **New** — `IDiagnostics`, `DiagnosticEvent` (types from shared/) |
 | `apps/client/src/core/adapters/noop-diagnostics.ts` | **New** — zero-cost no-op implementation |
 
-Pure TS, imports types from `@wds/shared` only.
+Pure TS, imports types from `@hub-of-wyn/shared` only.
 
 ### Commit 3: Settings schema extension (shared/ only)
 

@@ -1,4 +1,4 @@
-import { GameEventSchema, SyncStateSchema } from '@wds/shared';
+import { GameEventSchema, SyncStateSchema } from '@hub-of-wyn/shared';
 import { Hono } from 'hono';
 
 const app = new Hono()

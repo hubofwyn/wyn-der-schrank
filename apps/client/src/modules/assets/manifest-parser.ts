@@ -1,5 +1,5 @@
-import type { AssetEntry } from '@wds/shared';
-import { AssetManifestSchema } from '@wds/shared';
+import type { AssetEntry } from '@hub-of-wyn/shared';
+import { AssetManifestSchema } from '@hub-of-wyn/shared';
 
 /**
  * Parse and validate a raw asset manifest.

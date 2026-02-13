@@ -2,7 +2,7 @@
 title: Studio Asset Interface — Shared Contract & Game-Side Preparation
 last_updated: 2026-02-12
 status: DONE — G6 implemented, pending npm publish after PR merge
-scope: "@wds/shared preparation for studio consumption, missing schemas, publishing"
+scope: "@hub-of-wyn/shared preparation for studio consumption, missing schemas, publishing"
 companion: wyn-der-schrank-studio/plan.md (studio build plan)
 ---
 
@@ -10,9 +10,9 @@ companion: wyn-der-schrank-studio/plan.md (studio build plan)
 
 This document defines the shared contract between the game (`wyn-der-schrank`)
 and the studio (`wyn-der-schrank-studio`). It is the authoritative reference
-for how the two projects cooperate through `@wds/shared` and the asset manifest.
+for how the two projects cooperate through `@hub-of-wyn/shared` and the asset manifest.
 
-The studio plan (Part VII: @wds/shared Preparation) references this document
+The studio plan (Part VII: @hub-of-wyn/shared Preparation) references this document
 as the source of truth for all game-side concerns.
 
 ---
@@ -26,7 +26,7 @@ governs — the studio plan defers to it.
 
 The **only** integration points between studio and game are:
 
-1. **`@wds/shared` npm package** — schemas and types, consumed by the studio
+1. **`@hub-of-wyn/shared` npm package** — schemas and types, consumed by the studio
    as a pinned npm dependency.
 2. **`asset-manifest.json`** — the manifest file in the game repo, written by
    the studio's exporter and read by the game's PreloadScene.
@@ -38,24 +38,24 @@ were generated. The manifest is the handshake.
 
 ### 2. Export Paths — What the Studio Can Import
 
-`@wds/shared` publishes these explicit subpath exports:
+`@hub-of-wyn/shared` publishes these explicit subpath exports:
 
 | Export Path | File | Studio Uses For |
 |-------------|------|-----------------|
-| `@wds/shared/assets` | `schema/assets.ts` | AssetTypeSchema, AssetEntrySchema, AssetManifestSchema, SpritesheetMetaSchema, AudioMetaSchema, TilemapMetaSchema |
-| `@wds/shared/character` | `schema/character.ts` | CharacterIdSchema — validate spriteKey/portraitKey references |
-| `@wds/shared/enemy` | `schema/enemy.ts` | EnemyTypeSchema — validate spriteKey references |
-| `@wds/shared/collectible` | `schema/collectible.ts` | CollectibleTypeSchema — validate spriteKey/sfxKey references |
-| `@wds/shared/level` | `schema/level.ts` | LevelIdSchema, WorldIdSchema — validate tilemapAssetKey/musicKey references |
-| `@wds/shared/common` | `schema/common.ts` | Vec2Schema, RectSchema — positioning data |
-| `@wds/shared/types` | `types/index.ts` | TypeScript type aliases (z.infer<> re-exports) |
+| `@hub-of-wyn/shared/assets` | `schema/assets.ts` | AssetTypeSchema, AssetEntrySchema, AssetManifestSchema, SpritesheetMetaSchema, AudioMetaSchema, TilemapMetaSchema |
+| `@hub-of-wyn/shared/character` | `schema/character.ts` | CharacterIdSchema — validate spriteKey/portraitKey references |
+| `@hub-of-wyn/shared/enemy` | `schema/enemy.ts` | EnemyTypeSchema — validate spriteKey references |
+| `@hub-of-wyn/shared/collectible` | `schema/collectible.ts` | CollectibleTypeSchema — validate spriteKey/sfxKey references |
+| `@hub-of-wyn/shared/level` | `schema/level.ts` | LevelIdSchema, WorldIdSchema — validate tilemapAssetKey/musicKey references |
+| `@hub-of-wyn/shared/common` | `schema/common.ts` | Vec2Schema, RectSchema — positioning data |
+| `@hub-of-wyn/shared/types` | `types/index.ts` | TypeScript type aliases (z.infer<> re-exports) |
 
 The studio **never** imports:
 
 | Forbidden Export | Why |
 |-----------------|-----|
-| `@wds/shared` (barrel) | Pulls in all schemas including game internals |
-| `@wds/shared/schema/*` (wildcard) | Removed — replaced by explicit subpaths above |
+| `@hub-of-wyn/shared` (barrel) | Pulls in all schemas including game internals |
+| `@hub-of-wyn/shared/schema/*` (wildcard) | Removed — replaced by explicit subpaths above |
 | diagnostics, settings, events, sync, physics-config, player, progression, scoring, minigame | Game-internal runtime concerns |
 
 ESLint `no-restricted-imports` in the studio enforces this boundary.
@@ -161,7 +161,7 @@ correct asset type.
 ### 7. AnimationDef — Client Internal, Not Shared
 
 `AnimationDef` is a TypeScript interface in `modules/animation/animation-def.ts`.
-It is NOT a Zod schema and is NOT in `@wds/shared`. The studio does not import it.
+It is NOT a Zod schema and is NOT in `@hub-of-wyn/shared`. The studio does not import it.
 
 The studio needs animation frame metadata to produce correct spritesheets.
 This is solved by `SpritesheetMetaSchema.animations` — the studio writes
@@ -183,36 +183,36 @@ natural next step. The manifest schema is designed to support this.
 
 ### 8. Versioning Protocol
 
-- **@wds/shared version:** Semver. First publish at `1.0.0`.
+- **@hub-of-wyn/shared version:** Semver. First publish at `1.0.0`.
   - Patch: bug fixes, additive optional fields
   - Minor: new schemas, new export paths
   - Major: breaking changes to existing schemas (should be very rare)
 - **Manifest version:** Semver string in `asset-manifest.json`.
   - Bump when manifest structure changes (not on individual asset updates)
-- **Studio pins @wds/shared:** Uses exact version in `package.json` via
-  `bun add @wds/shared --exact` (the `--exact`/`-E` flag prevents the
+- **Studio pins @hub-of-wyn/shared:** Uses exact version in `package.json` via
+  `bun add @hub-of-wyn/shared --exact` (the `--exact`/`-E` flag prevents the
   default `^` range and writes the literal version string).
-  Updates deliberately via `bun update @wds/shared` followed by
+  Updates deliberately via `bun update @hub-of-wyn/shared` followed by
   `wds-studio validate-all` to confirm no regressions.
 
 ### 9. Development Workflow — `bun link`
 
 During active development across both repos, `bun link` eliminates the
-publish-install cycle. The studio resolves `@wds/shared` to the game's
+publish-install cycle. The studio resolves `@hub-of-wyn/shared` to the game's
 live source via symlink.
 
 **Setup (one-time per machine):**
 
 ```bash
-# In the game repo — register @wds/shared as linkable
+# In the game repo — register @hub-of-wyn/shared as linkable
 cd packages/shared
 bun link
-# → "Success! Registered @wds/shared"
+# → "Success! Registered @hub-of-wyn/shared"
 
 # In the studio repo — symlink to the local copy
 cd /path/to/wyn-der-schrank-studio
-bun link @wds/shared
-# → node_modules/@wds/shared → game's packages/shared/
+bun link @hub-of-wyn/shared
+# → node_modules/@hub-of-wyn/shared → game's packages/shared/
 ```
 
 Now schema changes in the game are immediately visible to the studio
@@ -223,7 +223,7 @@ without publishing. TypeScript sees the live `.ts` source files.
 ```jsonc
 {
   "dependencies": {
-    "@wds/shared": "link:@wds/shared"  // ← bun link sets this
+    "@hub-of-wyn/shared": "link:@hub-of-wyn/shared"  // ← bun link sets this
   }
 }
 ```
@@ -233,7 +233,7 @@ without publishing. TypeScript sees the live `.ts` source files.
 ```jsonc
 {
   "dependencies": {
-    "@wds/shared": "1.0.0"  // ← pinned npm version
+    "@hub-of-wyn/shared": "1.0.0"  // ← pinned npm version
   }
 }
 ```
@@ -242,11 +242,11 @@ without publishing. TypeScript sees the live `.ts` source files.
 
 ```bash
 # Switch to linked (dev): symlink to local game repo
-bun link @wds/shared
+bun link @hub-of-wyn/shared
 
 # Switch to published (prod/CI): install from npm
 bun unlink
-bun add @wds/shared@1.0.0 --exact
+bun add @hub-of-wyn/shared@1.0.0 --exact
 ```
 
 **When to publish vs link:**
@@ -259,8 +259,8 @@ bun add @wds/shared@1.0.0 --exact
 **Version monitoring:**
 
 ```bash
-# In the studio repo — check if @wds/shared has a newer published version
-bun outdated @wds/shared
+# In the studio repo — check if @hub-of-wyn/shared has a newer published version
+bun outdated @hub-of-wyn/shared
 ```
 
 ### 10. Package Management Conventions
@@ -291,7 +291,7 @@ steps:
 
 **Peer dependencies — Zod:**
 
-`@wds/shared` declares Zod as a `peerDependency` (`"zod": "^4.0.0"`).
+`@hub-of-wyn/shared` declares Zod as a `peerDependency` (`"zod": "^4.0.0"`).
 Bun auto-installs peer dependencies during `bun install`, so the studio
 does not need to manually `bun add zod` — Bun resolves it automatically.
 However, if the studio wants to pin a specific Zod version, it can add
@@ -314,10 +314,10 @@ Alternatively, use `bun add sharp --trust` which adds to
 
 **Exact version pinning:**
 
-The studio pins `@wds/shared` with `bun add @wds/shared@1.0.0 --exact`
+The studio pins `@hub-of-wyn/shared` with `bun add @hub-of-wyn/shared@1.0.0 --exact`
 (the `-E` flag). This writes `"1.0.0"` instead of `"^1.0.0"`, preventing
 unintended minor/patch upgrades. Updates are deliberate:
-`bun update @wds/shared` followed by validation.
+`bun update @hub-of-wyn/shared` followed by validation.
 
 **Installation strategy:**
 
@@ -331,7 +331,7 @@ override is needed.
 
 **Publishing gate:**
 
-`@wds/shared` has `prepublishOnly: "bun run typecheck"` which runs
+`@hub-of-wyn/shared` has `prepublishOnly: "bun run typecheck"` which runs
 automatically before `bun publish`. This prevents publishing with type
 errors. The studio can verify the publish preview with
 `bun publish --dry-run` from `packages/shared/`.
@@ -374,9 +374,9 @@ canonical definitions. Summary:
 | `AudioMetaSchema` | `audioMeta` | format (ogg/mp3/wav), durationMs, sampleRate?, channels? |
 | `TilemapMetaSchema` | `tilemapMeta` | width, height, tileWidth, tileHeight, layers, objectGroups? |
 
-All three are exported from `@wds/shared` and `@wds/shared/assets`.
+All three are exported from `@hub-of-wyn/shared` and `@hub-of-wyn/shared/assets`.
 Inferred types (`SpritesheetMeta`, `AudioMeta`, `TilemapMeta`) are
-exported from `@wds/shared/types`.
+exported from `@hub-of-wyn/shared/types`.
 
 ---
 
@@ -415,7 +415,7 @@ add rich metadata without breaking existing consumers.
 
 ```jsonc
 {
-  "name": "@wds/shared",
+  "name": "@hub-of-wyn/shared",
   "version": "1.0.0",
   "type": "module",
   "main": "./src/index.ts",
@@ -473,28 +473,28 @@ Concrete import guidance for the studio codebase:
 import {
   AssetTypeSchema, AssetEntrySchema, AssetManifestSchema,
   SpritesheetMetaSchema, AudioMetaSchema, TilemapMetaSchema,
-} from '@wds/shared/assets';
+} from '@hub-of-wyn/shared/assets';
 
 // REFERENCE VALIDATION — verify asset keys match game definitions
-import { CharacterIdSchema } from '@wds/shared/character';
-import { EnemyTypeSchema } from '@wds/shared/enemy';
-import { CollectibleTypeSchema } from '@wds/shared/collectible';
-import { LevelIdSchema, WorldIdSchema } from '@wds/shared/level';
+import { CharacterIdSchema } from '@hub-of-wyn/shared/character';
+import { EnemyTypeSchema } from '@hub-of-wyn/shared/enemy';
+import { CollectibleTypeSchema } from '@hub-of-wyn/shared/collectible';
+import { LevelIdSchema, WorldIdSchema } from '@hub-of-wyn/shared/level';
 
 // COMMON — positioning and geometry
-import { Vec2Schema, RectSchema } from '@wds/shared/common';
+import { Vec2Schema, RectSchema } from '@hub-of-wyn/shared/common';
 
 // TYPES — TypeScript type aliases when only types are needed
-import type { AssetEntry, AssetManifest, AssetType } from '@wds/shared/types';
+import type { AssetEntry, AssetManifest, AssetType } from '@hub-of-wyn/shared/types';
 ```
 
 The studio **NEVER** imports:
 
 ```typescript
 // FORBIDDEN — game internal schemas
-import { ... } from '@wds/shared';                // barrel pulls everything
-import { ... } from '@wds/shared/schema/settings'; // game runtime
-import { ... } from '@wds/shared/schema/physics-config'; // game runtime
+import { ... } from '@hub-of-wyn/shared';                // barrel pulls everything
+import { ... } from '@hub-of-wyn/shared/schema/settings'; // game runtime
+import { ... } from '@hub-of-wyn/shared/schema/physics-config'; // game runtime
 // etc.
 ```
 
@@ -511,8 +511,8 @@ When the game adds new asset types (e.g., `'particle'`, `'shader'`,
 2. If the type needs metadata, create an optional `{type}Meta` schema
 3. Add the optional field to `AssetEntrySchema`
 4. Export from `index.ts` and `types/index.ts`
-5. Publish a patch version of `@wds/shared`
-6. Studio runs `bun update @wds/shared` + `wds-studio validate-all`
+5. Publish a patch version of `@hub-of-wyn/shared`
+6. Studio runs `bun update @hub-of-wyn/shared` + `wds-studio validate-all`
 7. Studio adds a new processor for the asset type if needed
 
 This is always additive — existing manifest entries and studio code are
@@ -552,7 +552,7 @@ Not needed now, but the additive schema pattern supports it.
 
 ## Decisions (Resolved)
 
-1. **Publish target:** npm public registry. `@wds/shared` contains schemas
+1. **Publish target:** npm public registry. `@hub-of-wyn/shared` contains schemas
    and inferred types only — no secrets, no proprietary game logic. Public
    access simplifies CI for both repos (no auth tokens, no scoped registry
    config). `publishConfig: { "access": "public" }` is correct.
