@@ -1,7 +1,7 @@
 ---
 title: Studio Asset Interface — Shared Contract & Game-Side Preparation
 last_updated: 2026-02-12
-status: DONE — G6 implemented, pending npm publish after PR merge
+status: DONE — G6 implemented, @hub-of-wyn/shared@1.0.0 published to npm
 scope: "@hub-of-wyn/shared preparation for studio consumption, missing schemas, publishing"
 companion: wyn-der-schrank-studio/plan.md (studio build plan)
 ---

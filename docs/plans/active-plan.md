@@ -8,8 +8,8 @@ last_updated: 2026-02-12
 ## Snapshot
 
 - __Active:__ none
-- __Next ready:__ none
-- __Blocked:__ none
+- __Next ready:__ G7 Runtime & Observability
+- __Blocked:__ G8 (requires G7)
 - __Last milestone:__ 2026-02-12 — G6 @hub-of-wyn/shared Publishing Preparation (182 tests) [feat/shared-publishing]
 - __Gates:__ all green (182 tests)
 
@@ -102,7 +102,7 @@ Title screen, pause, game-over screen, settings, and persistence make the game s
 > __Requires:__ none (G1–G5 done, schemas stable)
 > __Benefits from:__ none
 > __Unlocks:__ Studio buildout (external repo)
-> __Branch:__ feat/shared-publishing
+> __Branch:__ merged
 
 Prepare `@hub-of-wyn/shared` for npm publication so the studio can depend on it. Add missing asset metadata schemas, replace wildcard exports with explicit subpaths, move Zod to peerDependencies, and remove the `private` flag. The studio repo (`wyn-der-schrank-studio`) is blocked on this — it needs `@hub-of-wyn/shared` published (or `bun link`-able with the new schemas) before its schema layer can import from `@hub-of-wyn/shared/assets`.
 
@@ -113,7 +113,46 @@ __Reference:__ `docs/plans/studio-asset-interface.md` — the authoritative shar
 - [x] Update `packages/shared/package.json`: remove `private: true`, bump to `1.0.0`, explicit subpath exports (no wildcards), `files` field, `publishConfig`, `prepublishOnly` script, Zod to `peerDependencies`
 - [x] Verify export self-containment via `bunx dependency-cruiser` (no transitive game-internal deps from any exported schema file)
 - [x] Update documentation: `AGENTS.md` (publishing workflow), `FOUNDATION.md` (shared package section)
-- [ ] Publish to npm public registry (`bun publish --access public` — manual step after PR merge)
+- [x] Publish to npm public registry (`bun publish --access public` — manual step after PR merge)
+
+### G7: Runtime & Observability
+
+> __Status:__ ready
+> __Requires:__ none (G1–G6 done)
+> __Benefits from:__ none
+> __Unlocks:__ G8
+> __Branch:__ (not started)
+
+Server starts properly with validated config, unified dev command, front-to-back diagnostics, tested and verified.
+
+- [ ] Server config validation with Zod (port, log level, diagnostics settings)
+- [ ] ServerDiagnostics service with ring buffer and query filtering
+- [ ] `GET /api/health` endpoint with uptime, version, environment
+- [ ] `GET /api/diagnostics` endpoint queryable by channel/level/last
+- [ ] Structured startup logging on server boot
+- [ ] Unified `bun run dev` starts both client (:3000) and server (:3001)
+- [ ] Documentation updated (AGENTS.md, diagnostics.md)
+
+### G8: Minigame Architecture & Shake Rush
+
+> __Status:__ not-started
+> __Requires:__ G7
+> __Benefits from:__ none
+> __Unlocks:__ future minigames (dice-duel, coin-catch, memory-match)
+> __Branch:__ (not started)
+
+Build the minigame framework, then completely rewrite the Birthday Minigame from wynisbuff2 using Phaser 4 and our architecture. Same gameplay (3-lane collect-and-deliver) rebuilt from scratch with hexagonal architecture, ports/adapters, zone defense, and full test coverage.
+
+- [ ] `'shake-rush'` added to MinigameIdSchema in `@hub-of-wyn/shared`
+- [ ] `'minigame'` added to DiagnosticChannelSchema
+- [ ] IMinigameLogic interface with snapshot/intent pattern (pure TS, zone-safe)
+- [ ] MinigameRegistry and MinigameManager modules with tests
+- [ ] MinigameHudState registry key pattern (mirrors GameplayState)
+- [ ] MinigameScope expanded with logic field, wired in container
+- [ ] Shake Rush complete rewrite: config, lane system, scoring, game orchestration — all pure TS with full test coverage
+- [ ] MinigameScene and MinigameHudScene (thin Phaser 4 wrappers, verified API only)
+- [ ] Minigame portal trigger in PlatformerScene via tilemap objects
+- [ ] Documentation updated (AGENTS.md, active-plan.md)
 
 ## Update Protocol
 
