@@ -1,6 +1,7 @@
 import { GameEventSchema, SyncStateSchema } from '@hub-of-wyn/shared';
 import { Hono } from 'hono';
 import { loadConfig } from './config.js';
+import { createDiagnosticsRoutes } from './routes/diagnostics.js';
 import { healthRoutes } from './routes/health.js';
 import { ServerDiagnostics } from './services/server-diagnostics.js';
 
@@ -9,6 +10,7 @@ const diagnostics = new ServerDiagnostics(config);
 
 const app = new Hono()
 	.route('/', healthRoutes)
+	.route('/', createDiagnosticsRoutes(diagnostics))
 	.get('/api/state', (c) => {
 		diagnostics.emit('request', 'state', 'GET /api/state', {
 			method: 'GET',
