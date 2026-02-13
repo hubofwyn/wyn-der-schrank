@@ -1,4 +1,5 @@
 import type { PlatformerConfig } from '@hub-of-wyn/shared';
+import type { IMinigameLogic } from '../modules/minigame/minigame-logic.js';
 import type { IAudioPlayer } from './ports/audio.js';
 import type { IDiagnostics } from './ports/diagnostics.js';
 import type { IGameClock } from './ports/engine.js';
@@ -31,7 +32,7 @@ export interface Container {
 	// ── Scoped Factories (per-scene lifecycle) ──
 	// Optional until wired — TypeScript enforces callers check before use.
 	readonly createPlatformerScope?: (levelId: string) => PlatformerScope;
-	readonly createMinigameScope?: (minigameId: string) => MinigameScope;
+	readonly createMinigameScope?: (minigameId: string, input: IInputProvider) => MinigameScope;
 }
 
 /**
@@ -50,5 +51,6 @@ export interface PlatformerScope {
  */
 export interface MinigameScope {
 	readonly minigameId: string;
+	readonly logic: IMinigameLogic;
 	dispose(): void;
 }

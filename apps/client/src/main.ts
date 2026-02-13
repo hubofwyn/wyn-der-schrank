@@ -9,7 +9,10 @@ import { NoopInput } from './core/adapters/noop-input.js';
 import { NoopNetwork } from './core/adapters/noop-network.js';
 import { NoopPhysics } from './core/adapters/noop-physics.js';
 import { PhaserClock } from './core/adapters/phaser-clock.js';
-import type { Container } from './core/container.js';
+import type { Container, MinigameScope } from './core/container.js';
+import type { IInputProvider } from './core/ports/input.js';
+import { MinigameManager } from './modules/minigame/minigame-manager.js';
+import { MinigameRegistry } from './modules/minigame/minigame-registry.js';
 import { SettingsManager } from './modules/settings/settings-manager.js';
 import { BootScene } from './scenes/boot-scene.js';
 import { GameOverScene } from './scenes/game-over-scene.js';
@@ -42,6 +45,24 @@ function createContainer(): Container {
 		settingsManager.current.diagnostics.ringBufferSize,
 	);
 
+	const registry = new MinigameRegistry();
+	const manager = new MinigameManager(registry, diagnostics);
+
+	function createMinigameScope(minigameId: string, sceneInput: IInputProvider): MinigameScope {
+		const logic = manager.createLogic(minigameId as import('@hub-of-wyn/shared').MinigameId, {
+			input: sceneInput,
+			clock,
+			diagnostics,
+		});
+		return {
+			minigameId,
+			logic,
+			dispose() {
+				manager.disposeActive();
+			},
+		};
+	}
+
 	return {
 		clock,
 		input,
@@ -51,6 +72,7 @@ function createContainer(): Container {
 		storage,
 		settingsManager,
 		diagnostics,
+		createMinigameScope,
 	};
 }
 
