@@ -1,9 +1,21 @@
 import { GameEventSchema, SyncStateSchema } from '@hub-of-wyn/shared';
 import { Hono } from 'hono';
+import { loadConfig } from './config.js';
+import { createDiagnosticsRoutes } from './routes/diagnostics.js';
+import { healthRoutes } from './routes/health.js';
+import { ServerDiagnostics } from './services/server-diagnostics.js';
+
+const config = loadConfig();
+const diagnostics = new ServerDiagnostics(config);
 
 const app = new Hono()
+	.route('/', healthRoutes)
+	.route('/', createDiagnosticsRoutes(diagnostics))
 	.get('/api/state', (c) => {
-		// TODO: Replace with real game session
+		diagnostics.emit('request', 'state', 'GET /api/state', {
+			method: 'GET',
+			path: '/api/state',
+		});
 		const state = SyncStateSchema.parse({
 			tick: 0,
 			players: [],
@@ -19,10 +31,29 @@ const app = new Hono()
 		if (!result.success) {
 			return c.json({ error: result.error.flatten() }, 400);
 		}
-		// TODO: Handle event via game session
-		console.log('Event received:', result.data);
+		diagnostics.emit('request', 'state', 'POST /api/event', {
+			method: 'POST',
+			path: '/api/event',
+			type: result.data.type,
+		});
 		return c.json({ ok: true });
 	});
 
+// Startup logging
+console.log(`[WDS] Wyn der Schrank server v0.0.1`);
+console.log(
+	`[WDS] Port: ${config.port} | Env: ${config.env} | Diagnostics: ${config.diagnosticsEnabled ? `enabled (buffer: ${config.diagnosticsBufferSize})` : 'disabled'}`,
+);
+
+diagnostics.emit('startup', 'state', 'server-ready', {
+	port: config.port,
+	env: config.env,
+	diagnosticsEnabled: config.diagnosticsEnabled,
+});
+
+export { diagnostics };
 export type AppType = typeof app;
-export default app;
+export default {
+	port: config.port,
+	fetch: app.fetch,
+};

@@ -50,7 +50,8 @@ apps/client/             → Phaser 4 game client (@hub-of-wyn/client)
     enemy/               → Enemy catalog, AI, behaviors, animation config
     game-state/          → Global FSM, sync manager
     level/               → Tilemap objects, world catalog, tile registry
-    minigame/            → Registry, manager, per-game logic (dice-duel, coin-catch, memory-match)
+    minigame/            → Registry, manager, IMinigameLogic interface, MinigameHudState
+      games/shake-rush/  → Shake Rush: config, lane system, scoring, ShakeRushLogic
     navigation/          → Scene keys, flow controller
     physics/             → Platformer physics, collision
     player/              → Player controller, state, animation config
@@ -74,7 +75,7 @@ scripts/
 ## Commands
 
 - `bun install` — Install dependencies
-- `bun run dev` — Start client dev server
+- `bun run dev` — Start client (:3000) and server (:3001) concurrently
 - `bun run typecheck` — TypeScript project references build
 - `bun run lint:zones` — ESLint zone enforcement on modules/
 - `bun run format` — Biome format + lint fix
@@ -86,6 +87,11 @@ scripts/
 - `bun run lint:md` — markdownlint check
 - `bun run lint:md:fix` — markdownlint autofix
 - `bun run hooks:install` — Install Lefthook git hooks (run once after clone)
+
+## Server Endpoints
+
+- `GET /api/health` — Server health check (status, version, uptime)
+- `GET /api/diagnostics?channel=&level=&last=` — Server diagnostic events (filterable)
 
 ## Definition of Done
 
@@ -313,7 +319,7 @@ shared/  X any app dependency except Zod
 | Engine abstraction | `apps/client/src/core/ports/` |
 | Phaser adapters | `apps/client/src/core/adapters/` |
 | DI wiring | `apps/client/src/core/container.ts` + `apps/client/src/main.ts` |
-| Scene rendering | `apps/client/src/scenes/` |
+| Scene rendering | `apps/client/src/scenes/` (PlatformerScene, MinigameScene, HudScene, MinigameHudScene) |
 | Shared schemas | `packages/shared/src/schema/` |
 | Inferred types | `packages/shared/src/types/index.ts` |
 | Server API | `apps/server/src/` |

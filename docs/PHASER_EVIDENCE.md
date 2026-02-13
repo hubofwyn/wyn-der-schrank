@@ -102,6 +102,12 @@ Do not duplicate entries — if a symbol is already listed, additional usages do
 | `GameObject.setDepth()` | `/classes/Phaser.GameObjects.Components.Depth.html#setDepth` — `phaser.d.ts:14009` | `scenes/pause-scene.ts` | 2026-02-12 | type-verified |
 | `Text.setColor()` | `/classes/Phaser.GameObjects.Text.html#setColor` — `phaser.d.ts:58828` | `scenes/title-scene.ts` | 2026-02-12 | type-verified |
 | `EventEmitter.off()` | `/classes/Phaser.Events.EventEmitter.html#off` — `phaser.d.ts:10108` | `scenes/pause-scene.ts` | 2026-02-12 | type-verified |
+| `Shape.fillColor` | `/classes/Phaser.GameObjects.Shape.html#fillColor` — `phaser.d.ts:40462` | `scenes/minigame-scene.ts` | 2026-02-12 | type-verified |
+| `Shape.setFillStyle()` | `/classes/Phaser.GameObjects.Shape.html#setFillStyle` — `phaser.d.ts:40532` | `scenes/minigame-scene.ts` | 2026-02-12 | type-verified |
+| `Text.setText()` | `/classes/Phaser.GameObjects.Text.html#setText` — `phaser.d.ts:57018` | `scenes/hud-scene.ts` | 2026-02-12 | type-verified |
+| `Text.setVisible()` | `/classes/Phaser.GameObjects.Components.Visible.html#setVisible` — `phaser.d.ts:14801` | `scenes/minigame-hud-scene.ts` | 2026-02-12 | type-verified |
+| `Shape.setPosition()` | `/classes/Phaser.GameObjects.Components.Transform.html#setPosition` — inherited via Shape | `scenes/minigame-scene.ts` | 2026-02-12 | type-verified |
+| `Shape.alpha` | `/classes/Phaser.GameObjects.Components.AlphaSingle.html#alpha` — inherited via Shape | `scenes/minigame-scene.ts` | 2026-02-12 | type-verified |
 | `SpriteGPULayer` | `/classes/Phaser.GameObjects.SpriteGPULayer.html` | (planned) | — | — |
 | `Texture#setWrap` | `/classes/Phaser.Textures.Texture.html#setWrap` | (planned) | — | — |
 

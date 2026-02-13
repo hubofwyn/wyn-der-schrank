@@ -1,5 +1,5 @@
-import type { EnemyType } from '@hub-of-wyn/shared';
-import { EnemyTypeSchema } from '@hub-of-wyn/shared';
+import type { EnemyType, MinigameId } from '@hub-of-wyn/shared';
+import { EnemyTypeSchema, MinigameIdSchema } from '@hub-of-wyn/shared';
 
 export interface TilemapObject {
 	readonly type: string;
@@ -91,4 +91,25 @@ export function extractExit(objects: TilemapObject[]): { x: number; y: number } 
 	}
 
 	return null;
+}
+
+export function extractMinigamePortals(
+	objects: TilemapObject[],
+): ReadonlyArray<{ x: number; y: number; minigameId: MinigameId }> {
+	const portals: Array<{ x: number; y: number; minigameId: MinigameId }> = [];
+
+	for (const obj of objects) {
+		if (obj.type !== 'minigame-portal') continue;
+		if (!hasCoordinates(obj)) continue;
+
+		const rawId = getStringProperty(obj.properties, 'minigameId');
+		if (!rawId) continue;
+
+		const parsed = MinigameIdSchema.safeParse(rawId);
+		if (!parsed.success) continue;
+
+		portals.push({ x: obj.x, y: obj.y, minigameId: parsed.data });
+	}
+
+	return portals;
 }

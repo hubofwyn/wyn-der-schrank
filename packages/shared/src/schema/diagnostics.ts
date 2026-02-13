@@ -10,6 +10,9 @@ export const DiagnosticChannelSchema = z.enum([
 	'audio',
 	'network',
 	'settings',
+	'request',
+	'startup',
+	'minigame',
 ]);
 
 export const DiagnosticLevelSchema = z.enum([
