@@ -7,8 +7,8 @@ last_updated: 2026-02-12
 
 ## Snapshot
 
-- __Active:__ none
-- __Next ready:__ G6 @wds/shared Publishing Preparation
+- __Active:__ G6 @wds/shared Publishing Preparation
+- __Next ready:__ none
 - __Blocked:__ none
 - __Last milestone:__ 2026-02-12 — G5 Menu and Flow (164 tests) [merged]
 - __Gates:__ all green (164 tests)
@@ -98,11 +98,11 @@ Title screen, pause, game-over screen, settings, and persistence make the game s
 
 ### G6: @wds/shared Publishing Preparation
 
-> __Status:__ ready
+> __Status:__ in-progress
 > __Requires:__ none (G1–G5 done, schemas stable)
 > __Benefits from:__ none
 > __Unlocks:__ Studio buildout (external repo)
-> __Branch:__ (set when work starts)
+> __Branch:__ feat/shared-publishing
 
 Prepare `@wds/shared` for npm publication so the studio can depend on it. Add missing asset metadata schemas, replace wildcard exports with explicit subpaths, move Zod to peerDependencies, and remove the `private` flag. The studio repo (`wyn-der-schrank-studio`) is blocked on this — it needs `@wds/shared` published (or `bun link`-able with the new schemas) before its schema layer can import from `@wds/shared/assets`.
 
