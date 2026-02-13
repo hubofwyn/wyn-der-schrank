@@ -633,3 +633,61 @@ Manual verification:
 5. See `[WDS:player:debug]` frame-by-frame data in console
 6. Run `window.__wds_diagnostics.filter(e => e.channel === 'player').slice(-10)` in console
 7. Verify ring buffer contains structured events with frame numbers
+
+## Server-Side Diagnostics
+
+Server diagnostics mirrors the client-side pattern but operates outside the
+Phaser game loop with no game clock dependency.
+
+### Implementation
+
+The `ServerDiagnostics` class lives in `apps/server/src/services/server-diagnostics.ts`.
+It implements the same `emit` / `isEnabled` / `query` shape as the client
+`IDiagnostics` port but uses `Date.now()` timestamps and a monotonic `seq`
+counter instead of the game clock's `frame` number. There is no `IGameClock`
+on the server.
+
+### Ring Buffer
+
+Events are stored in a ring buffer whose size is configurable via
+`ServerConfigSchema.diagnostics.ringBufferSize`. The buffer operates identically
+to the client `ConsoleDiagnostics` buffer — oldest events are evicted when the
+buffer reaches capacity.
+
+### HTTP Endpoint
+
+`GET /api/diagnostics` wraps `ServerDiagnostics.query()` with query parameters:
+
+| Param | Type | Description |
+|-------|------|-------------|
+| `channel` | string | Filter by diagnostic channel |
+| `level` | string | Filter by diagnostic level |
+| `last` | number | Return only the last N matching events |
+
+All parameters are optional. When omitted, the full buffer contents are returned.
+
+### Console Output
+
+Server console output follows the same `[WDS:channel:level]` prefix format as
+the client `ConsoleDiagnostics` adapter, keeping terminal grep workflows
+consistent across client and server:
+
+```text
+[WDS:startup:state] {"seq":1,"label":"server-ready","data":{"port":3001,"env":"development"}}
+[WDS:request:debug] {"seq":42,"label":"incoming","data":{"method":"GET","path":"/api/health"}}
+```
+
+### Server Channels
+
+Two server-specific channels are added to `DiagnosticChannelSchema` in
+`packages/shared/src/schema/diagnostics.ts`:
+
+- `request` — HTTP request lifecycle events
+- `startup` — Server boot and configuration events
+
+### Client-to-Server Forwarding
+
+No client-to-server diagnostic forwarding exists in this phase. The client
+and server diagnostic ring buffers are independent. Client-to-server forwarding
+(browser console events streamed to the server endpoint) is a Phase 2+
+enhancement noted in section 8 above.

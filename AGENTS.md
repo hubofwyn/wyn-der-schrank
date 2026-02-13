@@ -74,7 +74,7 @@ scripts/
 ## Commands
 
 - `bun install` — Install dependencies
-- `bun run dev` — Start client dev server
+- `bun run dev` — Start client (:3000) and server (:3001) concurrently
 - `bun run typecheck` — TypeScript project references build
 - `bun run lint:zones` — ESLint zone enforcement on modules/
 - `bun run format` — Biome format + lint fix
@@ -86,6 +86,11 @@ scripts/
 - `bun run lint:md` — markdownlint check
 - `bun run lint:md:fix` — markdownlint autofix
 - `bun run hooks:install` — Install Lefthook git hooks (run once after clone)
+
+## Server Endpoints
+
+- `GET /api/health` — Server health check (status, version, uptime)
+- `GET /api/diagnostics?channel=&level=&last=` — Server diagnostic events (filterable)
 
 ## Definition of Done
 

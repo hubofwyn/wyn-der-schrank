@@ -7,11 +7,11 @@ last_updated: 2026-02-12
 
 ## Snapshot
 
-- __Active:__ G7 Runtime & Observability [feat/runtime-observability]
-- __Next ready:__ none
-- __Blocked:__ G8 (requires G7)
-- __Last milestone:__ 2026-02-12 — G6 @hub-of-wyn/shared Publishing Preparation (182 tests) [feat/shared-publishing]
-- __Gates:__ all green (182 tests)
+- __Active:__ none
+- __Next ready:__ G8
+- __Blocked:__ none
+- __Last milestone:__ 2026-02-12 — G7 Runtime & Observability (218 tests) [feat/runtime-observability]
+- __Gates:__ all green (218 tests)
 
 ## Goals
 
@@ -117,7 +117,7 @@ __Reference:__ `docs/plans/studio-asset-interface.md` — the authoritative shar
 
 ### G7: Runtime & Observability
 
-> __Status:__ in-progress
+> __Status:__ done
 > __Requires:__ none (G1–G6 done)
 > __Benefits from:__ none
 > __Unlocks:__ G8
@@ -125,17 +125,17 @@ __Reference:__ `docs/plans/studio-asset-interface.md` — the authoritative shar
 
 Server starts properly with validated config, unified dev command, front-to-back diagnostics, tested and verified.
 
-- [ ] Server config validation with Zod (port, log level, diagnostics settings)
-- [ ] ServerDiagnostics service with ring buffer and query filtering
-- [ ] `GET /api/health` endpoint with uptime, version, environment
-- [ ] `GET /api/diagnostics` endpoint queryable by channel/level/last
-- [ ] Structured startup logging on server boot
-- [ ] Unified `bun run dev` starts both client (:3000) and server (:3001)
-- [ ] Documentation updated (AGENTS.md, diagnostics.md)
+- [x] Server config validation with Zod (port, log level, diagnostics settings)
+- [x] ServerDiagnostics service with ring buffer and query filtering
+- [x] `GET /api/health` endpoint with uptime, version, environment
+- [x] `GET /api/diagnostics` endpoint queryable by channel/level/last
+- [x] Structured startup logging on server boot
+- [x] Unified `bun run dev` starts both client (:3000) and server (:3001)
+- [x] Documentation updated (AGENTS.md, diagnostics.md)
 
 ### G8: Minigame Architecture & Shake Rush
 
-> __Status:__ not-started
+> __Status:__ ready
 > __Requires:__ G7
 > __Benefits from:__ none
 > __Unlocks:__ future minigames (dice-duel, coin-catch, memory-match)
@@ -187,6 +187,7 @@ Build the minigame framework, then completely rewrite the Birthday Minigame from
 
 ## Completed Log
 
+- __2026-02-12__ — G7: Runtime & Observability — Server config validation, ServerDiagnostics with ring buffer, health + diagnostics endpoints, unified dev command (218 tests) [feat/runtime-observability]
 - __2026-02-12__ — G6: @hub-of-wyn/shared Publishing Preparation — Meta schemas, package.json for npm, explicit subpath exports, self-containment verification (182 tests) [feat/shared-publishing]
 - __2026-02-12__ — G5: Menu and Flow — Title screen, pause overlay, settings with localStorage persistence, menu navigation on all result scenes (164 tests) [feat/menu-flow]
 - __2026-02-12__ — G4: Hazards — Enemy patrol AI, damage/invincibility, death/respawn, game-over scene (147 tests) [feat/enemy-ai]
