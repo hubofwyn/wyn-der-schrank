@@ -8,10 +8,10 @@ last_updated: 2026-02-12
 ## Snapshot
 
 - __Active:__ none
-- __Next ready:__ G8
+- __Next ready:__ none (all goals complete)
 - __Blocked:__ none
-- __Last milestone:__ 2026-02-12 — G7 Runtime & Observability (218 tests) [feat/runtime-observability]
-- __Gates:__ all green (218 tests)
+- __Last milestone:__ 2026-02-12 — G8 Minigame Architecture & Shake Rush (264 tests) [feat/minigame-architecture]
+- __Gates:__ all green (264 tests)
 
 ## Goals
 
@@ -135,24 +135,24 @@ Server starts properly with validated config, unified dev command, front-to-back
 
 ### G8: Minigame Architecture & Shake Rush
 
-> __Status:__ ready
+> __Status:__ done
 > __Requires:__ G7
 > __Benefits from:__ none
 > __Unlocks:__ future minigames (dice-duel, coin-catch, memory-match)
-> __Branch:__ (not started)
+> __Branch:__ feat/minigame-architecture
 
 Build the minigame framework, then completely rewrite the Birthday Minigame from wynisbuff2 using Phaser 4 and our architecture. Same gameplay (3-lane collect-and-deliver) rebuilt from scratch with hexagonal architecture, ports/adapters, zone defense, and full test coverage.
 
-- [ ] `'shake-rush'` added to MinigameIdSchema in `@hub-of-wyn/shared`
-- [ ] `'minigame'` added to DiagnosticChannelSchema
-- [ ] IMinigameLogic interface with snapshot/intent pattern (pure TS, zone-safe)
-- [ ] MinigameRegistry and MinigameManager modules with tests
-- [ ] MinigameHudState registry key pattern (mirrors GameplayState)
-- [ ] MinigameScope expanded with logic field, wired in container
-- [ ] Shake Rush complete rewrite: config, lane system, scoring, game orchestration — all pure TS with full test coverage
-- [ ] MinigameScene and MinigameHudScene (thin Phaser 4 wrappers, verified API only)
-- [ ] Minigame portal trigger in PlatformerScene via tilemap objects
-- [ ] Documentation updated (AGENTS.md, active-plan.md)
+- [x] `'shake-rush'` added to MinigameIdSchema in `@hub-of-wyn/shared`
+- [x] `'minigame'` added to DiagnosticChannelSchema
+- [x] IMinigameLogic interface with snapshot/intent pattern (pure TS, zone-safe)
+- [x] MinigameRegistry and MinigameManager modules with tests
+- [x] MinigameHudState registry key pattern (mirrors GameplayState)
+- [x] MinigameScope expanded with logic field, wired in container
+- [x] Shake Rush complete rewrite: config, lane system, scoring, game orchestration — all pure TS with full test coverage
+- [x] MinigameScene and MinigameHudScene (thin Phaser 4 wrappers, verified API only)
+- [x] Minigame portal trigger in PlatformerScene via tilemap objects
+- [x] Documentation updated (AGENTS.md, active-plan.md)
 
 ## Update Protocol
 
@@ -187,6 +187,7 @@ Build the minigame framework, then completely rewrite the Birthday Minigame from
 
 ## Completed Log
 
+- __2026-02-12__ — G8: Minigame Architecture & Shake Rush — IMinigameLogic interface, MinigameRegistry/Manager, Shake Rush complete rewrite (config, lane system, scoring, game logic), MinigameScene/MinigameHudScene, portal triggers (264 tests) [feat/minigame-architecture]
 - __2026-02-12__ — G7: Runtime & Observability — Server config validation, ServerDiagnostics with ring buffer, health + diagnostics endpoints, unified dev command (218 tests) [feat/runtime-observability]
 - __2026-02-12__ — G6: @hub-of-wyn/shared Publishing Preparation — Meta schemas, package.json for npm, explicit subpath exports, self-containment verification (182 tests) [feat/shared-publishing]
 - __2026-02-12__ — G5: Menu and Flow — Title screen, pause overlay, settings with localStorage persistence, menu navigation on all result scenes (164 tests) [feat/menu-flow]
