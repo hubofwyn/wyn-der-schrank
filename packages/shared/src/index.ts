@@ -1,6 +1,13 @@
 // Schemas
 
-export { AssetEntrySchema, AssetManifestSchema, AssetTypeSchema } from './schema/assets.js';
+export {
+	AssetEntrySchema,
+	AssetManifestSchema,
+	AssetTypeSchema,
+	AudioMetaSchema,
+	SpritesheetMetaSchema,
+	TilemapMetaSchema,
+} from './schema/assets.js';
 export {
 	CharacterAbilitySchema,
 	CharacterDefinitionSchema,
@@ -59,6 +66,7 @@ export type {
 	AssetEntry,
 	AssetManifest,
 	AssetType,
+	AudioMeta,
 	BodyDimensions,
 	CharacterAbility,
 	CharacterDefinition,
@@ -99,9 +107,11 @@ export type {
 	Rect,
 	SessionState,
 	Settings,
+	SpritesheetMeta,
 	StarRating,
 	SyncState,
 	TileLayerRef,
+	TilemapMeta,
 	Vec2,
 	WorldDefinition,
 	WorldId,

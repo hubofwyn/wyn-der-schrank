@@ -32,10 +32,10 @@ docs/
   commands/              → Slash commands (investigate, zone-check, implement-feature, drift-report, session-stats)
   skills/                → Repeatable workflows (fix-issue, add-module, add-minigame, review-diff, ship-small, phaser-doc)
   hooks/                 → Enforcement scripts (zone lint, Phaser guard, telemetry logging)
-packages/shared/         → Zod schemas + inferred types (@wds/shared)
-  src/schema/            → 14 schema files: common, character, player, enemy, level, collectible,
+packages/shared/         → Zod schemas + inferred types (@wds/shared, npm: @wds/shared@1.0.0)
+  src/schema/            → 15 schema files: common, character, player, enemy, level, collectible,
                            minigame, scoring, progression, settings, events, sync, assets,
-                           physics-config
+                           physics-config, diagnostics
   src/types/index.ts     → 40+ types, all z.infer<> re-exports
 apps/client/             → Phaser 4 game client (@wds/client)
   src/core/              → Infrastructure zone (ports, adapters, services, container)
@@ -229,6 +229,17 @@ main (updated) ←── pull ←── human merges/squashes ←─────
 - Disable tests or linters to make things pass
 - Commit secrets, keys, or tokens
 - Use `--no-verify` on commits or pushes
+
+### Publishing @wds/shared
+
+`@wds/shared` is published to npm public registry. The studio repo depends on it.
+
+- **Publishing is a manual step** after PR merge: `cd packages/shared && bun publish --access public`
+- **prepublishOnly gate** runs `bun run typecheck` automatically before publish
+- **Dry-run first:** `bun publish --dry-run` to verify package contents
+- **Version bumps** follow semver: patch (bug fixes), minor (new schemas/exports), major (breaking changes)
+- **Schema changes are contract changes** — they affect the studio. Always coordinate via `docs/plans/studio-asset-interface.md`.
+- **Local development:** Use `bun link` from `packages/shared/` to symlink into the studio repo for parallel development without publishing.
 
 ## Architecture Quick Reference
 

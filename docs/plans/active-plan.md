@@ -8,10 +8,10 @@ last_updated: 2026-02-12
 ## Snapshot
 
 - __Active:__ none
-- __Next ready:__ G6 @wds/shared Publishing Preparation
+- __Next ready:__ none
 - __Blocked:__ none
-- __Last milestone:__ 2026-02-12 — G5 Menu and Flow (164 tests) [merged]
-- __Gates:__ all green (164 tests)
+- __Last milestone:__ 2026-02-12 — G6 @wds/shared Publishing Preparation (182 tests) [feat/shared-publishing]
+- __Gates:__ all green (182 tests)
 
 ## Goals
 
@@ -98,21 +98,21 @@ Title screen, pause, game-over screen, settings, and persistence make the game s
 
 ### G6: @wds/shared Publishing Preparation
 
-> __Status:__ ready
+> __Status:__ done
 > __Requires:__ none (G1–G5 done, schemas stable)
 > __Benefits from:__ none
 > __Unlocks:__ Studio buildout (external repo)
-> __Branch:__ (set when work starts)
+> __Branch:__ feat/shared-publishing
 
 Prepare `@wds/shared` for npm publication so the studio can depend on it. Add missing asset metadata schemas, replace wildcard exports with explicit subpaths, move Zod to peerDependencies, and remove the `private` flag. The studio repo (`wyn-der-schrank-studio`) is blocked on this — it needs `@wds/shared` published (or `bun link`-able with the new schemas) before its schema layer can import from `@wds/shared/assets`.
 
 __Reference:__ `docs/plans/studio-asset-interface.md` — the authoritative shared contract defining export paths, schema extensions, and package.json changes.
 
-- [ ] Add `SpritesheetMetaSchema`, `AudioMetaSchema`, `TilemapMetaSchema` to `packages/shared/src/schema/assets.ts` as optional fields on `AssetEntrySchema`
-- [ ] Export new schemas from `index.ts` and add inferred types to `types/index.ts`
-- [ ] Update `packages/shared/package.json`: remove `private: true`, bump to `1.0.0`, explicit subpath exports (no wildcards), `files` field, `publishConfig`, `prepublishOnly` script, Zod to `peerDependencies`
-- [ ] Verify export self-containment via `bunx dependency-cruiser` (no transitive game-internal deps from any exported schema file)
-- [ ] Update documentation: `AGENTS.md` (publishing workflow), `FOUNDATION.md` (shared package section)
+- [x] Add `SpritesheetMetaSchema`, `AudioMetaSchema`, `TilemapMetaSchema` to `packages/shared/src/schema/assets.ts` as optional fields on `AssetEntrySchema`
+- [x] Export new schemas from `index.ts` and add inferred types to `types/index.ts`
+- [x] Update `packages/shared/package.json`: remove `private: true`, bump to `1.0.0`, explicit subpath exports (no wildcards), `files` field, `publishConfig`, `prepublishOnly` script, Zod to `peerDependencies`
+- [x] Verify export self-containment via `bunx dependency-cruiser` (no transitive game-internal deps from any exported schema file)
+- [x] Update documentation: `AGENTS.md` (publishing workflow), `FOUNDATION.md` (shared package section)
 - [ ] Publish to npm public registry (`bun publish --access public` — manual step after PR merge)
 
 ## Update Protocol
@@ -148,6 +148,7 @@ __Reference:__ `docs/plans/studio-asset-interface.md` — the authoritative shar
 
 ## Completed Log
 
+- __2026-02-12__ — G6: @wds/shared Publishing Preparation — Meta schemas, package.json for npm, explicit subpath exports, self-containment verification (182 tests) [feat/shared-publishing]
 - __2026-02-12__ — G5: Menu and Flow — Title screen, pause overlay, settings with localStorage persistence, menu navigation on all result scenes (164 tests) [feat/menu-flow]
 - __2026-02-12__ — G4: Hazards — Enemy patrol AI, damage/invincibility, death/respawn, game-over scene (147 tests) [feat/enemy-ai]
 - __2026-02-12__ — G3: Gameplay Loop — Collectible pickup, HUD, level-complete, scoring with star rating, 2-level forest world (110 tests) [feat/gameplay-loop]

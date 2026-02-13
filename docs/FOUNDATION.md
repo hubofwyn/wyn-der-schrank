@@ -90,14 +90,17 @@ Designed for **Bun Workspaces**. Separates Source of Truth (Shared) from Impleme
 ├── tsconfig.base.json              # Shared TS config (strict base)
 │
 ├── packages/
-│   └── shared/                     # THE CONTRACT
-│       ├── package.json            # name: "@wds/shared"
+│   └── shared/                     # THE CONTRACT — npm: @wds/shared@1.0.0
+│       ├── package.json            # name: "@wds/shared", public npm package
 │       ├── tsconfig.json           # extends base + isolatedDeclarations
 │       └── src/
-│           ├── schema/             # Runtime validators (Zod 4.3.6)
-│           │   ├── game-state.ts   # SyncStateSchema, PlayerSchema
-│           │   ├── events.ts       # GameEventSchema (type-safe events)
-│           │   └── minigame.ts     # MinigameStateSchema
+│           ├── schema/             # Runtime validators (Zod 4.3.6, 15 files)
+│           │   ├── assets.ts       # AssetManifestSchema + meta schemas
+│           │   ├── common.ts       # Vec2, Rect, Range, EntityId
+│           │   ├── character.ts    # CharacterDefinitionSchema
+│           │   ├── enemy.ts        # EnemyDefinitionSchema
+│           │   ├── level.ts        # LevelMetadata, WorldDefinition
+│           │   └── ...             # + collectible, minigame, scoring, etc.
 │           └── types/              # Inferred types (NEVER hand-written)
 │               └── index.ts        # Re-exports z.infer<> types only
 │
@@ -659,6 +662,20 @@ export type SyncState = z.infer<typeof SyncStateSchema>;
 export type MinigameId = z.infer<typeof MinigameIdSchema>;
 export type MinigameState = z.infer<typeof MinigameStateSchema>;
 ```
+
+### Publishing @wds/shared
+
+`@wds/shared` is published to the npm public registry so the studio repo
+(`wyn-der-schrank-studio`) can depend on it. Key details:
+
+- **Zod is a peer dependency** (`^4.0.0`). Bun auto-installs it for consumers.
+- **Explicit subpath exports** control what the studio can import:
+  `./assets`, `./level`, `./character`, `./enemy`, `./collectible`, `./common`, `./types`.
+- **Game-internal schemas** (settings, diagnostics, physics-config, etc.) are only
+  reachable via the barrel `@wds/shared` import — the studio is instructed not to use it.
+- **`prepublishOnly`** runs `tsc --noEmit` before every publish.
+- **Contract document:** `docs/plans/studio-asset-interface.md` defines the full
+  integration surface, versioning protocol, and `bun link` workflow.
 
 ---
 
