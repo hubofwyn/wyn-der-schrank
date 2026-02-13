@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const MinigameIdSchema = z.enum(['dice-duel', 'coin-catch', 'memory-match']);
+export const MinigameIdSchema = z.enum(['dice-duel', 'coin-catch', 'memory-match', 'shake-rush']);
 
 export const MinigamePhaseSchema = z.enum(['intro', 'active', 'finished']);
 
