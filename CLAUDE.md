@@ -9,11 +9,13 @@ Read `AGENTS.md` first. It is the project contract.
 | Project contract | `AGENTS.md` | Rules, boundaries, workflow, quick reference |
 | Architecture | `docs/FOUNDATION.md` | Tech stack, zone defense, DI, TypeScript config |
 | Game domain | `docs/plans/game-blueprint.md` | Scenes, schemas, modules, assets, data flow |
-| Enforcement | `docs/plans/telemetry.md` | Phaser 4 enforcement, hooks, telemetry |
-| Agentic setup | `docs/plans/agentic-setup.md` | Design of .claude/ infrastructure |
 | Roadmap | `docs/plans/active-plan.md` | Goal status, deliverables, update protocol |
-| Phaser evidence | `docs/PHASER_EVIDENCE.md` | Verified Phaser 4 API usage log |
+| Studio integration | `docs/plans/studio-asset-interface.md` | Shared contract with asset studio repo |
+| Enforcement | `docs/plans/telemetry.md` | Phaser 4 enforcement, hooks, telemetry |
+| Diagnostics | `docs/plans/diagnostics.md` | Runtime diagnostics: ports, channels, adapters |
+| Agentic setup | `docs/plans/agentic-setup.md` | Design of .claude/ infrastructure |
 | Lint & hooks | `docs/plans/lint-format-hooks.md` | Tool roles, config, git hook pipeline |
+| Phaser evidence | `docs/PHASER_EVIDENCE.md` | Verified Phaser 4 API usage log |
 
 ## Workflow
 

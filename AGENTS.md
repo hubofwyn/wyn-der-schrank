@@ -21,6 +21,7 @@ docs/
   plans/
     active-plan.md       → Goal roadmap, status tracking, update protocol
     game-blueprint.md    → Scenes, schemas, modules, assets, data flow
+    studio-asset-interface.md → Shared contract with asset studio repo (@wds/shared publishing)
     telemetry.md         → Agentic telemetry: Phaser 4 enforcement, hooks, observability
     diagnostics.md       → Game runtime diagnostics: port interface, adapters, channel filtering
     agentic-setup.md     → Design of .claude/ infrastructure
@@ -210,7 +211,7 @@ main (updated) ←── pull ←── human merges/squashes ←─────
 - New dependencies (runtime or dev)
 - New port interfaces or changes to existing ports
 - Changes to `eslint.config.mjs`, `.dependency-cruiser.cjs`, or `tsconfig.*.json`
-- Schema changes in `@wds/shared` (contract changes affect client + server)
+- Schema changes in `@wds/shared` (contract changes affect client, server, and studio)
 - New ADRs or changes to existing ADRs
 - Refactors touching >10 files
 
@@ -261,8 +262,8 @@ shared/  X any app dependency except Zod
 
 ### Schemas
 
-14 files in `packages/shared/src/schema/`:
-`common` `character` `player` `enemy` `level` `collectible` `minigame` `scoring` `progression` `settings` `events` `sync` `assets` `physics-config`
+15 files in `packages/shared/src/schema/`:
+`common` `character` `player` `enemy` `level` `collectible` `minigame` `scoring` `progression` `settings` `events` `sync` `assets` `physics-config` `diagnostics`
 
 40+ inferred types exported from `packages/shared/src/types/index.ts`.
 
@@ -309,5 +310,6 @@ shared/  X any app dependency except Zod
 | Architecture docs | `docs/FOUNDATION.md` |
 | Game blueprint | `docs/plans/game-blueprint.md` |
 | Roadmap & status | `docs/plans/active-plan.md` |
+| Studio integration | `docs/plans/studio-asset-interface.md` |
 | Agentic telemetry | `docs/plans/telemetry.md` + `.claude/hooks/` |
 | Game diagnostics | `core/ports/diagnostics.ts` + `core/adapters/console-diagnostics.ts` + `docs/plans/diagnostics.md` |
