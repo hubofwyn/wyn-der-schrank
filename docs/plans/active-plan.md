@@ -7,8 +7,8 @@ last_updated: 2026-02-12
 
 ## Snapshot
 
-- __Active:__ none
-- __Next ready:__ G7 Runtime & Observability
+- __Active:__ G7 Runtime & Observability [feat/runtime-observability]
+- __Next ready:__ none
 - __Blocked:__ G8 (requires G7)
 - __Last milestone:__ 2026-02-12 — G6 @hub-of-wyn/shared Publishing Preparation (182 tests) [feat/shared-publishing]
 - __Gates:__ all green (182 tests)
@@ -117,11 +117,11 @@ __Reference:__ `docs/plans/studio-asset-interface.md` — the authoritative shar
 
 ### G7: Runtime & Observability
 
-> __Status:__ ready
+> __Status:__ in-progress
 > __Requires:__ none (G1–G6 done)
 > __Benefits from:__ none
 > __Unlocks:__ G8
-> __Branch:__ (not started)
+> __Branch:__ feat/runtime-observability
 
 Server starts properly with validated config, unified dev command, front-to-back diagnostics, tested and verified.
 
