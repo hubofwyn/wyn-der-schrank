@@ -1,4 +1,4 @@
-import type { CharacterStats, PlatformerConfig } from '@wds/shared';
+import type { CharacterStats, PlatformerConfig } from '@hub-of-wyn/shared';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { DiagnosticEvent, IDiagnostics } from '../../../core/ports/diagnostics.js';
 import type { IGameClock } from '../../../core/ports/engine.js';

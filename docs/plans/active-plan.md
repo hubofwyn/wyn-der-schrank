@@ -10,7 +10,7 @@ last_updated: 2026-02-12
 - __Active:__ none
 - __Next ready:__ none
 - __Blocked:__ none
-- __Last milestone:__ 2026-02-12 — G6 @wds/shared Publishing Preparation (182 tests) [feat/shared-publishing]
+- __Last milestone:__ 2026-02-12 — G6 @hub-of-wyn/shared Publishing Preparation (182 tests) [feat/shared-publishing]
 - __Gates:__ all green (182 tests)
 
 ## Goals
@@ -96,7 +96,7 @@ Title screen, pause, game-over screen, settings, and persistence make the game s
 - [x] Settings scene with LocalStorageAdapter persistence (SceneKeys.SETTINGS defined; replace NoopStorage in main.ts)
 - [x] Level-complete scene connecting to next level or menu (enhance existing LevelCompleteScene — add Menu button)
 
-### G6: @wds/shared Publishing Preparation
+### G6: @hub-of-wyn/shared Publishing Preparation
 
 > __Status:__ done
 > __Requires:__ none (G1–G5 done, schemas stable)
@@ -104,7 +104,7 @@ Title screen, pause, game-over screen, settings, and persistence make the game s
 > __Unlocks:__ Studio buildout (external repo)
 > __Branch:__ feat/shared-publishing
 
-Prepare `@wds/shared` for npm publication so the studio can depend on it. Add missing asset metadata schemas, replace wildcard exports with explicit subpaths, move Zod to peerDependencies, and remove the `private` flag. The studio repo (`wyn-der-schrank-studio`) is blocked on this — it needs `@wds/shared` published (or `bun link`-able with the new schemas) before its schema layer can import from `@wds/shared/assets`.
+Prepare `@hub-of-wyn/shared` for npm publication so the studio can depend on it. Add missing asset metadata schemas, replace wildcard exports with explicit subpaths, move Zod to peerDependencies, and remove the `private` flag. The studio repo (`wyn-der-schrank-studio`) is blocked on this — it needs `@hub-of-wyn/shared` published (or `bun link`-able with the new schemas) before its schema layer can import from `@hub-of-wyn/shared/assets`.
 
 __Reference:__ `docs/plans/studio-asset-interface.md` — the authoritative shared contract defining export paths, schema extensions, and package.json changes.
 
@@ -148,7 +148,7 @@ __Reference:__ `docs/plans/studio-asset-interface.md` — the authoritative shar
 
 ## Completed Log
 
-- __2026-02-12__ — G6: @wds/shared Publishing Preparation — Meta schemas, package.json for npm, explicit subpath exports, self-containment verification (182 tests) [feat/shared-publishing]
+- __2026-02-12__ — G6: @hub-of-wyn/shared Publishing Preparation — Meta schemas, package.json for npm, explicit subpath exports, self-containment verification (182 tests) [feat/shared-publishing]
 - __2026-02-12__ — G5: Menu and Flow — Title screen, pause overlay, settings with localStorage persistence, menu navigation on all result scenes (164 tests) [feat/menu-flow]
 - __2026-02-12__ — G4: Hazards — Enemy patrol AI, damage/invincibility, death/respawn, game-over scene (147 tests) [feat/enemy-ai]
 - __2026-02-12__ — G3: Gameplay Loop — Collectible pickup, HUD, level-complete, scoring with star rating, 2-level forest world (110 tests) [feat/gameplay-loop]

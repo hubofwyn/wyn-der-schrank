@@ -18,7 +18,7 @@ Implement the feature described in $ARGUMENTS. Follow this sequence exactly:
 1. List files to create/modify with full paths
 2. Identify which zone each file belongs to
 3. Identify new port interfaces or container changes needed
-4. Identify schema changes in @wds/shared
+4. Identify schema changes in @hub-of-wyn/shared
 5. If the deliverable will touch >8 files, decompose into sub-deliverables first
 6. Present plan — stop for approval if it touches >5 files
 

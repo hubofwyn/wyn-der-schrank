@@ -89,7 +89,7 @@ cat package.json | jq '{name, private, workspaces, scripts}'
 # 1.2 — Workspace packages exist
 ls -d packages/*/package.json apps/*/package.json 2>/dev/null
 
-# 1.3 — Package names match @wds/* convention
+# 1.3 — Package names match @hub-of-wyn/* convention
 for pkg in packages/*/package.json apps/*/package.json; do
   echo "$pkg: $(jq -r .name "$pkg" 2>/dev/null)"
 done
@@ -109,7 +109,7 @@ done
 ### Expected
 
 - Root `package.json` name: `wyn-der-schrank`, private: true, workspaces: `["packages/*", "apps/*"]`
-- Three workspace packages: `@wds/shared`, `@wds/client`, `@wds/server`
+- Three workspace packages: `@hub-of-wyn/shared`, `@hub-of-wyn/client`, `@hub-of-wyn/server`
 - All six config files present
 - `bun.lock` committed (Bun 1.3+ text-based lockfile; not the old binary `bun.lockb`)
 
@@ -175,9 +175,9 @@ done
 | root (dev) | @biomejs/biome | 2.3.14 |
 | root (dev) | eslint | 10.0.0 |
 | root (dev) | dependency-cruiser | 17.3.8 |
-| @wds/shared | zod | 4.3.6 |
-| @wds/client | phaser | 4.0.0-rc.6 |
-| @wds/server | hono | 4.11.9 |
+| @hub-of-wyn/shared | zod | 4.3.6 |
+| @hub-of-wyn/client | phaser | 4.0.0-rc.6 |
+| @hub-of-wyn/server | hono | 4.11.9 |
 
 Any dependency not in this table or in the Foundation §1 stack table is a 🟡 WARNING.
 
@@ -646,7 +646,7 @@ Modules may define structural interfaces for:
 - **Deps objects** (`PlayerControllerDeps`) — collects constructor dependencies into a single typed parameter
 - **Readonly snapshots** (`PlayerSnapshot`) — frozen view of module state for scenes to read
 
-These are NOT domain types and do NOT belong in `@wds/shared`. They are implementation details of how modules receive deps and expose state.
+These are NOT domain types and do NOT belong in `@hub-of-wyn/shared`. They are implementation details of how modules receive deps and expose state.
 
 ### Spec Reference
 

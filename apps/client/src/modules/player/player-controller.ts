@@ -1,4 +1,10 @@
-import type { CharacterStats, Facing, PlatformerConfig, PlayerState, Vec2 } from '@wds/shared';
+import type {
+	CharacterStats,
+	Facing,
+	PlatformerConfig,
+	PlayerState,
+	Vec2,
+} from '@hub-of-wyn/shared';
 import type { IDiagnostics } from '../../core/ports/diagnostics.js';
 import type { IGameClock } from '../../core/ports/engine.js';
 import type { IInputProvider } from '../../core/ports/input.js';

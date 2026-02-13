@@ -1,4 +1,4 @@
-import type { GameEvent, SyncState } from '@wds/shared';
+import type { GameEvent, SyncState } from '@hub-of-wyn/shared';
 
 export interface INetworkClient {
 	fetchState<T>(endpoint: string): Promise<T>;

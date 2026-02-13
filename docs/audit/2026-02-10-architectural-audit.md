@@ -76,7 +76,7 @@ None. The Foundation, Blueprint, Telemetry, and Agentic Setup documents are inte
 ### Gate 1: Repository Structure ✅
 
 - Root `package.json`: name `wyn-der-schrank`, private `true`, workspaces `["packages/*", "apps/*"]` ✓
-- Three workspace packages: `@wds/shared`, `@wds/client`, `@wds/server` ✓
+- Three workspace packages: `@hub-of-wyn/shared`, `@hub-of-wyn/client`, `@hub-of-wyn/server` ✓
 - `bun.lock` exists (54,377 bytes, text-based format) ✓
 - All 5 config files present: `biome.json`, `eslint.config.mjs`, `.dependency-cruiser.cjs`, `tsconfig.base.json`, `vitest.workspace.ts` ✓
 
@@ -92,10 +92,10 @@ All pinned versions match Foundation §1:
 | root (dev) | @biomejs/biome | 2.3.14 | 2.3.14 | ✓ |
 | root (dev) | eslint | 10.0.0 | 10.0.0 | ✓ |
 | root (dev) | dependency-cruiser | 17.3.8 | 17.3.8 | ✓ |
-| @wds/client (dev) | vite | 7.3.1 | 7.3.1 | ✓ |
-| @wds/shared | zod | 4.3.6 | 4.3.6 | ✓ |
-| @wds/client | phaser | 4.0.0-rc.6 | 4.0.0-rc.6 | ✓ |
-| @wds/server | hono | 4.11.9 | 4.11.9 | ✓ |
+| @hub-of-wyn/client (dev) | vite | 7.3.1 | 7.3.1 | ✓ |
+| @hub-of-wyn/shared | zod | 4.3.6 | 4.3.6 | ✓ |
+| @hub-of-wyn/client | phaser | 4.0.0-rc.6 | 4.0.0-rc.6 | ✓ |
+| @hub-of-wyn/server | hono | 4.11.9 | 4.11.9 | ✓ |
 
 Unlisted but legitimate: `globals ^17.3.0`, `typescript-eslint ^8.55.0` (ESLint flat config deps).
 No unexpected production dependencies.

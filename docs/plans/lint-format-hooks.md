@@ -378,7 +378,7 @@ The banner script (Gate 0) prints the header for human readability. It's cosmeti
   "workspaces": ["packages/*", "apps/*"],
   "scripts": {
     // Development
-    "dev": "bun run --filter @wds/client dev",
+    "dev": "bun run --filter @hub-of-wyn/client dev",
     "build": "bun run --filter '*' build",
 
     // Type safety

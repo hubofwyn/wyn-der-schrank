@@ -1,5 +1,5 @@
 {
-	"name": "@wds/client",
+	"name": "@hub-of-wyn/client",
 	"version": "0.0.1",
 	"private": true,
 	"type": "module",
@@ -10,7 +10,7 @@
 	},
 	"dependencies": {
 		"phaser": "4.0.0-rc.6",
-		"@wds/shared": "workspace:*"
+		"@hub-of-wyn/shared": "workspace:*"
 	},
 	"devDependencies": {
 		"vite": "7.3.1"

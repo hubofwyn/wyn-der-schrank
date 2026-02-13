@@ -1,4 +1,4 @@
-import type { AssetEntry } from '@wds/shared';
+import type { AssetEntry } from '@hub-of-wyn/shared';
 import type { AnimationDef } from '../modules/animation/animation-def.js';
 import { parseManifest } from '../modules/assets/manifest-parser.js';
 import { getCoinAnimationDefs } from '../modules/collectible/animation-config.js';

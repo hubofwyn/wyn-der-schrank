@@ -1,4 +1,4 @@
-import type { Facing } from '@wds/shared';
+import type { Facing } from '@hub-of-wyn/shared';
 
 export interface PatrolConfig {
 	readonly leftBound: number;

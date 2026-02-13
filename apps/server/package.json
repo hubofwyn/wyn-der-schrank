@@ -1,5 +1,5 @@
 {
-	"name": "@wds/server",
+	"name": "@hub-of-wyn/server",
 	"version": "0.0.1",
 	"private": true,
 	"type": "module",
@@ -10,6 +10,6 @@
 	},
 	"dependencies": {
 		"hono": "4.11.9",
-		"@wds/shared": "workspace:*"
+		"@hub-of-wyn/shared": "workspace:*"
 	}
 }

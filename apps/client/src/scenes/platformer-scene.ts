@@ -1,5 +1,5 @@
-import type { CharacterStats } from '@wds/shared';
-import { PlatformerConfigSchema, SettingsSchema } from '@wds/shared';
+import type { CharacterStats } from '@hub-of-wyn/shared';
+import { PlatformerConfigSchema, SettingsSchema } from '@hub-of-wyn/shared';
 import { PhaserInput } from '../core/adapters/phaser-input.js';
 import { PhaserBody } from '../core/adapters/phaser-physics.js';
 import type { IGameClock } from '../core/ports/engine.js';

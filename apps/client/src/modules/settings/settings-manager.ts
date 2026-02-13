@@ -1,5 +1,5 @@
-import type { Settings } from '@wds/shared';
-import { SettingsSchema } from '@wds/shared';
+import type { Settings } from '@hub-of-wyn/shared';
+import { SettingsSchema } from '@hub-of-wyn/shared';
 import type { ISettingsManager } from '../../core/ports/settings.js';
 import type { IStorageProvider } from '../../core/ports/storage.js';
 

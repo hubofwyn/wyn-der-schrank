@@ -1,4 +1,4 @@
-import { SettingsSchema } from '@wds/shared';
+import { SettingsSchema } from '@hub-of-wyn/shared';
 import { describe, expect, it } from 'vitest';
 import type { IStorageProvider } from '../../../core/ports/storage.js';
 import { SETTINGS_STORAGE_KEY, SettingsManager } from '../settings-manager.js';

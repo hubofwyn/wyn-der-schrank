@@ -1,4 +1,4 @@
-import type { Facing } from '@wds/shared';
+import type { Facing } from '@hub-of-wyn/shared';
 import type { IDiagnostics } from '../../core/ports/diagnostics.js';
 import {
 	createPatrolState,

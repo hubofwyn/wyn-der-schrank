@@ -1,5 +1,5 @@
-import type { Settings } from '@wds/shared';
-import { SettingsSchema } from '@wds/shared';
+import type { Settings } from '@hub-of-wyn/shared';
+import { SettingsSchema } from '@hub-of-wyn/shared';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { IGameClock } from '../../ports/engine.js';
 import type { ISettingsManager } from '../../ports/settings.js';

@@ -49,12 +49,12 @@ wyn-der-schrank/
 - Repo shape: Bun workspaces monorepo
 
 ```text
-packages/shared/     → Zod schemas + inferred types (@wds/shared). THE source of truth.
-apps/client/         → Phaser 4 game client (@wds/client)
+packages/shared/     → Zod schemas + inferred types (@hub-of-wyn/shared). THE source of truth.
+apps/client/         → Phaser 4 game client (@hub-of-wyn/client)
   src/core/          → Infrastructure zone (ports, adapters, services, container)
   src/modules/       → Domain zone (pure TS, NO Phaser/browser globals)
   src/scenes/        → View zone (Phaser scenes, thin)
-apps/server/         → Hono API + game server (@wds/server)
+apps/server/         → Hono API + game server (@hub-of-wyn/server)
 docs/adr/            → Architectural Decision Records
 ```
 
@@ -75,7 +75,7 @@ docs/adr/            → Architectural Decision Records
 
 - [ ] `bun run check` passes (zero warnings, zero errors)
 - [ ] New/changed domain logic has co-located tests in `__tests__/`
-- [ ] No zone violations (modules/ imports only ports/ and @wds/shared)
+- [ ] No zone violations (modules/ imports only ports/ and @hub-of-wyn/shared)
 - [ ] New services registered in `core/container.ts`
 - [ ] New types inferred from Zod schemas (never hand-written)
 - [ ] ADR written for architectural changes (use `docs/adr/template.md`)
@@ -93,7 +93,7 @@ docs/adr/            → Architectural Decision Records
 
 - Respect the three zones. `modules/` is pure TS — no Phaser, no `window`, no `document`.
 - Wire new services through `core/container.ts` (Pure DI Composition Root in `main.ts`).
-- Infer types from Zod schemas in `@wds/shared`. Never hand-write types that Zod can generate.
+- Infer types from Zod schemas in `@hub-of-wyn/shared`. Never hand-write types that Zod can generate.
 - Scenes are thin. Domain logic lives in `modules/`, scenes only read state and move sprites.
 - Use port interfaces (`core/ports/`) — never import Phaser directly in domain code.
 
@@ -102,7 +102,7 @@ docs/adr/            → Architectural Decision Records
 - New dependencies (runtime or dev)
 - New port interfaces or changes to existing ports
 - Changes to `eslint.config.mjs`, `.dependency-cruiser.cjs`, or `tsconfig.*.json`
-- Schema changes in `@wds/shared` (contract changes affect client + server)
+- Schema changes in `@hub-of-wyn/shared` (contract changes affect client + server)
 - New ADRs or changes to existing ADRs
 - Refactors touching >10 files
 
@@ -123,10 +123,10 @@ docs/adr/            → Architectural Decision Records
 
 ```text
 modules/ → core/ports/    (interfaces only)
-modules/ → @wds/shared    (schemas + types)
+modules/ → @hub-of-wyn/shared    (schemas + types)
 scenes/  → modules/       (domain logic)
 scenes/  → core/          (services + adapters)
-core/    → @wds/shared    (schemas + types)
+core/    → @hub-of-wyn/shared    (schemas + types)
 
 FORBIDDEN:
 modules/ ✗ phaser, window, document, scenes/, core/adapters/
@@ -410,7 +410,7 @@ Implement the feature described in $ARGUMENTS. Follow this sequence exactly:
 1. List files to create/modify with full paths
 2. Identify which zone each file belongs to
 3. Identify new port interfaces or container changes needed
-4. Identify schema changes in @wds/shared
+4. Identify schema changes in @hub-of-wyn/shared
 5. Present plan — stop for approval if it touches >5 files
 
 **Gate 3 — Implement**
@@ -553,7 +553,7 @@ Run through this checklist before declaring a task complete.
 - [ ] New files are in the correct zone directory
 
 ## Contract compliance
-- [ ] New types use `z.infer<>` from @wds/shared (not hand-written)
+- [ ] New types use `z.infer<>` from @hub-of-wyn/shared (not hand-written)
 - [ ] New services are in `Container` interface and wired in `createContainer()`
 - [ ] Scenes remain thin (no game logic, only state-reading + sprite-moving)
 

@@ -1,4 +1,4 @@
-import type { Settings } from '@wds/shared';
+import type { Settings } from '@hub-of-wyn/shared';
 import type { ActionKey, IInputProvider } from '../ports/input.js';
 
 /**

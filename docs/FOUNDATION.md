@@ -90,8 +90,8 @@ Designed for **Bun Workspaces**. Separates Source of Truth (Shared) from Impleme
 ├── tsconfig.base.json              # Shared TS config (strict base)
 │
 ├── packages/
-│   └── shared/                     # THE CONTRACT — npm: @wds/shared@1.0.0
-│       ├── package.json            # name: "@wds/shared", public npm package
+│   └── shared/                     # THE CONTRACT — npm: @hub-of-wyn/shared@1.0.0
+│       ├── package.json            # name: "@hub-of-wyn/shared", public npm package
 │       ├── tsconfig.json           # extends base + isolatedDeclarations
 │       └── src/
 │           ├── schema/             # Runtime validators (Zod 4.3.6, 15 files)
@@ -106,7 +106,7 @@ Designed for **Bun Workspaces**. Separates Source of Truth (Shared) from Impleme
 │
 ├── apps/
 │   ├── server/                     # Hono 4.11.9 (API + Game Server)
-│   │   ├── package.json            # name: "@wds/server"
+│   │   ├── package.json            # name: "@hub-of-wyn/server"
 │   │   ├── tsconfig.json
 │   │   ├── src/
 │   │   │   ├── index.ts            # Entry + RPC export (AppType)
@@ -117,7 +117,7 @@ Designed for **Bun Workspaces**. Separates Source of Truth (Shared) from Impleme
 │   │   └── test/
 │   │
 │   └── client/                     # Phaser 4 Game Client
-│       ├── package.json            # name: "@wds/client"
+│       ├── package.json            # name: "@hub-of-wyn/client"
 │       ├── tsconfig.json
 │       ├── index.html
 │       ├── vite.config.ts          # Vite 7.3.1
@@ -219,18 +219,18 @@ The architecture enforces **strict dependency direction** through three zones:
 
 | Zone | May Import | May NOT Import | Phaser Access |
 |------|-----------|----------------|---------------|
-| **Modules** (Domain) | `@wds/shared`, `core/ports/` | `phaser`, `scenes/`, `window`, `document` | ❌ Forbidden |
-| **Scenes** (View) | `modules/`, `core/`, `@wds/shared` | `server/`, raw `fetch` | ✅ Full access |
+| **Modules** (Domain) | `@hub-of-wyn/shared`, `core/ports/` | `phaser`, `scenes/`, `window`, `document` | ❌ Forbidden |
+| **Scenes** (View) | `modules/`, `core/`, `@hub-of-wyn/shared` | `server/`, raw `fetch` | ✅ Full access |
 | **Core** (Infrastructure) | Everything | — | ✅ Full access |
 
 ### Dependency Direction Law
 
 ```text
 modules/ ──imports──▶ core/ports/  (interfaces only)
-modules/ ──imports──▶ @wds/shared/  (schemas + types)
+modules/ ──imports──▶ @hub-of-wyn/shared/  (schemas + types)
 scenes/  ──imports──▶ modules/  (domain logic)
 scenes/  ──imports──▶ core/  (services + adapters)
-core/    ──imports──▶ @wds/shared/  (schemas + types)
+core/    ──imports──▶ @hub-of-wyn/shared/  (schemas + types)
 core/    ──implements──▶ core/ports/  (adapter pattern)
 
 FORBIDDEN:
@@ -595,7 +595,7 @@ export interface IStorageProvider {
 
 // core/ports/settings.ts
 export interface ISettingsManager {
-  readonly current: Settings;           // Settings from @wds/shared
+  readonly current: Settings;           // Settings from @hub-of-wyn/shared
   load(): Promise<Settings>;
   save(settings: Settings): Promise<void>;
   updateSection<K extends keyof Settings>(
@@ -663,16 +663,16 @@ export type MinigameId = z.infer<typeof MinigameIdSchema>;
 export type MinigameState = z.infer<typeof MinigameStateSchema>;
 ```
 
-### Publishing @wds/shared
+### Publishing @hub-of-wyn/shared
 
-`@wds/shared` is published to the npm public registry so the studio repo
+`@hub-of-wyn/shared` is published to the npm public registry so the studio repo
 (`wyn-der-schrank-studio`) can depend on it. Key details:
 
 - **Zod is a peer dependency** (`^4.0.0`). Bun auto-installs it for consumers.
 - **Explicit subpath exports** control what the studio can import:
   `./assets`, `./level`, `./character`, `./enemy`, `./collectible`, `./common`, `./types`.
 - **Game-internal schemas** (settings, diagnostics, physics-config, etc.) are only
-  reachable via the barrel `@wds/shared` import — the studio is instructed not to use it.
+  reachable via the barrel `@hub-of-wyn/shared` import — the studio is instructed not to use it.
 - **`prepublishOnly`** runs `tsc --noEmit` before every publish.
 - **Contract document:** `docs/plans/studio-asset-interface.md` defines the full
   integration surface, versioning protocol, and `bun link` workflow.
@@ -698,7 +698,7 @@ export type MinigameState = z.infer<typeof MinigameStateSchema>;
 // apps/server/src/index.ts
 import { Hono } from 'hono';
 import { hc } from 'hono/client';
-import { SyncStateSchema } from '@wds/shared';
+import { SyncStateSchema } from '@hub-of-wyn/shared';
 
 const app = new Hono()
   .get('/api/state', async (c) => {
@@ -837,7 +837,7 @@ Platformer + minigame web game. Phaser 4 (RC6, pinned). Bun workspaces monorepo.
 - THREE ZONES: modules/ (pure TS), scenes/ (Phaser view), core/ (infrastructure)
 - modules/ NEVER imports phaser, window, document, or scenes/
 - ALL dependencies wired in main.ts (Pure DI Composition Root)
-- Types inferred from Zod schemas in @wds/shared — never hand-written
+- Types inferred from Zod schemas in @hub-of-wyn/shared — never hand-written
 - Phaser 4 renderer is WebGL. Do not reference WebGPU.
 
 ## Investigation First
@@ -873,7 +873,7 @@ You are a senior game architect reviewing Wyn der Schrank.
 
 CRITICAL RULES:
 - modules/ must be pure TypeScript with ZERO Phaser imports
-- All types come from @wds/shared Zod schemas
+- All types come from @hub-of-wyn/shared Zod schemas
 - New services MUST be registered in core/container.ts
 - Every architectural change needs an ADR in docs/adr/
 
@@ -1042,7 +1042,7 @@ module.exports = {
 
 ### Path Alias Decision: Deferred (Use Relative Imports)
 
-Path aliases (`@wds/client/*`, etc.) are **not defined in Phase 0**. All intra-package
+Path aliases (`@hub-of-wyn/client/*`, etc.) are **not defined in Phase 0**. All intra-package
 imports use relative paths. This avoids tooling mismatches across Vite `resolve.alias`,
 TS `paths`, ESLint config, and dependency-cruiser.
 
@@ -1175,7 +1175,7 @@ bun add -d vite@7.3.1
   "private": true,
   "workspaces": ["packages/*", "apps/*"],
   "scripts": {
-    "dev": "bun run --filter @wds/client dev",
+    "dev": "bun run --filter @hub-of-wyn/client dev",
     "build": "bun run --filter '*' build",
     "typecheck": "tsc --build --force",
     "lint": "eslint .",
