@@ -65,6 +65,10 @@ Types are inferred from Zod schemas, never hand-written. Services are wired thro
 |----------|---------|
 | `AGENTS.md` | Project contract: rules, boundaries, workflow |
 | `docs/FOUNDATION.md` | Architecture deep-dive: zones, DI, TypeScript config |
+| `docs/plans/active-plan.md` | Goal roadmap, status tracking, deliverables |
 | `docs/plans/game-blueprint.md` | Game domain: scenes, schemas, modules, assets |
-| `docs/plans/active-plan.md` | Current phase and next steps |
+| `docs/plans/studio-asset-interface.md` | Shared contract with asset studio repo |
+| `docs/plans/diagnostics.md` | Runtime diagnostics: ports, channels, adapters |
+| `docs/plans/telemetry.md` | Agentic telemetry and Phaser 4 enforcement |
+| `docs/plans/lint-format-hooks.md` | Tool roles, config, git hook pipeline |
 | `docs/PHASER_EVIDENCE.md` | Verified Phaser 4 API usage log |
