@@ -749,6 +749,23 @@ Not needed now, but the additive schema pattern supports it.
   for each export path to confirm no transitive game-internal deps
 - Document results in this plan or in a verification log
 
+**Verification results (2026-02-12):** All 8 export entry points pass
+dependency-cruiser with zero violations:
+
+| Export Path | Modules | Dependencies | Result |
+|-------------|---------|-------------|--------|
+| `./` (index.ts) | 17 | 48 | clean |
+| `./assets` (schema/assets.ts) | 2 | 1 | clean |
+| `./level` (schema/level.ts) | 3 | 3 | clean |
+| `./character` (schema/character.ts) | 2 | 1 | clean |
+| `./enemy` (schema/enemy.ts) | 3 | 3 | clean |
+| `./collectible` (schema/collectible.ts) | 3 | 3 | clean |
+| `./common` (schema/common.ts) | 2 | 1 | clean |
+| `./types` (types/index.ts) | 1 | 0 | clean |
+
+No transitive game-internal deps found. Each subpath schema file
+depends only on `zod` and (where applicable) `../schema/common.ts`.
+
 ### Commit 4: Documentation
 
 - Update `AGENTS.md` with publishing workflow notes
