@@ -13,6 +13,7 @@ import {
 	extractCollectibles,
 	extractEnemies,
 	extractExit,
+	extractMinigamePortals,
 	extractSpawn,
 } from '../modules/level/tilemap-objects.js';
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
@@ -46,6 +47,7 @@ export class PlatformerScene extends BaseScene {
 	private levelStartMs = 0;
 	private mapKey = 'map-forest-1';
 	private levelCompleted = false;
+	private portalTriggered = false;
 	private deathHandled = false;
 	private lives = 3;
 	private spawnPoint = { x: 100, y: 700 };
@@ -56,6 +58,7 @@ export class PlatformerScene extends BaseScene {
 
 	create(data?: Record<string, unknown>): void {
 		this.levelCompleted = false;
+		this.portalTriggered = false;
 
 		// ── Level parameterization ──
 		const settingsData = this.scene.settings.data as Record<string, unknown> | undefined;
@@ -194,6 +197,17 @@ export class PlatformerScene extends BaseScene {
 			this.physics.add.existing(exitZone, true);
 			this.physics.add.overlap(this.playerSprite, exitZone, () => {
 				this.onExitReached();
+			});
+		}
+
+		// ── Minigame portals ──
+		const portals = extractMinigamePortals(objects);
+		for (const portal of portals) {
+			const portalZone = this.add.zone(portal.x, portal.y, 32, 64);
+			this.physics.add.existing(portalZone, true);
+			const portalMinigameId = portal.minigameId;
+			this.physics.add.overlap(this.playerSprite, portalZone, () => {
+				this.onMinigamePortalReached(portalMinigameId);
 			});
 		}
 
@@ -388,5 +402,18 @@ export class PlatformerScene extends BaseScene {
 				playerHealth: result.newHealth,
 			});
 		}
+	}
+
+	private onMinigamePortalReached(minigameId: string): void {
+		if (this.portalTriggered || this.levelCompleted) return;
+		this.portalTriggered = true;
+
+		this.container.diagnostics.emit('scene', 'state', 'portal', {
+			type: 'minigame-portal',
+			minigameId,
+		});
+
+		this.stopParallel(SceneKeys.HUD);
+		this.scene.start(SceneKeys.MINIGAME, { minigameId });
 	}
 }

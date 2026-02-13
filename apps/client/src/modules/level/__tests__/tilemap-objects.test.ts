@@ -4,6 +4,7 @@ import {
 	extractCollectibles,
 	extractEnemies,
 	extractExit,
+	extractMinigamePortals,
 	extractSpawn,
 } from '../tilemap-objects.js';
 
@@ -179,5 +180,51 @@ describe('extractExit', () => {
 		];
 
 		expect(extractExit(objects)).toEqual({ x: 3100, y: 700 });
+	});
+});
+
+describe('extractMinigamePortals', () => {
+	it('extracts portal with valid minigameId from properties', () => {
+		const objects: TilemapObject[] = [
+			{
+				type: 'minigame-portal',
+				x: 500,
+				y: 400,
+				properties: [{ name: 'minigameId', type: 'string', value: 'shake-rush' }],
+			},
+		];
+
+		expect(extractMinigamePortals(objects)).toEqual([{ x: 500, y: 400, minigameId: 'shake-rush' }]);
+	});
+
+	it('skips portals missing minigameId property', () => {
+		const objects: TilemapObject[] = [{ type: 'minigame-portal', x: 500, y: 400 }];
+
+		expect(extractMinigamePortals(objects)).toEqual([]);
+	});
+
+	it('skips portals with invalid minigameId', () => {
+		const objects: TilemapObject[] = [
+			{
+				type: 'minigame-portal',
+				x: 500,
+				y: 400,
+				properties: [{ name: 'minigameId', type: 'string', value: 'invalid-game' }],
+			},
+		];
+
+		expect(extractMinigamePortals(objects)).toEqual([]);
+	});
+
+	it('skips portals missing coordinates', () => {
+		const objects: TilemapObject[] = [
+			{
+				type: 'minigame-portal',
+				x: 500,
+				properties: [{ name: 'minigameId', type: 'string', value: 'shake-rush' }],
+			},
+		];
+
+		expect(extractMinigamePortals(objects)).toEqual([]);
 	});
 });
