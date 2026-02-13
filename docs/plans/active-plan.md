@@ -1,6 +1,6 @@
 ---
 title: Active Plan
-last_updated: 2026-02-11
+last_updated: 2026-02-12
 ---
 
 # Active Plan
@@ -8,7 +8,7 @@ last_updated: 2026-02-11
 ## Snapshot
 
 - __Active:__ none
-- __Next ready:__ none
+- __Next ready:__ G6 @wds/shared Publishing Preparation
 - __Blocked:__ none
 - __Last milestone:__ 2026-02-12 — G5 Menu and Flow (164 tests) [merged]
 - __Gates:__ all green (164 tests)
@@ -95,6 +95,25 @@ Title screen, pause, game-over screen, settings, and persistence make the game s
 - [x] Game-over scene with retry/quit options (enhance existing GameOverScene — add Menu button once TitleScene exists)
 - [x] Settings scene with LocalStorageAdapter persistence (SceneKeys.SETTINGS defined; replace NoopStorage in main.ts)
 - [x] Level-complete scene connecting to next level or menu (enhance existing LevelCompleteScene — add Menu button)
+
+### G6: @wds/shared Publishing Preparation
+
+> __Status:__ ready
+> __Requires:__ none (G1–G5 done, schemas stable)
+> __Benefits from:__ none
+> __Unlocks:__ Studio buildout (external repo)
+> __Branch:__ (set when work starts)
+
+Prepare `@wds/shared` for npm publication so the studio can depend on it. Add missing asset metadata schemas, replace wildcard exports with explicit subpaths, move Zod to peerDependencies, and remove the `private` flag. The studio repo (`wyn-der-schrank-studio`) is blocked on this — it needs `@wds/shared` published (or `bun link`-able with the new schemas) before its schema layer can import from `@wds/shared/assets`.
+
+__Reference:__ `docs/plans/studio-asset-interface.md` — the authoritative shared contract defining export paths, schema extensions, and package.json changes.
+
+- [ ] Add `SpritesheetMetaSchema`, `AudioMetaSchema`, `TilemapMetaSchema` to `packages/shared/src/schema/assets.ts` as optional fields on `AssetEntrySchema`
+- [ ] Export new schemas from `index.ts` and add inferred types to `types/index.ts`
+- [ ] Update `packages/shared/package.json`: remove `private: true`, bump to `1.0.0`, explicit subpath exports (no wildcards), `files` field, `publishConfig`, `prepublishOnly` script, Zod to `peerDependencies`
+- [ ] Verify export self-containment via `bunx dependency-cruiser` (no transitive game-internal deps from any exported schema file)
+- [ ] Update documentation: `AGENTS.md` (publishing workflow), `FOUNDATION.md` (shared package section)
+- [ ] Publish to npm public registry (`bun publish --access public` — manual step after PR merge)
 
 ## Update Protocol
 

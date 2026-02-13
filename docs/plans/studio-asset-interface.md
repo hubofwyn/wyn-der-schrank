@@ -1,7 +1,7 @@
 ---
 title: Studio Asset Interface — Shared Contract & Game-Side Preparation
 last_updated: 2026-02-12
-status: PLAN — pending implementation
+status: PLAN — decisions resolved, implementation tracked as G6 in active-plan.md
 scope: "@wds/shared preparation for studio consumption, missing schemas, publishing"
 companion: wyn-der-schrank-studio/plan.md (studio build plan)
 ---
@@ -697,25 +697,33 @@ Not needed now, but the additive schema pattern supports it.
 
 ---
 
-## Open Questions for Human
+## Decisions (Resolved)
 
-1. **Publish target:** npm public registry, or GitHub Packages (private)?
-   The plan assumes public npm. If private, the studio needs auth config.
+1. **Publish target:** npm public registry. `@wds/shared` contains schemas
+   and inferred types only — no secrets, no proprietary game logic. Public
+   access simplifies CI for both repos (no auth tokens, no scoped registry
+   config). `publishConfig: { "access": "public" }` is correct.
 
-2. **Version strategy:** Start at `1.0.0` (semver-proper for a stable schema
-   surface), or `0.1.0` (pre-stability signal)?
+2. **Version strategy:** Start at `1.0.0`. The schema surface is stable
+   after G1–G5 (14 schema files, 40+ inferred types, 164 passing tests).
+   Pre-1.0 versioning would signal instability that doesn't exist. Semver
+   applies: patch for additive optional fields, minor for new schemas or
+   export paths, major for breaking changes (should be rare).
 
-3. **Zod peer vs hard dep:** Moving Zod to `peerDependencies` is cleaner but
-   requires the studio to install Zod separately. The studio already uses
-   Zod, so this should be fine. Confirm?
+3. **Zod peer dep:** Confirmed. Move Zod to `peerDependencies`. Bun
+   auto-installs peer dependencies during `bun install`, so the studio
+   gets Zod resolved automatically without explicit `bun add zod`. The
+   studio already uses Zod directly for its own schemas, so there is no
+   friction. The `^4.0.0` range gives both repos flexibility within Zod 4.
 
-4. **Scope of this branch:** Should this branch implement the changes
-   (schema additions, package.json updates), or just document the plan?
-   The actual publish should be a separate step after review.
+4. **Scope of this branch:** `docs/studio-asset-interface` is documentation
+   only — it defines the contract and plan. Implementation goes on a
+   separate branch tracked as **G6** in `docs/plans/active-plan.md`. The
+   publish itself (`bun publish`) is a manual step after the G6 PR merges.
 
 ---
 
-## Implementation Sequence (If Approved)
+## Implementation Sequence (G6)
 
 ### Commit 1: Add meta schemas to assets.ts
 
