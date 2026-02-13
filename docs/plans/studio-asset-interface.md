@@ -1,7 +1,7 @@
 ---
 title: Studio Asset Interface — Shared Contract & Game-Side Preparation
 last_updated: 2026-02-12
-status: PLAN — decisions resolved, implementation tracked as G6 in active-plan.md
+status: DONE — G6 implemented, pending npm publish after PR merge
 scope: "@wds/shared preparation for studio consumption, missing schemas, publishing"
 companion: wyn-der-schrank-studio/plan.md (studio build plan)
 ---
@@ -340,39 +340,13 @@ errors. The studio can verify the publish preview with
 
 ## Current State
 
+> **Status:** All issues resolved by G6 (`feat/shared-publishing`). The package
+> is ready for `bun publish --access public` after PR merge.
+
 ### Package Configuration
 
-`packages/shared/package.json` is currently:
-
-```jsonc
-{
-  "name": "@wds/shared",
-  "version": "0.0.1",
-  "private": true,           // ← blocks npm publish
-  "type": "module",
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
-  "exports": {
-    ".": "./src/index.ts",
-    "./schema/*": "./src/schema/*",    // ← wildcard, no boundary control
-    "./types": "./src/types/index.ts"
-  },
-  "dependencies": {
-    "zod": "4.3.6"
-  }
-}
-```
-
-**Issues for publishing:**
-
-1. `"private": true` prevents `bun publish`.
-2. No `files` field — publish would include everything (tests, configs).
-3. No `publishConfig` — access level unspecified.
-4. No `peerDependencies` — Zod is a hard dep instead of peer, risking version
-   conflicts if the studio pins a different Zod patch.
-5. Wildcard `./schema/*` export gives the studio access to every schema
-   including game internals. Must be replaced with explicit subpaths.
-6. No `prepublishOnly` script — no gate before publishing.
+`packages/shared/package.json` — see "Implemented package.json" section below
+for the current (post-G6) configuration.
 
 ### Schemas the Studio Needs (Already Exist)
 
@@ -388,177 +362,56 @@ errors. The studio can verify the publish preview with
 | `WorldIdSchema` | `schema/level.ts` | Matching backgroundKey/musicKey refs |
 | `Vec2Schema` | `schema/common.ts` | Positioning data |
 
-### Schemas the Studio Needs (Missing)
+### Schemas the Studio Needs (Implemented in G6)
 
-The studio plan (Part VII, Step 3) identifies three missing schemas. Analysis
-of the current codebase confirms they do not exist.
+All three missing meta schemas were added to `packages/shared/src/schema/assets.ts`
+as optional fields on `AssetEntrySchema`. See the source file for the
+canonical definitions. Summary:
 
-#### 1. SpritesheetMetaSchema
+| Schema | Optional Field | Key Properties |
+|--------|---------------|----------------|
+| `SpritesheetMetaSchema` | `spritesheetMeta` | frameWidth, frameHeight, frameCount, columns?, animations? |
+| `AudioMetaSchema` | `audioMeta` | format (ogg/mp3/wav), durationMs, sampleRate?, channels? |
+| `TilemapMetaSchema` | `tilemapMeta` | width, height, tileWidth, tileHeight, layers, objectGroups? |
 
-`AssetEntrySchema` has `frameWidth` and `frameHeight` but no `frameCount`.
-The studio needs frame count to validate `total_width = frameWidth × frameCount`.
-
-Currently, frame counts are hardcoded in client-internal animation config files:
-
-- `player.png`: 7 cols × 4 rows (28 frames, but only 0–8 used)
-- `skeleton-idle.png`: 6 frames at 32×32
-- `skeleton-walk.png`: 10 frames at 32×32
-- `coin.png`: 4 frames at 16×16
-
-**Proposed schema:**
-
-```typescript
-export const SpritesheetMetaSchema = z.object({
-  frameWidth: z.number().int().positive(),
-  frameHeight: z.number().int().positive(),
-  frameCount: z.number().int().positive(),
-  columns: z.number().int().positive().optional(),
-  animations: z.array(z.object({
-    key: z.string(),
-    startFrame: z.number().int().min(0),
-    endFrame: z.number().int().min(0),
-    frameRate: z.number().positive(),
-    repeat: z.number().int().min(-1),
-  })).optional(),
-});
-```
-
-Added as optional `spritesheetMeta` field on `AssetEntrySchema`. This lets
-the manifest carry full metadata without breaking existing entries.
-
-#### 2. AudioMetaSchema
-
-No audio metadata schema exists. Audio assets are loaded as bare
-`{ key, type: 'audio', url }` in the manifest. The studio needs to validate
-format, duration, and channel count.
-
-**Proposed schema:**
-
-```typescript
-export const AudioMetaSchema = z.object({
-  format: z.enum(['ogg', 'mp3', 'wav']),
-  durationMs: z.number().positive(),
-  sampleRate: z.number().int().positive().optional(),
-  channels: z.number().int().min(1).max(2).optional(),
-});
-```
-
-Added as optional `audioMeta` field on `AssetEntrySchema`.
-
-#### 3. TilemapMetaSchema
-
-Tilemap assets are `{ key, type: 'tilemapTiledJSON', url }` — no metadata.
-The studio's level builder needs to know dimensions, tile size, and layer names.
-
-**Proposed schema:**
-
-```typescript
-export const TilemapMetaSchema = z.object({
-  width: z.number().int().positive(),
-  height: z.number().int().positive(),
-  tileWidth: z.number().int().positive(),
-  tileHeight: z.number().int().positive(),
-  layers: z.array(z.string()),
-  objectGroups: z.array(z.string()).optional(),
-});
-```
-
-Added as optional `tilemapMeta` field on `AssetEntrySchema`.
+All three are exported from `@wds/shared` and `@wds/shared/assets`.
+Inferred types (`SpritesheetMeta`, `AudioMeta`, `TilemapMeta`) are
+exported from `@wds/shared/types`.
 
 ---
 
 ## Gap Analysis Summary
 
-| Item | Status | Action |
+> All items resolved by G6 except the final manual publish step.
+
+| Item | Status | Commit |
 |------|--------|--------|
-| Remove `"private": true` | Missing | Edit package.json |
-| Add `files` field | Missing | Edit package.json |
-| Add `publishConfig` | Missing | Edit package.json |
-| Move Zod to `peerDependencies` | Missing | Edit package.json |
-| Add `prepublishOnly` script | Missing | Edit package.json |
-| Replace wildcard exports with explicit subpaths | Missing | Edit package.json |
-| Create `SpritesheetMetaSchema` | Missing | New fields in schema/assets.ts |
-| Create `AudioMetaSchema` | Missing | New fields in schema/assets.ts |
-| Create `TilemapMetaSchema` | Missing | New fields in schema/assets.ts |
-| Export new types from index.ts and types/index.ts | Missing | Add type re-exports |
-| Verify schema self-containment | Needed | Run dep-cruiser on each export path |
-| Bump version to `1.0.0` | Needed | Semver for first publish |
-| Publish to npm | Needed | `bun publish --access public` |
+| Remove `"private": true` | Done | `feat/shared-publishing` Commit 2 |
+| Add `files` field | Done | Commit 2 |
+| Add `publishConfig` | Done | Commit 2 |
+| Move Zod to `peerDependencies` | Done | Commit 2 |
+| Add `prepublishOnly` script | Done | Commit 2 |
+| Replace wildcard exports with explicit subpaths | Done | Commit 2 |
+| Create `SpritesheetMetaSchema` | Done | Commit 1 |
+| Create `AudioMetaSchema` | Done | Commit 1 |
+| Create `TilemapMetaSchema` | Done | Commit 1 |
+| Export new types from index.ts and types/index.ts | Done | Commit 1 |
+| Verify schema self-containment | Done | Commit 3 |
+| Bump version to `1.0.0` | Done | Commit 2 |
+| Publish to npm | Pending | Manual step after PR merge |
 
 ---
 
-## Proposed AssetEntrySchema Extension
+## AssetEntrySchema Extension (Implemented)
 
-Current:
-
-```typescript
-export const AssetEntrySchema = z.object({
-  key: z.string(),
-  type: AssetTypeSchema,
-  url: z.string(),
-  frameWidth: z.number().int().positive().optional(),
-  frameHeight: z.number().int().positive().optional(),
-  atlasUrl: z.string().optional(),
-  fontDataUrl: z.string().optional(),
-});
-```
-
-Proposed:
-
-```typescript
-export const SpritesheetMetaSchema = z.object({
-  frameWidth: z.number().int().positive(),
-  frameHeight: z.number().int().positive(),
-  frameCount: z.number().int().positive(),
-  columns: z.number().int().positive().optional(),
-  animations: z.array(z.object({
-    key: z.string(),
-    startFrame: z.number().int().min(0),
-    endFrame: z.number().int().min(0),
-    frameRate: z.number().positive(),
-    repeat: z.number().int().min(-1),
-  })).optional(),
-});
-
-export const AudioMetaSchema = z.object({
-  format: z.enum(['ogg', 'mp3', 'wav']),
-  durationMs: z.number().positive(),
-  sampleRate: z.number().int().positive().optional(),
-  channels: z.number().int().min(1).max(2).optional(),
-});
-
-export const TilemapMetaSchema = z.object({
-  width: z.number().int().positive(),
-  height: z.number().int().positive(),
-  tileWidth: z.number().int().positive(),
-  tileHeight: z.number().int().positive(),
-  layers: z.array(z.string()),
-  objectGroups: z.array(z.string()).optional(),
-});
-
-export const AssetEntrySchema = z.object({
-  key: z.string(),
-  type: AssetTypeSchema,
-  url: z.string(),
-  // Legacy fields preserved — PreloadScene reads these directly
-  frameWidth: z.number().int().positive().optional(),
-  frameHeight: z.number().int().positive().optional(),
-  atlasUrl: z.string().optional(),
-  fontDataUrl: z.string().optional(),
-  // Optional metadata — studio writes, game ignores for now
-  spritesheetMeta: SpritesheetMetaSchema.optional(),
-  audioMeta: AudioMetaSchema.optional(),
-  tilemapMeta: TilemapMetaSchema.optional(),
-});
-```
-
+The extended schema is now live in `packages/shared/src/schema/assets.ts`.
 `frameWidth`/`frameHeight` remain as top-level fields because PreloadScene
-reads them directly for `this.load.spritesheet()`. The `spritesheetMeta` field
-adds `frameCount` and animation data without breaking existing consumers.
+reads them directly for `this.load.spritesheet()`. The three `*Meta` fields
+add rich metadata without breaking existing consumers.
 
 ---
 
-## Proposed package.json
+## Implemented package.json
 
 ```jsonc
 {
@@ -723,7 +576,7 @@ Not needed now, but the additive schema pattern supports it.
 
 ---
 
-## Implementation Sequence (G6)
+## Implementation Sequence (G6) — Complete
 
 ### Commit 1: Add meta schemas to assets.ts
 
