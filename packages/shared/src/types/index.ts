@@ -1,5 +1,12 @@
 import type { z } from 'zod';
-import type { AssetEntrySchema, AssetManifestSchema, AssetTypeSchema } from '../schema/assets.js';
+import type {
+	AssetEntrySchema,
+	AssetManifestSchema,
+	AssetTypeSchema,
+	AudioMetaSchema,
+	SpritesheetMetaSchema,
+	TilemapMetaSchema,
+} from '../schema/assets.js';
 import type {
 	CharacterAbilitySchema,
 	CharacterDefinitionSchema,
@@ -127,6 +134,9 @@ export type SyncState = z.infer<typeof SyncStateSchema>;
 
 // Assets
 export type AssetType = z.infer<typeof AssetTypeSchema>;
+export type SpritesheetMeta = z.infer<typeof SpritesheetMetaSchema>;
+export type AudioMeta = z.infer<typeof AudioMetaSchema>;
+export type TilemapMeta = z.infer<typeof TilemapMetaSchema>;
 export type AssetEntry = z.infer<typeof AssetEntrySchema>;
 export type AssetManifest = z.infer<typeof AssetManifestSchema>;
 
