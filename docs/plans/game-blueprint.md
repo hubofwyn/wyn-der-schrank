@@ -300,13 +300,19 @@ apps/client/
     │   │   ├── minigame-registry.ts    # Registry + Factory
     │   │   ├── minigame-logic.ts       # MinigameLogic interface
     │   │   ├── games/
-    │   │   │   ├── dice-duel/
+    │   │   │   ├── shake-rush/          # G8: IMPLEMENTED
+    │   │   │   │   ├── shake-rush-config.ts
+    │   │   │   │   ├── lane-system.ts
+    │   │   │   │   ├── scoring.ts
+    │   │   │   │   ├── shake-rush-logic.ts
+    │   │   │   │   └── __tests__/
+    │   │   │   ├── dice-duel/           # PLANNED
     │   │   │   │   ├── logic.ts
     │   │   │   │   └── __tests__/
-    │   │   │   ├── coin-catch/
+    │   │   │   ├── coin-catch/          # PLANNED
     │   │   │   │   ├── logic.ts
     │   │   │   │   └── __tests__/
-    │   │   │   └── memory-match/
+    │   │   │   └── memory-match/        # PLANNED
     │   │   │       ├── logic.ts
     │   │   │       └── __tests__/
     │   │   └── __tests__/
@@ -638,6 +644,7 @@ export const MinigameIdSchema = z.enum([
   'dice-duel',
   'coin-catch',
   'memory-match',
+  'shake-rush',     // G8: first implemented minigame (3-lane collect-and-deliver)
 ]);
 
 export const MinigamePhaseSchema = z.enum([
@@ -1247,9 +1254,11 @@ function createContainer(game: Phaser.Game): Container {
   const minigameManager   = new MinigameManager(minigameRegistry, network, audio);
 
   // Register minigame factories
-  minigameRegistry.register('dice-duel', () => new DiceDuelLogic());
-  minigameRegistry.register('coin-catch', () => new CoinCatchLogic());
-  minigameRegistry.register('memory-match', () => new MemoryMatchLogic());
+  // G8: shake-rush is implemented; others are planned
+  minigameRegistry.register('shake-rush', (deps) => new ShakeRushLogic(deps));
+  // minigameRegistry.register('dice-duel', (deps) => new DiceDuelLogic(deps));
+  // minigameRegistry.register('coin-catch', (deps) => new CoinCatchLogic(deps));
+  // minigameRegistry.register('memory-match', (deps) => new MemoryMatchLogic(deps));
 
   // ── 13. Top-level State (depends on many) ──
   const syncManager       = new SyncManager(network);
@@ -1328,7 +1337,7 @@ Each module is a self-contained domain concern. All are pure TS — zero Phaser,
 | `level` | Level JSON → domain model, world manifest, tile types | `INetworkClient`, `worldCatalog` |
 | `camera` | Follow target, bounds clamping, lookahead, shake | `IGameClock` |
 | `collectible` | Pickup detection, inventory updates, powerup timers | `collectibleCatalog`, `IAudioPlayer` |
-| `minigame` | Registry, lifecycle management, individual game logic | `INetworkClient`, `IAudioPlayer` |
+| `minigame` | Registry, lifecycle management, IMinigameLogic interface, individual game logic (shake-rush implemented) | `IInputProvider`, `IGameClock`, `IDiagnostics` |
 | `scoring` | Point calculation, combo multiplier, star thresholds | None (pure math) |
 | `progression` | Save/load profiles, unlock tracking, session state | `IStorageProvider`, `worldCatalog`, `characterCatalog` |
 | `settings` | Audio/display/control preferences, persistence | `IStorageProvider`, `IAudioPlayer`, `IInputProvider` |
@@ -1602,7 +1611,8 @@ export class PauseScene extends BaseScene {
                       // POST /api/leaderboard — submit score
 ├── profile.ts        // GET /api/profile/:id — player profile
                       // PUT /api/profile/:id — update profile
-└── health.ts         // GET /api/health — server health check
+├── health.ts         // GET /api/health — server health check
+└── diagnostics.ts    // GET /api/diagnostics?channel=&level=&last= — runtime diagnostics
 ```
 
 ### Server Services
@@ -1612,6 +1622,7 @@ export class PauseScene extends BaseScene {
 ├── game-session.ts      // Session state, event processing
 ├── leaderboard.ts       // Score storage, ranking
 ├── profile-service.ts   // Profile CRUD (server-side persistence)
+├── server-diagnostics.ts // Ring buffer diagnostics (G7)
 └── validation.ts        // Shared Zod parse helpers
 ```
 

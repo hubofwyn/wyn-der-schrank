@@ -1,8 +1,8 @@
 ---
 title: Game Runtime Diagnostics
-last_updated: 2026-02-11
-status: IMPLEMENTED — feat/diagnostics branch
-scope: Port interface, adapters, container wiring, domain integration
+last_updated: 2026-02-12
+status: IMPLEMENTED — client diagnostics (feat/diagnostics), server diagnostics (feat/runtime-observability)
+scope: Port interface, adapters, container wiring, domain integration, server endpoints
 ---
 
 # Game Runtime Diagnostics
@@ -71,6 +71,9 @@ export const DiagnosticChannelSchema = z.enum([
   'audio',
   'network',
   'settings',
+  'request',    // Server: HTTP request lifecycle (added G7)
+  'startup',    // Server: boot and configuration (added G7)
+  'minigame',   // Client: minigame subsystem (added G8)
 ]);
 
 export const DiagnosticLevelSchema = z.enum([
