@@ -20,9 +20,12 @@ import type {
 } from '../schema/collectible.js';
 import type { EntityIdSchema, RangeSchema, RectSchema, Vec2Schema } from '../schema/common.js';
 import type {
+	ClientDiagnosticEventSchema,
+	ClientDiagnosticPayloadSchema,
 	DiagnosticChannelConfigSchema,
 	DiagnosticChannelSchema,
 	DiagnosticLevelSchema,
+	DiagnosticSourceSchema,
 	DiagnosticsConfigSchema,
 } from '../schema/diagnostics.js';
 import type {
@@ -143,5 +146,8 @@ export type AssetManifest = z.infer<typeof AssetManifestSchema>;
 // Diagnostics
 export type DiagnosticChannel = z.infer<typeof DiagnosticChannelSchema>;
 export type DiagnosticLevel = z.infer<typeof DiagnosticLevelSchema>;
+export type DiagnosticSource = z.infer<typeof DiagnosticSourceSchema>;
 export type DiagnosticChannelConfig = z.infer<typeof DiagnosticChannelConfigSchema>;
 export type DiagnosticsConfig = z.infer<typeof DiagnosticsConfigSchema>;
+export type ClientDiagnosticEvent = z.infer<typeof ClientDiagnosticEventSchema>;
+export type ClientDiagnosticPayload = z.infer<typeof ClientDiagnosticPayloadSchema>;

@@ -21,9 +21,12 @@ export {
 } from './schema/collectible.js';
 export { EntityIdSchema, RangeSchema, RectSchema, Vec2Schema } from './schema/common.js';
 export {
+	ClientDiagnosticEventSchema,
+	ClientDiagnosticPayloadSchema,
 	DiagnosticChannelConfigSchema,
 	DiagnosticChannelSchema,
 	DiagnosticLevelSchema,
+	DiagnosticSourceSchema,
 	DiagnosticsConfigSchema,
 } from './schema/diagnostics.js';
 export {
@@ -72,12 +75,15 @@ export type {
 	CharacterDefinition,
 	CharacterId,
 	CharacterStats,
+	ClientDiagnosticEvent,
+	ClientDiagnosticPayload,
 	CollectibleDefinition,
 	CollectibleInstance,
 	CollectibleType,
 	DiagnosticChannel,
 	DiagnosticChannelConfig,
 	DiagnosticLevel,
+	DiagnosticSource,
 	DiagnosticsConfig,
 	EnemyBehavior,
 	EnemyDefinition,
