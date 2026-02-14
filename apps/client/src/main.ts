@@ -2,13 +2,13 @@
 // All services are wired here and ONLY here.
 // See core/container.ts for the Container interface.
 
-import { ConsoleDiagnostics } from './core/adapters/console-diagnostics.js';
 import { LocalStorageAdapter } from './core/adapters/local-storage-adapter.js';
 import { NoopAudio } from './core/adapters/noop-audio.js';
 import { NoopInput } from './core/adapters/noop-input.js';
 import { NoopNetwork } from './core/adapters/noop-network.js';
 import { NoopPhysics } from './core/adapters/noop-physics.js';
 import { PhaserClock } from './core/adapters/phaser-clock.js';
+import { ReportingDiagnostics } from './core/adapters/reporting-diagnostics.js';
 import type { Container, MinigameScope } from './core/container.js';
 import type { IInputProvider } from './core/ports/input.js';
 import { ShakeRushLogic } from './modules/minigame/games/shake-rush/shake-rush-logic.js';
@@ -42,11 +42,9 @@ function createContainer(): Container {
 	const network = new NoopNetwork();
 	const storage = new LocalStorageAdapter();
 	const settingsManager = new SettingsManager(storage);
-	const diagnostics = new ConsoleDiagnostics(
-		clock,
-		settingsManager,
-		settingsManager.current.diagnostics.ringBufferSize,
-	);
+	const diagnostics = new ReportingDiagnostics(clock, settingsManager, {
+		bufferSize: settingsManager.current.diagnostics.ringBufferSize,
+	});
 
 	const registry = new MinigameRegistry();
 	registry.register('shake-rush', (deps) => new ShakeRushLogic(deps));
