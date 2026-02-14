@@ -130,12 +130,17 @@ Designed for **Bun Workspaces**. Separates Source of Truth (Shared) from Impleme
 │           │   │   ├── input.ts    # IInputProvider
 │           │   │   ├── audio.ts    # IAudioPlayer
 │           │   │   ├── physics.ts  # IPhysicsWorld, IBody
-│           │   │   └── network.ts  # INetworkClient
+│           │   │   ├── network.ts  # INetworkClient
+│           │   │   ├── diagnostics.ts # IDiagnostics, DiagnosticEvent
+│           │   │   ├── storage.ts  # IStorageProvider
+│           │   │   └── settings.ts # ISettingsManager
 │           │   ├── adapters/       # Phaser implementations of ports
 │           │   │   ├── phaser-clock.ts
 │           │   │   ├── phaser-input.ts
 │           │   │   ├── phaser-audio.ts
-│           │   │   └── phaser-physics.ts
+│           │   │   ├── phaser-physics.ts
+│           │   │   ├── reporting-diagnostics.ts  # Client diagnostics + server forwarding
+│           │   │   └── console-diagnostics.ts     # Console-only diagnostics (no forwarding)
 │           │   ├── container.ts    # DI container (Pure DI)
 │           │   └── services/       # Cross-cutting infrastructure
 │           │       ├── network-manager.ts

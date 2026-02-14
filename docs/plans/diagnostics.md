@@ -1,8 +1,8 @@
 ---
 title: Game Runtime Diagnostics
-last_updated: 2026-02-12
-status: IMPLEMENTED — client diagnostics (feat/diagnostics), server diagnostics (feat/runtime-observability)
-scope: Port interface, adapters, container wiring, domain integration, server endpoints
+last_updated: 2026-02-13
+status: IMPLEMENTED — client diagnostics, server diagnostics, agentic observability (feat/agentic-observability)
+scope: Port interface, adapters, container wiring, domain integration, server endpoints, client-to-server forwarding, agent-optimized query endpoints
 ---
 
 # Game Runtime Diagnostics
@@ -471,15 +471,25 @@ bun run dev 2>&1 | grep ':warn\]'
 bun run dev 2>&1 | grep 'state-change'
 ```
 
-**Phase 2+ enhancement:** A Vite plugin or dev-mode WebSocket bridge that
-forwards `console.*` calls from the browser to the terminal. This gives the
-agent direct access to diagnostic output through the terminal it's already
-reading, completing the feedback loop without human mediation.
+**IMPLEMENTED (feat/agentic-observability):** Client diagnostic events are now
+forwarded to the server via `ReportingDiagnostics` adapter. The adapter batches
+events and POSTs them to `POST /api/diagnostics/ingest`. The Vite dev server
+proxies `/api/*` to the Hono server (port 3001). Agents can now query client
+diagnostics from the terminal without browser access:
 
-**Phase 2+ enhancement:** An HTTP endpoint on the Hono dev server
-(`GET /api/diagnostics?channel=player&last=20`) that wraps the `query()` method.
-The agent can `curl` it directly. The ring buffer's `query()` API is designed
-now to support this without adapter changes.
+```bash
+# All client events
+curl localhost:3001/api/diagnostics?source=client
+
+# Unified view (client + server, sorted by timestamp)
+curl localhost:3001/api/diagnostics?unified=true&channel=player&last=20
+
+# System snapshot (health, buffers, channel activity, warnings)
+curl localhost:3001/api/diagnostics/snapshot
+
+# AI-readable summary (status, highlights, event rates)
+curl localhost:3001/api/diagnostics/summary
+```
 
 ### 9. Agentic Workflow Integration
 
@@ -509,6 +519,7 @@ screenshot instead of console commands.
 | `DiagnosticsConfigSchema` | `@hub-of-wyn/shared` | Importable everywhere |
 | `IDiagnostics` port + `DiagnosticEvent` | `core/ports/` | Importable by modules/ and scenes/ |
 | `ConsoleDiagnostics` adapter | `core/adapters/` | Importable by scenes/ and main.ts only |
+| `ReportingDiagnostics` adapter | `core/adapters/` | Same (extends ConsoleDiagnostics + server forwarding) |
 | `NoopDiagnostics` adapter | `core/adapters/` | Same |
 | Domain emit calls | `modules/` | Import `IDiagnostics` from port (zone-safe) |
 | `window.__wds_diagnostics` | `core/adapters/` | Browser global in adapter only (permitted) |
@@ -690,7 +701,32 @@ Two server-specific channels are added to `DiagnosticChannelSchema` in
 
 ### Client-to-Server Forwarding
 
-No client-to-server diagnostic forwarding exists in this phase. The client
-and server diagnostic ring buffers are independent. Client-to-server forwarding
-(browser console events streamed to the server endpoint) is a Phase 2+
-enhancement noted in section 8 above.
+**IMPLEMENTED (feat/agentic-observability):** The `ReportingDiagnostics` adapter
+in the client batches events and forwards them to `POST /api/diagnostics/ingest`
+on the server. The Vite dev server proxies `/api/*` to `localhost:3001`.
+
+The server `ServerDiagnostics` class stores client events in a separate ring
+buffer and provides unified query methods:
+
+- `unifiedQuery()` — merges client + server events, sorted by timestamp
+- `snapshot()` — full system state with per-channel activity and warnings
+- `summary()` — AI-readable status report with highlights and event rates
+
+### Agent Diagnostic Workflow
+
+Agents debugging gameplay issues should:
+
+1. **Check system status:** `curl localhost:3001/api/diagnostics/summary`
+2. **If warnings exist:** `curl localhost:3001/api/diagnostics?unified=true&level=warn`
+3. **Focus on a channel:** `curl localhost:3001/api/diagnostics?source=client&channel=player&last=20`
+4. **Full snapshot:** `curl localhost:3001/api/diagnostics/snapshot`
+
+The `/api/diagnostics/summary` endpoint returns machine-readable JSON with:
+
+- `status`: `'quiet'` | `'active'` | `'warnings'`
+- `description`: Human/AI-readable explanation
+- `activeChannels`: Channels with events in the last 60 seconds
+- `warningChannels`: Channels with warnings in the last 60 seconds
+- `highlights`: Notable observations (missing client events, warning counts, state transitions)
+- `eventRate`: Events per minute by source (client, server, total)
+- `recentWarnings`: Last 10 warning events with full payloads

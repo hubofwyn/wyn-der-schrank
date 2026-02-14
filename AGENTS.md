@@ -92,6 +92,11 @@ scripts/
 
 - `GET /api/health` — Server health check (status, version, uptime)
 - `GET /api/diagnostics?channel=&level=&last=` — Server diagnostic events (filterable)
+- `GET /api/diagnostics?source=client&channel=&level=&last=` — Client events forwarded from browser
+- `GET /api/diagnostics?unified=true&channel=&level=&last=` — Both client + server events (sorted by timestamp)
+- `POST /api/diagnostics/ingest` — Accept batched client diagnostic events (used by ReportingDiagnostics)
+- `GET /api/diagnostics/snapshot` — Full system state: uptime, buffer usage, per-channel activity, recent warnings
+- `GET /api/diagnostics/summary` — AI-readable summary: status, active channels, highlights, event rates
 
 ## Definition of Done
 
@@ -329,4 +334,4 @@ shared/  X any app dependency except Zod
 | Roadmap & status | `docs/plans/active-plan.md` |
 | Studio integration | `docs/plans/studio-asset-interface.md` |
 | Agentic telemetry | `docs/plans/telemetry.md` + `.claude/hooks/` |
-| Game diagnostics | `core/ports/diagnostics.ts` + `core/adapters/console-diagnostics.ts` + `docs/plans/diagnostics.md` |
+| Game diagnostics | `core/ports/diagnostics.ts` + `core/adapters/reporting-diagnostics.ts` + `docs/plans/diagnostics.md` |
