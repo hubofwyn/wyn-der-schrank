@@ -7,11 +7,11 @@ last_updated: 2026-02-16
 
 ## Snapshot
 
-- __Active:__ G11 Character System & Selection Flow [feat/character-system]
-- __Next ready:__ G12 (blocked by G11)
+- __Active:__ none (G11 complete, awaiting merge)
+- __Next ready:__ G12
 - __Blocked:__ none
-- __Last milestone:__ 2026-02-15 — G10 Audio System (348 tests) [feat/audio-system]
-- __Gates:__ all green (348 tests)
+- __Last milestone:__ 2026-02-15 — G11 Character System & Selection Flow (396 tests) [feat/character-system]
+- __Gates:__ all green (396 tests)
 
 ## Goals
 
@@ -208,7 +208,7 @@ __Deliverables:__
 
 ### G11: Character System & Selection Flow
 
-> __Status:__ in-progress
+> __Status:__ done
 > __Requires:__ G10
 > __Benefits from:__ none
 > __Unlocks:__ G12
@@ -237,16 +237,16 @@ __Architecture notes:__
 
 __Deliverables:__
 
-- [ ] Character catalog module (`modules/character/character-catalog.ts`) — loads definitions from JSON data, queries by ID, returns all unlocked characters. Pure TS, zone-safe, with co-located tests.
-- [ ] World catalog module (`modules/level/world-catalog.ts`) — loads world definitions from JSON data, queries levels by world, checks unlock conditions against SessionSave. Pure TS, zone-safe, with co-located tests.
-- [ ] Flow controller module (`modules/navigation/flow-controller.ts`) — tracks selected character, selected world, selected level. Determines valid next scene based on current selection state. Pure TS, zone-safe, with co-located tests.
-- [ ] Character and world JSON data files (`public/assets/data/characters.json`, `public/assets/data/worlds.json`) validated against shared schemas, loaded in PreloadScene
-- [ ] `CharacterSelectScene` (`scenes/character-select-scene.ts`) — 3-character card layout ported from wynisbuff2. Hover glow, color-coded borders, staggered entrance, selection persisted via flow controller. Thin scene.
-- [ ] `MainMenuScene` (`scenes/main-menu-scene.ts`) — level grid with responsive layout ported from wynisbuff2. Shows world sections, level cards with star ratings from SessionSave, locked/unlocked state. Keyboard navigation. Thin scene.
-- [ ] `WorldSelectScene` and `LevelSelectScene` (`scenes/world-select-scene.ts`, `scenes/level-select-scene.ts`) — world selection shows 3 worlds (forest unlocked, cave/castle locked), level selection shows levels within selected world with star display
-- [ ] Container updated: `characterCatalog` and `flowController` added to `Container` interface and wired in `main.ts`
-- [ ] `TitleScene` updated: Play navigates to `CHARACTER_SELECT` instead of directly to `PLATFORMER`
-- [ ] Navigation chain verified end-to-end: Title → CharacterSelect → MainMenu → Platformer → LevelComplete → MainMenu
+- [x] Character catalog module (`modules/character/character-catalog.ts`) — loads definitions from JSON data, queries by ID, returns all unlocked characters. Pure TS, zone-safe, with co-located tests.
+- [x] World catalog module (`modules/level/world-catalog.ts`) — loads world definitions from JSON data, queries levels by world, checks unlock conditions against SessionSave. Pure TS, zone-safe, with co-located tests.
+- [x] Flow controller module (`modules/navigation/flow-controller.ts`) — tracks selected character, selected world, selected level. Determines valid next scene based on current selection state. Pure TS, zone-safe, with co-located tests.
+- [x] Character and world JSON data files (`public/assets/data/characters.json`, `public/assets/data/worlds.json`) validated against shared schemas, loaded in PreloadScene
+- [x] `CharacterSelectScene` (`scenes/character-select-scene.ts`) — 3-character card layout ported from wynisbuff2. Hover glow, color-coded borders, staggered entrance, selection persisted via flow controller. Thin scene.
+- [x] `MainMenuScene` (`scenes/main-menu-scene.ts`) — level grid with responsive layout ported from wynisbuff2. Shows world sections, level cards with star ratings from SessionSave, locked/unlocked state. Keyboard navigation. Thin scene.
+- [x] `WorldSelectScene` and `LevelSelectScene` (`scenes/world-select-scene.ts`, `scenes/level-select-scene.ts`) — world selection shows 3 worlds (forest unlocked, cave/castle locked), level selection shows levels within selected world with star display
+- [x] Container updated: `characterCatalog` and `flowController` added to `Container` interface and wired in `main.ts`
+- [x] `TitleScene` updated: Play navigates to `CHARACTER_SELECT` instead of directly to `PLATFORMER`
+- [x] Navigation chain verified end-to-end: Title → CharacterSelect → MainMenu → Platformer → LevelComplete → MainMenu
 
 ### G12: Second Minigame (Coin Catch)
 
