@@ -50,6 +50,7 @@ export class PreloadScene extends BaseScene {
 
 		this.load.once('complete', () => {
 			this.createAnimations();
+			this.initCatalogs();
 			Promise.all([this.container.settingsManager.load(), this.container.sessionSave.load()]).then(
 				() => {
 					this.navigateTo(SceneKeys.TITLE);
@@ -98,6 +99,17 @@ export class PreloadScene extends BaseScene {
 		}
 		for (const def of getCoinAnimationDefs()) {
 			this.registerAnimation(def);
+		}
+	}
+
+	private initCatalogs(): void {
+		const charactersRaw = this.cache.json.get('characters-data') as unknown;
+		if (charactersRaw) {
+			this.container.characterCatalog.init(charactersRaw);
+		}
+		const worldsRaw = this.cache.json.get('worlds-data') as unknown;
+		if (worldsRaw) {
+			this.container.worldCatalog.init(worldsRaw);
 		}
 	}
 

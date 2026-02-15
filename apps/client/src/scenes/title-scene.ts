@@ -59,7 +59,8 @@ export class TitleScene extends BaseScene {
 		playBtn.on('pointerout', () => playBtn.setColor(Colors.button));
 		playBtn.on('pointerdown', () => {
 			this.playButtonSfx();
-			this.navigateTo(SceneKeys.PLATFORMER);
+			this.container.flowController.reset();
+			this.navigateTo(SceneKeys.CHARACTER_SELECT);
 		});
 
 		// ── Settings button ──
