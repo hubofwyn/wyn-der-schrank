@@ -1,0 +1,65 @@
+[
+	{
+		"id": "knight",
+		"name": "Knight",
+		"description": "A stalwart defender with high health and strong defense. Slow but resilient.",
+		"stats": {
+			"maxHealth": 150,
+			"speed": 200,
+			"jumpForce": 380,
+			"attackPower": 12,
+			"defense": 10
+		},
+		"ability": {
+			"id": "shield-bash",
+			"name": "Shield Bash",
+			"description": "A powerful melee strike that stuns enemies briefly.",
+			"cooldownMs": 5000
+		},
+		"spriteKey": "player",
+		"portraitKey": "player",
+		"unlocked": true
+	},
+	{
+		"id": "mage",
+		"name": "Mage",
+		"description": "A nimble spellcaster with high jump and attack power. Fragile but powerful.",
+		"stats": {
+			"maxHealth": 80,
+			"speed": 230,
+			"jumpForce": 460,
+			"attackPower": 18,
+			"defense": 3
+		},
+		"ability": {
+			"id": "arcane-bolt",
+			"name": "Arcane Bolt",
+			"description": "Launches a ranged projectile that damages enemies on contact.",
+			"cooldownMs": 3000
+		},
+		"spriteKey": "player",
+		"portraitKey": "player",
+		"unlocked": true
+	},
+	{
+		"id": "rogue",
+		"name": "Rogue",
+		"description": "A swift infiltrator with the fastest speed. Balanced stats with a dash ability.",
+		"stats": {
+			"maxHealth": 100,
+			"speed": 280,
+			"jumpForce": 420,
+			"attackPower": 14,
+			"defense": 5
+		},
+		"ability": {
+			"id": "shadow-dash",
+			"name": "Shadow Dash",
+			"description": "A quick forward dash that grants brief invincibility.",
+			"cooldownMs": 4000
+		},
+		"spriteKey": "player",
+		"portraitKey": "player",
+		"unlocked": true
+	}
+]

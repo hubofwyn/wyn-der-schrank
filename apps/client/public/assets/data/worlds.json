@@ -1,0 +1,40 @@
+[
+	{
+		"id": "forest",
+		"name": "Enchanted Forest",
+		"description": "Mossy pathways and ancient trees hide secrets among the roots.",
+		"order": 0,
+		"levels": ["forest-1", "forest-2"],
+		"unlockCondition": {
+			"type": "none"
+		},
+		"backgroundKey": "bg-forest",
+		"musicKey": "music-platformer"
+	},
+	{
+		"id": "cave",
+		"name": "Crystal Caverns",
+		"description": "Glowing crystals light the way through treacherous underground passages.",
+		"order": 1,
+		"levels": [],
+		"unlockCondition": {
+			"type": "world-complete",
+			"worldId": "forest"
+		},
+		"backgroundKey": "bg-cave",
+		"musicKey": "music-platformer"
+	},
+	{
+		"id": "castle",
+		"name": "Shadow Castle",
+		"description": "The dark fortress looms ahead. Only the bravest dare enter.",
+		"order": 2,
+		"levels": [],
+		"unlockCondition": {
+			"type": "stars",
+			"starsRequired": 10
+		},
+		"backgroundKey": "bg-castle",
+		"musicKey": "music-platformer"
+	}
+]

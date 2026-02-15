@@ -74,6 +74,8 @@
 			"type": "audio",
 			"url": "assets/audio/music/platformer-theme.mp3"
 		},
-		{ "key": "music-minigame", "type": "audio", "url": "assets/audio/music/minigame-theme.mp3" }
+		{ "key": "music-minigame", "type": "audio", "url": "assets/audio/music/minigame-theme.mp3" },
+		{ "key": "characters-data", "type": "json", "url": "assets/data/characters.json" },
+		{ "key": "worlds-data", "type": "json", "url": "assets/data/worlds.json" }
 	]
 }
