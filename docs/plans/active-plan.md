@@ -7,8 +7,8 @@ last_updated: 2026-02-16
 
 ## Snapshot
 
-- __Active:__ none (G11 complete, awaiting merge)
-- __Next ready:__ G12
+- __Active:__ G12 Second Minigame (Coin Catch) [feat/coin-catch]
+- __Next ready:__ none
 - __Blocked:__ none
 - __Last milestone:__ 2026-02-15 — G11 Character System & Selection Flow (396 tests) [feat/character-system]
 - __Gates:__ all green (396 tests)
@@ -250,11 +250,11 @@ __Deliverables:__
 
 ### G12: Second Minigame (Coin Catch)
 
-> __Status:__ ready
+> __Status:__ in-progress
 > __Requires:__ G11
 > __Benefits from:__ G10 (audio feedback during gameplay)
 > __Unlocks:__ future minigames (dice-duel, memory-match)
-> __Branch:__ —
+> __Branch:__ feat/coin-catch
 
 Implement Coin Catch as the second minigame using the established `IMinigameLogic` interface, `MinigameRegistry`, and `MinigameScope` pattern from G8. Coin Catch is an action-oriented falling-object collection game: coins fall from the top of the screen, the player moves a basket/character left and right to catch them, avoiding bombs/obstacles. Timed rounds with scoring multipliers.
 
