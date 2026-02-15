@@ -58,6 +58,7 @@ export {
 export { FacingSchema, PlayerSchema, PlayerStateSchema } from './schema/player.js';
 export { PlayerProfileSchema, SessionStateSchema } from './schema/progression.js';
 export { LeaderboardEntrySchema, LevelResultSchema, StarRatingSchema } from './schema/scoring.js';
+export { LevelCompletionSchema, SessionSaveSchema } from './schema/session-save.js';
 export { SettingsSchema } from './schema/settings.js';
 export { SyncStateSchema } from './schema/sync.js';
 
@@ -89,6 +90,7 @@ export type {
 	GameEvent,
 	JumpConfig,
 	LeaderboardEntry,
+	LevelCompletion,
 	LevelId,
 	LevelMetadata,
 	LevelResult,
@@ -105,6 +107,7 @@ export type {
 	PlayerState,
 	Range,
 	Rect,
+	SessionSaveData,
 	SessionState,
 	Settings,
 	SpritesheetMeta,
