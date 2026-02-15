@@ -61,7 +61,8 @@
 					},
 					{
 						"type": "command",
-						"command": ".claude/hooks/telemetry-log.sh"
+						"command": ".claude/hooks/telemetry-log.sh",
+						"async": true
 					}
 				]
 			},
@@ -70,7 +71,8 @@
 				"hooks": [
 					{
 						"type": "command",
-						"command": ".claude/hooks/telemetry-log.sh"
+						"command": ".claude/hooks/telemetry-log.sh",
+						"async": true
 					}
 				]
 			}
