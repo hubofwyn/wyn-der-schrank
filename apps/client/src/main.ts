@@ -8,10 +8,10 @@ import 'phaser';
 
 import { ConsoleDiagnostics } from './core/adapters/console-diagnostics.js';
 import { LocalStorageAdapter } from './core/adapters/local-storage-adapter.js';
-import { NoopAudio } from './core/adapters/noop-audio.js';
 import { NoopInput } from './core/adapters/noop-input.js';
 import { NoopNetwork } from './core/adapters/noop-network.js';
 import { NoopPhysics } from './core/adapters/noop-physics.js';
+import { PhaserAudio } from './core/adapters/phaser-audio.js';
 import { PhaserClock } from './core/adapters/phaser-clock.js';
 import type { Container, MinigameScope } from './core/container.js';
 import type { IInputProvider } from './core/ports/input.js';
@@ -42,7 +42,7 @@ import { TitleScene } from './scenes/title-scene.js';
 function createContainer(): Container {
 	const clock = new PhaserClock();
 	const input = new NoopInput();
-	const audio = new NoopAudio();
+	const audio = new PhaserAudio();
 	const physics = new NoopPhysics();
 	const network = new NoopNetwork();
 	const storage = new LocalStorageAdapter();
@@ -121,4 +121,18 @@ const game = new Phaser.Game({
 	],
 });
 
-game.registry.set('container', createContainer());
+const container = createContainer();
+game.registry.set('container', container);
+
+// Bind PhaserAudio to the game's sound manager now that the game is created.
+// Apply persisted settings (volumes + mute) immediately.
+(container.audio as PhaserAudio).bind(game);
+(container.audio as PhaserAudio).unlockAudioContext();
+
+const audioSettings = container.settingsManager.current.audio;
+container.audio.setMasterVolume(audioSettings.masterVolume);
+container.audio.setMusicVolume(audioSettings.musicVolume);
+container.audio.setSfxVolume(audioSettings.sfxVolume);
+if (audioSettings.muted) {
+	container.audio.mute();
+}

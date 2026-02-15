@@ -3,6 +3,7 @@ import { PlatformerConfigSchema, SettingsSchema } from '@hub-of-wyn/shared';
 import { PhaserInput } from '../core/adapters/phaser-input.js';
 import { PhaserBody } from '../core/adapters/phaser-physics.js';
 import type { IGameClock } from '../core/ports/engine.js';
+import { MusicKeys, pickSfxVariant, SfxKeys } from '../modules/assets/audio-keys.js';
 import { getCoinDefaultAnim } from '../modules/collectible/animation-config.js';
 import { CollectibleManager } from '../modules/collectible/collectible-manager.js';
 import { getSkeletonDefaultAnim } from '../modules/enemy/animation-config.js';
@@ -33,6 +34,12 @@ const DEFAULT_ENEMY_SPEED = 60;
  * Wires PlayerController through ports to sprite rendering.
  * Game-scoped services come from the DI container; scene-scoped
  * adapters (input, body) are created here because they need a live scene.
+ *
+ * Audio policy:
+ *   Music  — platformer-theme (loop, crossfade from title/other tracks)
+ *   SFX    — jump on takeoff, land on ground contact, coin on pickup,
+ *            hurt on damage, game-over sting on final death
+ *   Silent — pause (music paused, not stopped); respawn (no extra SFX)
  */
 export class PlatformerScene extends BaseScene {
 	private clock!: IGameClock;
@@ -51,6 +58,7 @@ export class PlatformerScene extends BaseScene {
 	private deathHandled = false;
 	private lives = 3;
 	private spawnPoint = { x: 100, y: 700 };
+	private previousPlayerState: string | null = null;
 
 	constructor() {
 		super({ key: SceneKeys.PLATFORMER });
@@ -68,6 +76,9 @@ export class PlatformerScene extends BaseScene {
 		} else {
 			this.mapKey = 'map-forest-1';
 		}
+
+		// ── Music: crossfade into platformer theme ──
+		this.container.audio.playMusic(MusicKeys.PLATFORMER, { loop: true, fadeInMs: 800 });
 
 		// ── Game-scoped services from container ──
 		this.clock = this.container.clock;
@@ -241,6 +252,8 @@ export class PlatformerScene extends BaseScene {
 			this.stopParallel(SceneKeys.HUD);
 		});
 
+		this.previousPlayerState = null;
+
 		this.container.diagnostics.emit('scene', 'state', 'lifecycle', {
 			scene: SceneKeys.PLATFORMER,
 			event: 'created',
@@ -267,6 +280,22 @@ export class PlatformerScene extends BaseScene {
 		const animKey = getAnimKeyForState(snap.state);
 		this.playerSprite.play(animKey, true);
 		this.playerSprite.flipX = snap.facing === 'left';
+
+		// ── SFX on player state transitions ──
+		if (this.previousPlayerState !== snap.state) {
+			const wasAirborne =
+				this.previousPlayerState === 'jumping' || this.previousPlayerState === 'falling';
+			const isGrounded = snap.state === 'idle' || snap.state === 'running';
+
+			if (snap.state === 'jumping') {
+				const sfx = pickSfxVariant('jump');
+				if (sfx) this.container.audio.playSfx(sfx);
+			} else if (wasAirborne && isGrounded) {
+				const sfx = pickSfxVariant('land');
+				if (sfx) this.container.audio.playSfx(sfx);
+			}
+			this.previousPlayerState = snap.state;
+		}
 
 		// ── Invincibility flash ──
 		if (snap.isInvincible) {
@@ -316,6 +345,9 @@ export class PlatformerScene extends BaseScene {
 		const result = this.collectibleManager.collect(index);
 		if (!result.collected) return;
 
+		const sfx = pickSfxVariant('coin');
+		if (sfx) this.container.audio.playSfx(sfx);
+
 		this.scoreTracker.addCoins(result.coinCount);
 		const sprite = this.collectibleSprites[index];
 		if (sprite) {
@@ -351,6 +383,9 @@ export class PlatformerScene extends BaseScene {
 		};
 		this.registry.set(GAMEPLAY_STATE_KEY, finalState);
 
+		// Fade out gameplay music before transitioning — the level-complete
+		// scene plays a victory jingle that should land over silence.
+		this.container.audio.stopMusic(300);
 		this.stopParallel(SceneKeys.HUD);
 		this.navigateTo(SceneKeys.LEVEL_COMPLETE);
 	}
@@ -378,11 +413,15 @@ export class PlatformerScene extends BaseScene {
 
 		if (this.lives > 0) {
 			// Respawn at spawn point — collected coins persist across respawns
+			const sfx = pickSfxVariant('hurt');
+			if (sfx) this.container.audio.playSfx(sfx);
 			this.playerSprite.setPosition(this.spawnPoint.x, this.spawnPoint.y);
 			this.playerController.respawn();
 			this.deathHandled = false;
 		} else {
-			// Game over
+			// Game over — fade music, play sting, transition
+			this.container.audio.stopMusic(400);
+			this.container.audio.playSfx(SfxKeys.GAME_OVER);
 			this.stopParallel(SceneKeys.HUD);
 			this.navigateTo(SceneKeys.GAME_OVER);
 		}
@@ -395,6 +434,8 @@ export class PlatformerScene extends BaseScene {
 		if (!enemySnap.isAlive) return;
 		const result = this.playerController.takeDamage(enemySnap.damage);
 		if (result.damaged) {
+			const sfx = pickSfxVariant('hurt');
+			if (sfx) this.container.audio.playSfx(sfx);
 			this.container.diagnostics.emit('scene', 'state', 'collision', {
 				type: 'enemy-damage',
 				enemyIndex: index,

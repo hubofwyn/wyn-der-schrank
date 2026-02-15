@@ -7,6 +7,11 @@ import { BaseScene } from './base-scene.js';
  *
  * Launched parallel to PlatformerScene when paused. PlatformerScene
  * is paused (no update) but still renders underneath the overlay.
+ *
+ * Audio policy:
+ *   Music  — paused on create, resumed on resume (not stopped — avoids
+ *            restarting the track when the player unpauses)
+ *   SFX    — menu-select on all buttons
  */
 export class PauseScene extends BaseScene {
 	private escHandler: (() => void) | null = null;
@@ -18,6 +23,9 @@ export class PauseScene extends BaseScene {
 	create(): void {
 		const { width, height } = this.scale;
 		const cx = width / 2;
+
+		// ── Pause music while paused ──
+		this.container.audio.pauseMusic();
 
 		// ── Dark overlay ──
 		const overlay = this.add.rectangle(cx, height / 2, width, height, 0x000000);
@@ -42,7 +50,10 @@ export class PauseScene extends BaseScene {
 		resumeBtn.setInteractive({ useHandCursor: true });
 		resumeBtn.on('pointerover', () => resumeBtn.setColor(Colors.buttonHover));
 		resumeBtn.on('pointerout', () => resumeBtn.setColor(Colors.button));
-		resumeBtn.on('pointerdown', () => this.resumeGame());
+		resumeBtn.on('pointerdown', () => {
+			this.playButtonSfx();
+			this.resumeGame();
+		});
 
 		// ── Settings button ──
 		const settingsBtn = this.add.text(cx, height * 0.55, 'Settings', {
@@ -55,6 +66,7 @@ export class PauseScene extends BaseScene {
 		settingsBtn.on('pointerover', () => settingsBtn.setColor(Colors.buttonHover));
 		settingsBtn.on('pointerout', () => settingsBtn.setColor(Colors.button));
 		settingsBtn.on('pointerdown', () => {
+			this.playButtonSfx();
 			this.scene.start(SceneKeys.SETTINGS, { returnTo: SceneKeys.PAUSE });
 		});
 
@@ -69,6 +81,7 @@ export class PauseScene extends BaseScene {
 		quitBtn.on('pointerover', () => quitBtn.setColor('#ff6666'));
 		quitBtn.on('pointerout', () => quitBtn.setColor(Colors.danger));
 		quitBtn.on('pointerdown', () => {
+			this.playButtonSfx();
 			this.stopParallel(SceneKeys.HUD);
 			this.stopParallel(SceneKeys.PLATFORMER);
 			this.navigateTo(SceneKeys.TITLE);
@@ -88,6 +101,7 @@ export class PauseScene extends BaseScene {
 	}
 
 	private resumeGame(): void {
+		this.container.audio.resumeMusic();
 		this.resumeScene(SceneKeys.PLATFORMER);
 		this.resumeScene(SceneKeys.HUD);
 		this.scene.stop();
