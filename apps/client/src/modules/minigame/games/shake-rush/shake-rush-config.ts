@@ -1,4 +1,8 @@
-import type { MinigameDefinition, MinigameId, MinigamePhase } from '@hub-of-wyn/shared';
+import type { MinigameDefinition, MinigameId } from '@hub-of-wyn/shared';
+import type {
+	MinigameEntitySnapshot,
+	MinigameRenderStateBase,
+} from '../../minigame-render-state.js';
 
 export const SHAKE_RUSH = {
 	// Layout
@@ -12,7 +16,7 @@ export const SHAKE_RUSH = {
 	WORLD_HEIGHT: 768,
 
 	// Movement
-	PLAYER_MOVE_SPEED: 5,
+	PLAYER_MOVE_SPEED_PX_PER_SEC: 300,
 	BASE_SCROLL_SPEED: 300,
 	DASH_DISTANCE: 200,
 	DASH_DURATION_MS: 300,
@@ -72,26 +76,19 @@ export interface ShakeRushEntityState {
 	active: boolean;
 }
 
-export interface ShakeRushRenderState {
-	readonly player: {
+export interface ShakeRushRenderState extends MinigameRenderStateBase {
+	readonly player: MinigameRenderStateBase['player'] & {
 		readonly lane: number;
-		readonly x: number;
-		readonly y: number;
 		readonly carrying: CarryingType;
 		readonly isDashing: boolean;
-		readonly isInvincible: boolean;
-		readonly tintOverride?: number;
 	};
-	readonly entities: ReadonlyArray<{
-		readonly id: number;
-		readonly kind: EntityKind;
-		readonly lane: number;
-		readonly x: number;
-		readonly y: number;
-		readonly active: boolean;
-	}>;
+	readonly entities: ReadonlyArray<
+		MinigameEntitySnapshot & {
+			readonly lane: number;
+			readonly kind: EntityKind;
+		}
+	>;
 	readonly deliveryZone: { readonly x: number; readonly width: number };
-	readonly phase: MinigamePhase;
 }
 
 export function getLaneY(lane: number): number {

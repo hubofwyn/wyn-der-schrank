@@ -3,6 +3,7 @@ import type { IDiagnostics } from '../../../../core/ports/diagnostics.js';
 import type { IInputProvider } from '../../../../core/ports/input.js';
 import type { MinigameHudState } from '../../minigame-hud-state.js';
 import type { IMinigameLogic, MinigameLogicDeps } from '../../minigame-logic.js';
+import { clampDelta } from '../../minigame-time.js';
 import {
 	checkObstacleHit,
 	checkPickup,
@@ -58,11 +59,12 @@ export class ShakeRushLogic implements IMinigameLogic {
 	// Lane system (exposed as readonly for testing)
 	readonly laneState: LaneSystemState;
 
-	// rng accepted from deps for interface compliance; ShakeRush still uses
-	// Math.random internally. Tech debt: adopt injected rng in G13+.
+	private readonly rng: () => number;
+
 	constructor(deps: MinigameLogicDeps) {
 		this.input = deps.input;
 		this.diagnostics = deps.diagnostics ?? NOOP_DIAGNOSTICS;
+		this.rng = deps.rng;
 		this.laneState = createLaneSystemState();
 	}
 
@@ -99,8 +101,9 @@ export class ShakeRushLogic implements IMinigameLogic {
 		});
 	}
 
-	update(deltaMs: number): void {
+	update(rawDeltaMs: number): void {
 		if (this._phase !== 'active') return;
+		const deltaMs = clampDelta(rawDeltaMs);
 
 		this.elapsedMs += deltaMs;
 		this.message = null;
@@ -132,11 +135,12 @@ export class ShakeRushLogic implements IMinigameLogic {
 		}
 
 		// Input: horizontal movement
+		const movePx = SHAKE_RUSH.PLAYER_MOVE_SPEED_PX_PER_SEC * (deltaMs / 1000);
 		if (this.input.isDown('left')) {
-			this.x -= SHAKE_RUSH.PLAYER_MOVE_SPEED;
+			this.x -= movePx;
 		}
 		if (this.input.isDown('right')) {
-			this.x += SHAKE_RUSH.PLAYER_MOVE_SPEED;
+			this.x += movePx;
 		}
 		this.x = Math.max(SHAKE_RUSH.PLAYER_MIN_X, Math.min(SHAKE_RUSH.PLAYER_MAX_X, this.x));
 
@@ -154,14 +158,14 @@ export class ShakeRushLogic implements IMinigameLogic {
 				SHAKE_RUSH.MIN_SPAWN_INTERVAL_MS,
 				SHAKE_RUSH.BASE_SPAWN_INTERVAL_MS - this.deliveries * SHAKE_RUSH.SPAWN_INTERVAL_DECREASE_MS,
 			);
-			const roll = Math.floor(Math.random() * 100);
+			const roll = Math.floor(this.rng() * 100);
 			if (roll < SHAKE_RUSH.SPAWN_OBSTACLE_MAX) {
-				const kind = OBSTACLE_KINDS[Math.floor(Math.random() * OBSTACLE_KINDS.length)]!;
-				const lane = Math.floor(Math.random() * SHAKE_RUSH.LANE_COUNT);
+				const kind = OBSTACLE_KINDS[Math.floor(this.rng() * OBSTACLE_KINDS.length)]!;
+				const lane = Math.floor(this.rng() * SHAKE_RUSH.LANE_COUNT);
 				spawnEntity(this.laneState, kind, lane);
 			} else if (roll < SHAKE_RUSH.SPAWN_PARCEL_MAX) {
-				const kind = PARCEL_KINDS[Math.floor(Math.random() * PARCEL_KINDS.length)]!;
-				const lane = Math.floor(Math.random() * SHAKE_RUSH.LANE_COUNT);
+				const kind = PARCEL_KINDS[Math.floor(this.rng() * PARCEL_KINDS.length)]!;
+				const lane = Math.floor(this.rng() * SHAKE_RUSH.LANE_COUNT);
 				spawnEntity(this.laneState, kind, lane);
 			}
 		}

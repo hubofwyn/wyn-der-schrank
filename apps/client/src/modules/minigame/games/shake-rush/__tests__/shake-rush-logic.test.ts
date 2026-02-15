@@ -5,6 +5,9 @@ import { spawnEntity } from '../lane-system.js';
 import { SHAKE_RUSH } from '../shake-rush-config.js';
 import { ShakeRushLogic } from '../shake-rush-logic.js';
 
+const DELTA = 16;
+const MOVE_PER_TICK = SHAKE_RUSH.PLAYER_MOVE_SPEED_PX_PER_SEC * (DELTA / 1000);
+
 function createLogic() {
 	const input = createMockInput();
 	const clock = createMockClock();
@@ -36,7 +39,7 @@ describe('ShakeRushLogic', () => {
 
 		// Player starts at lane 1; pressing jump should move to lane 0
 		input._justPressed.add('jump');
-		logic.update(16);
+		logic.update(DELTA);
 
 		const snap = logic.renderSnapshot();
 		expect(snap.player.lane).toBe(0);
@@ -48,7 +51,7 @@ describe('ShakeRushLogic', () => {
 
 		// Player starts at lane 1; pressing down should move to lane 2
 		input._justPressed.add('down');
-		logic.update(16);
+		logic.update(DELTA);
 
 		const snap = logic.renderSnapshot();
 		expect(snap.player.lane).toBe(2);
@@ -61,18 +64,18 @@ describe('ShakeRushLogic', () => {
 
 		// Move right
 		input._pressed.add('right');
-		logic.update(16);
+		logic.update(DELTA);
 		input._pressed.delete('right');
 
 		const afterRight = logic.renderSnapshot().player.x;
-		expect(afterRight).toBe(startX + SHAKE_RUSH.PLAYER_MOVE_SPEED);
+		expect(afterRight).toBe(startX + MOVE_PER_TICK);
 
 		// Move left
 		input._pressed.add('left');
-		logic.update(16);
+		logic.update(DELTA);
 
 		const afterLeft = logic.renderSnapshot().player.x;
-		expect(afterLeft).toBe(afterRight - SHAKE_RUSH.PLAYER_MOVE_SPEED);
+		expect(afterLeft).toBe(afterRight - MOVE_PER_TICK);
 	});
 
 	it('parcel pickup on proximity', () => {
@@ -84,7 +87,7 @@ describe('ShakeRushLogic', () => {
 		// Move entity to player's starting x position
 		logic.laneState.entities[0]!.x = SHAKE_RUSH.PLAYER_START_X;
 
-		logic.update(16);
+		logic.update(DELTA);
 
 		const snap = logic.renderSnapshot();
 		expect(snap.player.carrying).toBe('protein');
@@ -100,7 +103,7 @@ describe('ShakeRushLogic', () => {
 		// Spawn and pick up a parcel
 		spawnEntity(logic.laneState, 'parcel-protein', 1);
 		logic.laneState.entities[0]!.x = SHAKE_RUSH.PLAYER_START_X;
-		logic.update(16);
+		logic.update(DELTA);
 
 		// Verify we're carrying
 		expect(logic.renderSnapshot().player.carrying).toBe('protein');
@@ -109,9 +112,9 @@ describe('ShakeRushLogic', () => {
 		logic.laneState.spawnTimer = 999_999;
 		input._pressed.add('right');
 		const distanceNeeded = SHAKE_RUSH.DELIVERY_ZONE_X - SHAKE_RUSH.PLAYER_START_X;
-		const updatesNeeded = Math.ceil(distanceNeeded / SHAKE_RUSH.PLAYER_MOVE_SPEED) + 1;
+		const updatesNeeded = Math.ceil(distanceNeeded / MOVE_PER_TICK) + 1;
 		for (let i = 0; i < updatesNeeded; i++) {
-			logic.update(16);
+			logic.update(DELTA);
 		}
 		input._pressed.delete('right');
 
@@ -131,7 +134,7 @@ describe('ShakeRushLogic', () => {
 		spawnEntity(logic.laneState, 'obstacle-poop', 1);
 		logic.laneState.entities[0]!.x = SHAKE_RUSH.PLAYER_START_X;
 
-		logic.update(16);
+		logic.update(DELTA);
 
 		expect(logic.hudSnapshot().lives).toBe(SHAKE_RUSH.INITIAL_LIVES - 1);
 	});
@@ -146,15 +149,15 @@ describe('ShakeRushLogic', () => {
 		// First delivery
 		spawnEntity(logic.laneState, 'parcel-protein', 1);
 		logic.laneState.entities[0]!.x = SHAKE_RUSH.PLAYER_START_X;
-		logic.update(16); // pickup
+		logic.update(DELTA); // pickup
 
 		// Move to delivery zone
 		logic.laneState.spawnTimer = 999_999;
 		input._pressed.add('right');
 		const distanceNeeded = SHAKE_RUSH.DELIVERY_ZONE_X - SHAKE_RUSH.PLAYER_START_X;
-		const updatesNeeded = Math.ceil(distanceNeeded / SHAKE_RUSH.PLAYER_MOVE_SPEED) + 1;
+		const updatesNeeded = Math.ceil(distanceNeeded / MOVE_PER_TICK) + 1;
 		for (let i = 0; i < updatesNeeded; i++) {
-			logic.update(16);
+			logic.update(DELTA);
 		}
 		input._pressed.delete('right');
 
@@ -164,7 +167,7 @@ describe('ShakeRushLogic', () => {
 		logic.laneState.spawnTimer = 999_999;
 		input._pressed.add('left');
 		for (let i = 0; i < updatesNeeded; i++) {
-			logic.update(16);
+			logic.update(DELTA);
 		}
 		input._pressed.delete('left');
 
@@ -173,12 +176,12 @@ describe('ShakeRushLogic', () => {
 		spawnEntity(logic.laneState, 'parcel-protein', 1);
 		const newEntity = logic.laneState.entities[logic.laneState.entities.length - 1]!;
 		newEntity.x = logic.renderSnapshot().player.x;
-		logic.update(16); // pickup
+		logic.update(DELTA); // pickup
 
 		logic.laneState.spawnTimer = 999_999;
 		input._pressed.add('right');
 		for (let i = 0; i < updatesNeeded; i++) {
-			logic.update(16);
+			logic.update(DELTA);
 		}
 		input._pressed.delete('right');
 
@@ -192,13 +195,13 @@ describe('ShakeRushLogic', () => {
 
 		// First update: ability triggers dash state
 		input._justPressed.add('ability');
-		logic.update(16);
+		logic.update(DELTA);
 		input._justPressed.delete('ability');
 
 		expect(logic.renderSnapshot().player.isDashing).toBe(true);
 
 		// Second update: dash movement applies
-		logic.update(16);
+		logic.update(DELTA);
 
 		const snap = logic.renderSnapshot();
 		expect(snap.player.isDashing).toBe(true);
@@ -213,11 +216,14 @@ describe('ShakeRushLogic', () => {
 		for (let i = 0; i < SHAKE_RUSH.INITIAL_LIVES; i++) {
 			spawnEntity(logic.laneState, 'obstacle-poop', 1);
 			logic.laneState.entities[logic.laneState.entities.length - 1]!.x = SHAKE_RUSH.PLAYER_START_X;
-			logic.update(16);
+			logic.update(DELTA);
 
-			// Wait for invincibility to expire before next hit
+			// Advance in small ticks — clampDelta caps at 50ms, so a single large delta won't work
 			if (i < SHAKE_RUSH.INITIAL_LIVES - 1) {
-				logic.update(SHAKE_RUSH.INVINCIBILITY_DURATION_MS + 1);
+				const ticksToExpire = Math.ceil((SHAKE_RUSH.INVINCIBILITY_DURATION_MS + 1) / DELTA);
+				for (let j = 0; j < ticksToExpire; j++) {
+					logic.update(DELTA);
+				}
 			}
 		}
 
@@ -239,15 +245,15 @@ describe('ShakeRushLogic', () => {
 			spawnEntity(logic.laneState, 'parcel-protein', 1);
 			logic.laneState.entities[logic.laneState.entities.length - 1]!.x =
 				logic.renderSnapshot().player.x;
-			logic.update(16); // pickup
+			logic.update(DELTA); // pickup
 
 			// Move to delivery zone
 			logic.laneState.spawnTimer = 999_999;
 			input._pressed.add('right');
 			const distanceNeeded = SHAKE_RUSH.DELIVERY_ZONE_X - logic.renderSnapshot().player.x;
-			const updatesNeeded = Math.ceil(distanceNeeded / SHAKE_RUSH.PLAYER_MOVE_SPEED) + 2;
+			const updatesNeeded = Math.ceil(distanceNeeded / MOVE_PER_TICK) + 2;
 			for (let i = 0; i < updatesNeeded; i++) {
-				logic.update(16);
+				logic.update(DELTA);
 			}
 			input._pressed.delete('right');
 
@@ -256,7 +262,7 @@ describe('ShakeRushLogic', () => {
 				logic.laneState.spawnTimer = 999_999;
 				input._pressed.add('left');
 				for (let i = 0; i < updatesNeeded; i++) {
-					logic.update(16);
+					logic.update(DELTA);
 				}
 				input._pressed.delete('left');
 			}
@@ -286,5 +292,26 @@ describe('ShakeRushLogic', () => {
 		const { logic } = createLogic();
 		logic.start();
 		expect(logic.getResult()).toBeNull();
+	});
+
+	it('uses injected rng for spawn decisions', () => {
+		// Sequence: first roll=15 (obstacle, <30), second roll picks kind index 0,
+		// third roll picks lane 0
+		const values = [0.15, 0.0, 0.0];
+		let i = 0;
+		const logic = new ShakeRushLogic({
+			input: createMockInput(),
+			clock: createMockClock(),
+			diagnostics: { emit: vi.fn(), isEnabled: () => false, query: () => [] },
+			rng: () => values[i++]!,
+		});
+		logic.start();
+		// Force spawn timer to fire immediately
+		logic.laneState.spawnTimer = 0;
+		logic.update(DELTA);
+		// Assert entity spawned with expected kind and lane from the seeded RNG
+		expect(logic.laneState.entities).toHaveLength(1);
+		expect(logic.laneState.entities[0]!.kind).toBe('obstacle-poop');
+		expect(logic.laneState.entities[0]!.lane).toBe(0);
 	});
 });
