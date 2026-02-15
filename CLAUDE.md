@@ -46,17 +46,6 @@ The living roadmap is `docs/plans/active-plan.md`. Read it at session start.
 - Never add, remove, or reorder goals. Only the human modifies the goal list.
 - The `/implement-feature` command reads and updates the plan automatically.
 
-## Phaser 4.0.0-rc.6 — Docs-First Contract
+## Phaser 4 Contract
 
-Source of truth (in priority order):
-
-1. Type declarations: `node_modules/.bun/phaser@4.0.0-rc.6/node_modules/phaser/types/phaser.d.ts`
-2. Online docs: `https://docs.phaser.io/api-documentation/4.0.0-rc.6/`
-
-Before using ANY Phaser symbol not already in this codebase:
-
-1. Locate it in rc.6 docs or types
-2. Record it in `docs/PHASER_EVIDENCE.md`
-3. If not found, say "Not found in Phaser 4.0.0-rc.6 docs" and STOP
-
-Never cite photonstorm.github.io/phaser3-docs or docs.phaser.io/api-documentation/api-documentation (v3).
+Path-scoped: see `.claude/rules/phaser-evidence.md` (activates for adapters/ and scenes/).

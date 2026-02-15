@@ -2,7 +2,7 @@
 name: architect
 description: Reviews changes for zone violations and architectural conformance
 tools: Read, Grep, Glob
-model: opus
+model: sonnet
 ---
 You are a senior game architect reviewing Wyn der Schrank.
 

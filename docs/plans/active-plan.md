@@ -1,6 +1,6 @@
 ---
 title: Active Plan
-last_updated: 2026-02-12
+last_updated: 2026-02-14
 ---
 
 # Active Plan
@@ -10,8 +10,8 @@ last_updated: 2026-02-12
 - __Active:__ none
 - __Next ready:__ none (all goals complete)
 - __Blocked:__ none
-- __Last milestone:__ 2026-02-12 — G8 Minigame Architecture & Shake Rush (264 tests) [feat/minigame-architecture]
-- __Gates:__ all green (264 tests)
+- __Last milestone:__ 2026-02-14 — G9 Vertical Slice Safety Net (284 tests) [chore/agentic-infra-refinement]
+- __Gates:__ all green (284 tests)
 
 ## Goals
 
@@ -154,6 +154,24 @@ Build the minigame framework, then completely rewrite the Birthday Minigame from
 - [x] Minigame portal trigger in PlatformerScene via tilemap objects
 - [x] Documentation updated (AGENTS.md, active-plan.md)
 
+### G9: Vertical Slice Safety Net
+
+> __Status:__ done
+> __Requires:__ G7, G8
+> __Benefits from:__ none
+> __Unlocks:__ none
+> __Branch:__ chore/agentic-infra-refinement
+
+Wire one event end-to-end through the network port, build session persistence with schema validation, close the persistence loop with load-on-boot and a visible title-screen indicator. Fix Phaser global resolution for Vite dev server.
+
+- [x] Activate events schema in client (already done — confirmed via investigation)
+- [x] Wire `level:completed` event emission through `INetworkClient.sendEvent()` with typed `GameEvent`
+- [x] `SessionSaveSchema` and `LevelCompletionSchema` in `@hub-of-wyn/shared`
+- [x] `SessionSave` service in `modules/progression/` with `safeParse()` validation, DI registration, one consumer
+- [x] `SessionSave.load()` wired into boot sequence (`PreloadScene` via `Promise.all`)
+- [x] Progress indicator on Title scene (conditional, zero regression for new players)
+- [x] Fix Phaser global: Vite alias to browser build + side-effect import in `main.ts`
+
 ## Update Protocol
 
 ### When to read
@@ -187,6 +205,7 @@ Build the minigame framework, then completely rewrite the Birthday Minigame from
 
 ## Completed Log
 
+- __2026-02-14__ — G9: Vertical Slice Safety Net — Event emission (level:completed), SessionSave with schema-validated persistence, boot-sequence loading, title-screen progress indicator, Phaser global fix for Vite (284 tests) [chore/agentic-infra-refinement]
 - __2026-02-12__ — G8: Minigame Architecture & Shake Rush — IMinigameLogic interface, MinigameRegistry/Manager, Shake Rush complete rewrite (config, lane system, scoring, game logic), MinigameScene/MinigameHudScene, portal triggers (264 tests) [feat/minigame-architecture]
 - __2026-02-12__ — G7: Runtime & Observability — Server config validation, ServerDiagnostics with ring buffer, health + diagnostics endpoints, unified dev command (218 tests) [feat/runtime-observability]
 - __2026-02-12__ — G6: @hub-of-wyn/shared Publishing Preparation — Meta schemas, package.json for npm, explicit subpath exports, self-containment verification (182 tests) [feat/shared-publishing]

@@ -1,3 +1,4 @@
+import { emitLevelCompleted } from '../modules/game-state/game-events.js';
 import type { GameplayState } from '../modules/game-state/gameplay-state.js';
 import {
 	createInitialGameplayState,
@@ -37,6 +38,20 @@ export class LevelCompleteScene extends BaseScene {
 
 	create(): void {
 		const state = this.readGameplayState();
+
+		// Fire-and-forget: emit typed GameEvent through network port
+		emitLevelCompleted(this.container.network, state);
+
+		// Persist level completion to session save (fire-and-forget)
+		const levelId = state.levelId.replace(/^map-/, '');
+		this.container.sessionSave.onLevelComplete(
+			levelId,
+			state.score,
+			state.stars,
+			state.coins,
+			state.timeElapsedMs,
+		);
+
 		const { width, height } = this.scale;
 		const cx = width / 2;
 

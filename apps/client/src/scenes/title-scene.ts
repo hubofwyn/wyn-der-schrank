@@ -1,4 +1,5 @@
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
+import { progressSummary } from '../modules/progression/progress-summary.js';
 import { Colors, Typography } from '../modules/ui/design-tokens.js';
 import { BaseScene } from './base-scene.js';
 
@@ -28,6 +29,16 @@ export class TitleScene extends BaseScene {
 		);
 		title.setOrigin(0.5, 0.5);
 		title.setColor(Colors.accent);
+
+		// ── Progress indicator (only when save data exists) ──
+		const summary = progressSummary(this.container.sessionSave.current);
+		if (summary) {
+			const progressText = this.add.text(cx, height * 0.38, summary, {
+				...Typography.small,
+				color: Colors.textMuted,
+			} as Phaser.Types.GameObjects.Text.TextStyle);
+			progressText.setOrigin(0.5, 0.5);
+		}
 
 		// ── Play button ──
 		const playBtn = this.add.text(cx, height * 0.55, 'Play', {

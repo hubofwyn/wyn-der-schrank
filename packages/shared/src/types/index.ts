@@ -61,6 +61,7 @@ import type {
 	LevelResultSchema,
 	StarRatingSchema,
 } from '../schema/scoring.js';
+import type { LevelCompletionSchema, SessionSaveSchema } from '../schema/session-save.js';
 import type { SettingsSchema } from '../schema/settings.js';
 import type { SyncStateSchema } from '../schema/sync.js';
 
@@ -122,6 +123,10 @@ export type LeaderboardEntry = z.infer<typeof LeaderboardEntrySchema>;
 // Progression
 export type PlayerProfile = z.infer<typeof PlayerProfileSchema>;
 export type SessionState = z.infer<typeof SessionStateSchema>;
+
+// Session Save
+export type LevelCompletion = z.infer<typeof LevelCompletionSchema>;
+export type SessionSaveData = z.infer<typeof SessionSaveSchema>;
 
 // Settings
 export type Settings = z.infer<typeof SettingsSchema>;

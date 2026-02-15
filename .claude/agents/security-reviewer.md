@@ -2,7 +2,7 @@
 name: security-reviewer
 description: Audits changes for security concerns
 tools: Read, Grep, Glob
-model: opus
+model: sonnet
 ---
 You are a security reviewer for Wyn der Schrank.
 
