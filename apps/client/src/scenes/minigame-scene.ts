@@ -3,27 +3,21 @@ import { PhaserInput } from '../core/adapters/phaser-input.js';
 import type { MinigameScope } from '../core/container.js';
 import type { IGameClock } from '../core/ports/engine.js';
 import { MusicKeys } from '../modules/assets/audio-keys.js';
-import type { ShakeRushRenderState } from '../modules/minigame/games/shake-rush/shake-rush-config.js';
 import { getLaneY, SHAKE_RUSH } from '../modules/minigame/games/shake-rush/shake-rush-config.js';
 import { MINIGAME_HUD_STATE_KEY } from '../modules/minigame/minigame-hud-state.js';
 import type { IMinigameLogic } from '../modules/minigame/minigame-logic.js';
+import type { MinigameRenderStateBase } from '../modules/minigame/minigame-render-state.js';
+import {
+	MINIGAME_VIEW_CONFIGS,
+	type MinigameViewConfig,
+} from '../modules/minigame/minigame-view-config.js';
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
 import { BaseScene } from './base-scene.js';
 
-/** Color palette for rendering entity kinds as colored rectangles. */
-const ENTITY_COLORS: Record<string, number> = {
-	'parcel-protein': 0x22cc44,
-	'parcel-special': 0xffd700,
-	'obstacle-poop': 0x8b4513,
-	'obstacle-cone': 0xff8c00,
-	'obstacle-bird': 0x4488cc,
-};
-
-const LANE_COLORS = [0x334455, 0x2a3a4a, 0x334455] as const;
-const DELIVERY_ZONE_COLOR = 0x00aa44;
-const PLAYER_COLOR = 0xff4444;
-const PLAYER_CARRYING_COLOR = 0x44ff44;
 const FINISH_DELAY_MS = 2000;
+
+/** Default entity style when a kind is not found in the view config. */
+const FALLBACK_ENTITY_STYLE = { width: 24, height: 24, tint: 0xffffff } as const;
 
 /**
  * MinigameScene — drives pure minigame logic via the snapshot/intent pattern.
@@ -34,15 +28,16 @@ const FINISH_DELAY_MS = 2000;
  *
  * All game rules live in modules/. This scene is a thin Phaser rendering layer.
  *
- * Audio policy:
- *   Music  — minigame-theme (loop, crossfade from platformer track)
- *   SFX    — none yet (minigame-specific SFX deferred to G12)
+ * The update loop is fully generic — entity size/tint comes from
+ * MinigameViewConfig. Game-specific background decoration branches once
+ * in create().
  */
 export class MinigameScene extends BaseScene {
 	private clock!: IGameClock;
 	private phaserInput!: PhaserInput;
 	private scope!: MinigameScope;
 	private logic!: IMinigameLogic;
+	private viewConfig!: MinigameViewConfig;
 
 	// Visual objects
 	private playerRect!: Phaser.GameObjects.Rectangle;
@@ -63,6 +58,9 @@ export class MinigameScene extends BaseScene {
 		this.entityPool.clear();
 
 		const minigameId = (data?.minigameId as string) ?? 'shake-rush';
+
+		// ── View config (data-driven, no switch in update loop) ──
+		this.viewConfig = MINIGAME_VIEW_CONFIGS[minigameId] ?? MINIGAME_VIEW_CONFIGS['shake-rush']!;
 
 		// ── Game-scoped services from container ──
 		this.clock = this.container.clock;
@@ -90,41 +88,20 @@ export class MinigameScene extends BaseScene {
 		// ── Music: crossfade into minigame theme ──
 		this.container.audio.playMusic(MusicKeys.MINIGAME, { loop: true, fadeInMs: 600 });
 
-		// ── Lane backgrounds ──
-		for (let i = 0; i < SHAKE_RUSH.LANE_COUNT; i++) {
-			const y = getLaneY(i);
-			this.add.rectangle(
-				SHAKE_RUSH.WORLD_WIDTH / 2,
-				y,
-				SHAKE_RUSH.WORLD_WIDTH,
-				SHAKE_RUSH.LANE_HEIGHT - 4,
-				LANE_COLORS[i] ?? 0x334455,
-				0.6,
-			);
-		}
-
-		// ── Delivery zone indicator ──
-		const dzWidth = SHAKE_RUSH.WORLD_WIDTH - SHAKE_RUSH.DELIVERY_ZONE_X;
-		this.add.rectangle(
-			SHAKE_RUSH.DELIVERY_ZONE_X + dzWidth / 2,
-			getLaneY(1),
-			dzWidth,
-			SHAKE_RUSH.LANE_COUNT * SHAKE_RUSH.LANE_HEIGHT,
-			DELIVERY_ZONE_COLOR,
-			0.3,
-		);
+		// ── Game-specific background decoration (branch once in create) ──
+		this.setupBackground(minigameId);
 
 		// ── Player ──
 		this.playerRect = this.add.rectangle(
-			SHAKE_RUSH.PLAYER_START_X,
-			getLaneY(1),
-			32,
-			40,
-			PLAYER_COLOR,
+			0,
+			0,
+			this.viewConfig.playerSize.width,
+			this.viewConfig.playerSize.height,
+			this.viewConfig.playerTint,
 		);
 
 		// ── Intro prompt ──
-		this.introText = this.add.text(SHAKE_RUSH.WORLD_WIDTH / 2, 200, 'Press SPACE to Start', {
+		this.introText = this.add.text(512, 200, 'Press SPACE to Start', {
 			fontSize: '32px',
 			color: '#ffffff',
 			fontFamily: 'monospace',
@@ -181,11 +158,11 @@ export class MinigameScene extends BaseScene {
 		// ── Active phase: run game logic and render ──
 		this.logic.update(delta);
 
-		const snap = this.logic.renderSnapshot() as ShakeRushRenderState;
+		const snap = this.logic.renderSnapshot() as MinigameRenderStateBase;
 
 		// Sync player
 		this.playerRect.setPosition(snap.player.x, snap.player.y);
-		this.playerRect.setFillStyle(snap.player.carrying ? PLAYER_CARRYING_COLOR : PLAYER_COLOR);
+		this.playerRect.setFillStyle(this.viewConfig.playerTint);
 
 		// Invincibility flash
 		if (snap.player.isInvincible) {
@@ -194,7 +171,7 @@ export class MinigameScene extends BaseScene {
 			this.playerRect.alpha = 1;
 		}
 
-		// Sync entity pool — create/update/destroy per frame
+		// Sync entity pool — create/update/destroy per frame (fully generic)
 		const activeIds = new Set<number>();
 		for (const entity of snap.entities) {
 			if (!entity.active) continue;
@@ -202,14 +179,8 @@ export class MinigameScene extends BaseScene {
 
 			let rect = this.entityPool.get(entity.id);
 			if (!rect) {
-				const size = entity.kind.startsWith('obstacle') ? 28 : 24;
-				rect = this.add.rectangle(
-					entity.x,
-					entity.y,
-					size,
-					size,
-					ENTITY_COLORS[entity.kind] ?? 0xffffff,
-				);
+				const style = this.viewConfig.entityStyles[entity.kind] ?? FALLBACK_ENTITY_STYLE;
+				rect = this.add.rectangle(entity.x, entity.y, style.width, style.height, style.tint);
 				this.entityPool.set(entity.id, rect);
 			}
 			rect.setPosition(entity.x, entity.y);
@@ -225,6 +196,42 @@ export class MinigameScene extends BaseScene {
 
 		// Write HUD state for MinigameHudScene
 		this.registry.set(MINIGAME_HUD_STATE_KEY, this.logic.hudSnapshot());
+	}
+
+	/**
+	 * One-time background decoration setup per game.
+	 * This is the ONLY place that branches on minigameId.
+	 */
+	private setupBackground(minigameId: string): void {
+		if (minigameId === 'shake-rush') {
+			// Lane backgrounds
+			for (let i = 0; i < SHAKE_RUSH.LANE_COUNT; i++) {
+				const y = getLaneY(i);
+				const laneColors = [0x334455, 0x2a3a4a, 0x334455] as const;
+				this.add.rectangle(
+					SHAKE_RUSH.WORLD_WIDTH / 2,
+					y,
+					SHAKE_RUSH.WORLD_WIDTH,
+					SHAKE_RUSH.LANE_HEIGHT - 4,
+					laneColors[i] ?? 0x334455,
+					0.6,
+				);
+			}
+
+			// Delivery zone indicator
+			const dzWidth = SHAKE_RUSH.WORLD_WIDTH - SHAKE_RUSH.DELIVERY_ZONE_X;
+			this.add.rectangle(
+				SHAKE_RUSH.DELIVERY_ZONE_X + dzWidth / 2,
+				getLaneY(1),
+				dzWidth,
+				SHAKE_RUSH.LANE_COUNT * SHAKE_RUSH.LANE_HEIGHT,
+				0x00aa44,
+				0.3,
+			);
+		} else if (minigameId === 'coin-catch') {
+			// Catcher zone indicator at bottom
+			this.add.rectangle(512, 680, 1024, 60, 0x224488, 0.3);
+		}
 	}
 
 	private cleanupEntityPool(): void {
