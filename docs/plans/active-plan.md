@@ -10,8 +10,8 @@ last_updated: 2026-02-15
 - __Active:__ none
 - __Next ready:__ none
 - __Blocked:__ none
-- __Last milestone:__ 2026-02-15 — G12 Second Minigame (Coin Catch) (454 tests) [feat/coin-catch]
-- __Gates:__ all green (454 tests)
+- __Last milestone:__ 2026-02-15 — G12 Second Minigame (Coin Catch) (457 tests) [feat/coin-catch]
+- __Gates:__ all green (457 tests)
 
 ## Goals
 
@@ -314,7 +314,7 @@ __Deliverables:__
 
 ## Completed Log
 
-- __2026-02-15__ — G12: Second Minigame (Coin Catch) — MinigameRenderStateBase, clampDelta, data-driven view config, injected RNG, falling-objects module, scoring module, CoinCatchLogic, MinigameScene refactored to generic renderer, coin-catch portal in forest-2 (454 tests) [feat/coin-catch]
+- __2026-02-15__ — G12: Second Minigame (Coin Catch) — MinigameRenderStateBase, clampDelta, data-driven view config, injected RNG, falling-objects module, scoring module, CoinCatchLogic, MinigameScene refactored to generic renderer, coin-catch portal in forest-2, regression fixes (tintOverride, intro position, removeInactive) (457 tests) [feat/coin-catch]
 - __2026-02-15__ — G11: Character System & Selection Flow — CharacterCatalog, WorldCatalog, FlowController (FSM), 4 new scenes (CharacterSelect, MainMenu, WorldSelect, LevelSelect), character/world JSON data, navigation chain rewiring (396 tests) [feat/character-system]
 - __2026-02-15__ — G10: Audio System — PhaserAudio adapter (layered volume, crossfade, AudioContext unlock), audio-keys domain module (SFX variants), 26 audio assets, scene integration across all 8 scenes, settings round-trip (348 tests) [feat/audio-system]
 - __2026-02-14__ — G9: Vertical Slice Safety Net — Event emission (level:completed), SessionSave with schema-validated persistence, boot-sequence loading, title-screen progress indicator, Phaser global fix for Vite (284 tests) [chore/agentic-infra-refinement]

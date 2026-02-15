@@ -51,8 +51,9 @@ apps/client/             → Phaser 4 game client (@hub-of-wyn/client)
     enemy/               → Enemy catalog, AI, behaviors, animation config
     game-state/          → Global FSM, sync manager, event emission (level:completed)
     level/               → WorldCatalog (world/level structure, unlock logic, next-level traversal), tile registry
-    minigame/            → Registry, manager, IMinigameLogic interface, MinigameHudState
+    minigame/            → Registry, manager, IMinigameLogic, render state base, delta clamp, view config
       games/shake-rush/  → Shake Rush: config, lane system, scoring, ShakeRushLogic
+      games/coin-catch/  → Coin Catch: config, falling objects, scoring, CoinCatchLogic
     navigation/          → Scene keys, FlowController (typed FSM: idle → character-selected → world-selected → ready)
     physics/             → Platformer physics, collision
     player/              → Player controller, state, animation config
