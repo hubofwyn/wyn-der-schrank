@@ -34,10 +34,10 @@ docs/
   hooks/                 → Enforcement scripts (zone lint, Phaser guard, telemetry, branch protection, notifications)
   rules/                 → Path-scoped conventions (modules-zone, scenes-thin, shared-schemas, phaser-evidence)
 packages/shared/         → Zod schemas + inferred types (@hub-of-wyn/shared, npm: @hub-of-wyn/shared@1.0.0)
-  src/schema/            → 15 schema files: common, character, player, enemy, level, collectible,
-                           minigame, scoring, progression, settings, events, sync, assets,
-                           physics-config, diagnostics
-  src/types/index.ts     → 40+ types, all z.infer<> re-exports
+  src/schema/            → 16 schema files: common, character, player, enemy, level, collectible,
+                           minigame, scoring, progression, session-save, settings, events, sync,
+                           assets, physics-config, diagnostics
+  src/types/index.ts     → 54 types, all z.infer<> re-exports
 apps/client/             → Phaser 4 game client (@hub-of-wyn/client)
   src/core/              → Infrastructure zone (ports, adapters, services, container)
     ports/               → 8 interfaces: engine, input, audio, physics, network, storage, settings, diagnostics
@@ -49,14 +49,14 @@ apps/client/             → Phaser 4 game client (@hub-of-wyn/client)
     character/           → Character definitions, stats
     collectible/         → Pickup system, catalog, animation config
     enemy/               → Enemy catalog, AI, behaviors, animation config
-    game-state/          → Global FSM, sync manager
+    game-state/          → Global FSM, sync manager, event emission (level:completed)
     level/               → Tilemap objects, world catalog, tile registry
     minigame/            → Registry, manager, IMinigameLogic interface, MinigameHudState
       games/shake-rush/  → Shake Rush: config, lane system, scoring, ShakeRushLogic
     navigation/          → Scene keys, flow controller
     physics/             → Platformer physics, collision
     player/              → Player controller, state, animation config
-    progression/         → Profile, unlocks, session state
+    progression/         → SessionSave (schema-validated persistence), progress summary
     scoring/             → Score calculator, star rating
     settings/            → Preferences manager (ISettingsManager + localStorage persistence)
     ui/                  → Design tokens: colors, spacing, typography, z-index (pure TS, zone-safe)
@@ -92,7 +92,9 @@ scripts/
 ## Server Endpoints
 
 - `GET /api/health` — Server health check (status, version, uptime)
+- `GET /api/state` — Game state (stub: tick 0, empty arrays)
 - `GET /api/diagnostics?channel=&level=&last=` — Server diagnostic events (filterable)
+- `POST /api/event` — Accept and validate a `GameEvent` against `GameEventSchema`
 
 ## Definition of Done
 
@@ -280,10 +282,10 @@ shared/  X any app dependency except Zod
 
 ### Schemas
 
-15 files in `packages/shared/src/schema/`:
-`common` `character` `player` `enemy` `level` `collectible` `minigame` `scoring` `progression` `settings` `events` `sync` `assets` `physics-config` `diagnostics`
+16 files in `packages/shared/src/schema/`:
+`common` `character` `player` `enemy` `level` `collectible` `minigame` `scoring` `progression` `session-save` `settings` `events` `sync` `assets` `physics-config` `diagnostics`
 
-40+ inferred types exported from `packages/shared/src/types/index.ts`.
+54 inferred types exported from `packages/shared/src/types/index.ts`.
 
 ### Hooks (enforcement)
 
@@ -318,6 +320,7 @@ shared/  X any app dependency except Zod
 | Minigame system | `apps/client/src/modules/minigame/` |
 | Game state | `apps/client/src/modules/game-state/` |
 | Settings & persistence | `apps/client/src/modules/settings/` + `core/ports/settings.ts` |
+| Session save & progress | `apps/client/src/modules/progression/` (SessionSave, progressSummary) |
 | UI design tokens | `apps/client/src/modules/ui/design-tokens.ts` |
 | Scene navigation | `apps/client/src/modules/navigation/scene-keys.ts` |
 | Engine abstraction | `apps/client/src/core/ports/` |
