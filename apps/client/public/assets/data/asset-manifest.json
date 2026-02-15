@@ -1,5 +1,5 @@
 {
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"assets": [
 		{
 			"key": "player",
@@ -43,6 +43,37 @@
 			"key": "map-forest-2",
 			"type": "tilemapTiledJSON",
 			"url": "assets/tilemaps/levels/forest-2.json"
-		}
+		},
+		{ "key": "sfx-jump-1", "type": "audio", "url": "assets/audio/sfx/jump-1.mp3" },
+		{ "key": "sfx-jump-2", "type": "audio", "url": "assets/audio/sfx/jump-2.mp3" },
+		{ "key": "sfx-jump-3", "type": "audio", "url": "assets/audio/sfx/jump-3.mp3" },
+		{ "key": "sfx-jump-4", "type": "audio", "url": "assets/audio/sfx/jump-4.mp3" },
+		{ "key": "sfx-land-1", "type": "audio", "url": "assets/audio/sfx/land-1.mp3" },
+		{ "key": "sfx-land-2", "type": "audio", "url": "assets/audio/sfx/land-2.mp3" },
+		{ "key": "sfx-land-3", "type": "audio", "url": "assets/audio/sfx/land-3.mp3" },
+		{ "key": "sfx-land-4", "type": "audio", "url": "assets/audio/sfx/land-4.mp3" },
+		{ "key": "sfx-coin-1", "type": "audio", "url": "assets/audio/sfx/coin-1.mp3" },
+		{ "key": "sfx-coin-2", "type": "audio", "url": "assets/audio/sfx/coin-2.mp3" },
+		{ "key": "sfx-coin-3", "type": "audio", "url": "assets/audio/sfx/coin-3.mp3" },
+		{ "key": "sfx-coin-4", "type": "audio", "url": "assets/audio/sfx/coin-4.mp3" },
+		{ "key": "sfx-hurt-1", "type": "audio", "url": "assets/audio/sfx/hurt-1.mp3" },
+		{ "key": "sfx-hurt-2", "type": "audio", "url": "assets/audio/sfx/hurt-2.mp3" },
+		{ "key": "sfx-enemy-defeat-1", "type": "audio", "url": "assets/audio/sfx/enemy-defeat-1.mp3" },
+		{ "key": "sfx-enemy-defeat-2", "type": "audio", "url": "assets/audio/sfx/enemy-defeat-2.mp3" },
+		{ "key": "sfx-menu-select-1", "type": "audio", "url": "assets/audio/sfx/menu-select-1.mp3" },
+		{ "key": "sfx-menu-select-2", "type": "audio", "url": "assets/audio/sfx/menu-select-2.mp3" },
+		{ "key": "sfx-menu-select-3", "type": "audio", "url": "assets/audio/sfx/menu-select-3.mp3" },
+		{ "key": "sfx-menu-select-4", "type": "audio", "url": "assets/audio/sfx/menu-select-4.mp3" },
+		{ "key": "sfx-menu-confirm-1", "type": "audio", "url": "assets/audio/sfx/menu-confirm-1.mp3" },
+		{ "key": "sfx-menu-confirm-2", "type": "audio", "url": "assets/audio/sfx/menu-confirm-2.mp3" },
+		{ "key": "sfx-level-complete", "type": "audio", "url": "assets/audio/sfx/level-complete.mp3" },
+		{ "key": "sfx-game-over", "type": "audio", "url": "assets/audio/sfx/game-over.mp3" },
+		{ "key": "music-title", "type": "audio", "url": "assets/audio/music/title-theme.mp3" },
+		{
+			"key": "music-platformer",
+			"type": "audio",
+			"url": "assets/audio/music/platformer-theme.mp3"
+		},
+		{ "key": "music-minigame", "type": "audio", "url": "assets/audio/music/minigame-theme.mp3" }
 	]
 }
