@@ -36,6 +36,15 @@
 						"command": ".claude/hooks/block-phaser3-urls.sh"
 					}
 				]
+			},
+			{
+				"matcher": "Edit|Write",
+				"hooks": [
+					{
+						"type": "command",
+						"command": ".claude/hooks/protect-main-branch.sh"
+					}
+				]
 			}
 		],
 		"PostToolUse": [
@@ -82,6 +91,26 @@
 					{
 						"type": "command",
 						"command": ".claude/hooks/telemetry-log.sh subagent-stop"
+					}
+				]
+			}
+		],
+		"Notification": [
+			{
+				"hooks": [
+					{
+						"type": "command",
+						"command": ".claude/hooks/notify-attention.sh"
+					}
+				]
+			}
+		],
+		"PreCompact": [
+			{
+				"hooks": [
+					{
+						"type": "command",
+						"command": ".claude/hooks/pre-compact-backup.sh"
 					}
 				]
 			}

@@ -33,6 +33,7 @@ npm-debug.log*
 
 # Claude Code (machine-local, regenerated per session)
 .claude/telemetry/
+.claude/telemetry/compaction-backups/
 .claude/settings.local.json
 .claude/plan.md
 .claude/plans/
