@@ -2,6 +2,10 @@
 // All services are wired here and ONLY here.
 // See core/container.ts for the Container interface.
 
+// Side-effect import: registers `globalThis.Phaser` so all scenes and
+// adapters can reference the Phaser namespace without explicit imports.
+import 'phaser';
+
 import { ConsoleDiagnostics } from './core/adapters/console-diagnostics.js';
 import { LocalStorageAdapter } from './core/adapters/local-storage-adapter.js';
 import { NoopAudio } from './core/adapters/noop-audio.js';
