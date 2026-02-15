@@ -13,7 +13,7 @@ function createLogic() {
 		isEnabled: () => true,
 		query: () => [],
 	};
-	const logic = new ShakeRushLogic({ input, clock, diagnostics });
+	const logic = new ShakeRushLogic({ input, clock, diagnostics, rng: Math.random });
 	return { logic, input, clock, diagnostics };
 }
 

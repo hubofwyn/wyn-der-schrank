@@ -74,6 +74,7 @@ function createContainer(): Container {
 			input: sceneInput,
 			clock,
 			diagnostics,
+			rng: Math.random,
 		});
 		return {
 			minigameId,

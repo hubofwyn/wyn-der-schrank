@@ -58,6 +58,8 @@ export class ShakeRushLogic implements IMinigameLogic {
 	// Lane system (exposed as readonly for testing)
 	readonly laneState: LaneSystemState;
 
+	// rng accepted from deps for interface compliance; ShakeRush still uses
+	// Math.random internally. Tech debt: adopt injected rng in G13+.
 	constructor(deps: MinigameLogicDeps) {
 		this.input = deps.input;
 		this.diagnostics = deps.diagnostics ?? NOOP_DIAGNOSTICS;
