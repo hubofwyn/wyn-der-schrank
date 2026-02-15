@@ -44,16 +44,16 @@ apps/client/             → Phaser 4 game client (@hub-of-wyn/client)
     container.ts         → Container + PlatformerScope + MinigameScope
   src/modules/           → Domain zone (pure TS, NO Phaser/browser globals)
     animation/           → Shared AnimationDef type for entity animations
-    assets/              → Asset manifest parser (Zod-validated)
+    assets/              → Asset manifest parser (Zod-validated), audio-keys (SFX variants)
     camera/              → Camera controller
-    character/           → Character definitions, stats
+    character/           → Character definitions, stats (empty — G11 target)
     collectible/         → Pickup system, catalog, animation config
     enemy/               → Enemy catalog, AI, behaviors, animation config
     game-state/          → Global FSM, sync manager, event emission (level:completed)
-    level/               → Tilemap objects, world catalog, tile registry
+    level/               → Tilemap objects (world-catalog and tile registry — G11 target)
     minigame/            → Registry, manager, IMinigameLogic interface, MinigameHudState
       games/shake-rush/  → Shake Rush: config, lane system, scoring, ShakeRushLogic
-    navigation/          → Scene keys, flow controller
+    navigation/          → Scene keys (flow-controller — G11 target)
     physics/             → Platformer physics, collision
     player/              → Player controller, state, animation config
     progression/         → SessionSave (schema-validated persistence), progress summary
@@ -322,6 +322,7 @@ shared/  X any app dependency except Zod
 | Settings & persistence | `apps/client/src/modules/settings/` + `core/ports/settings.ts` |
 | Session save & progress | `apps/client/src/modules/progression/` (SessionSave, progressSummary) |
 | UI design tokens | `apps/client/src/modules/ui/design-tokens.ts` |
+| Audio system | `apps/client/src/core/adapters/phaser-audio.ts` + `modules/assets/audio-keys.ts` |
 | Scene navigation | `apps/client/src/modules/navigation/scene-keys.ts` |
 | Engine abstraction | `apps/client/src/core/ports/` |
 | Phaser adapters | `apps/client/src/core/adapters/` |

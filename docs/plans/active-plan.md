@@ -1,17 +1,17 @@
 ---
 title: Active Plan
-last_updated: 2026-02-15
+last_updated: 2026-02-16
 ---
 
 # Active Plan
 
 ## Snapshot
 
-- __Active:__ G10 Audio System [feat/audio-system]
-- __Next ready:__ G11 (blocked by G10)
+- __Active:__ G11 Character System & Selection Flow [feat/character-system]
+- __Next ready:__ G12 (blocked by G11)
 - __Blocked:__ none
-- __Last milestone:__ 2026-02-14 — G9 Vertical Slice Safety Net (284 tests) [chore/agentic-infra-refinement]
-- __Gates:__ all green (284 tests)
+- __Last milestone:__ 2026-02-15 — G10 Audio System (348 tests) [feat/audio-system]
+- __Gates:__ all green (348 tests)
 
 ## Goals
 
@@ -174,11 +174,11 @@ Wire one event end-to-end through the network port, build session persistence wi
 
 ### G10: Audio System
 
-> __Status:__ in-progress
+> __Status:__ done
 > __Requires:__ none (G1–G9 done)
 > __Benefits from:__ none
 > __Unlocks:__ G11 (menus need audio feedback for interactions)
-> __Branch:__ feat/audio-system
+> __Branch:__ merged
 
 Replace `NoopAudio` with a real `PhaserAudio` adapter that implements the existing `IAudioPlayer` port (`core/ports/audio.ts`). Add SFX and music playback across all existing scenes. Wire the `SettingsManager` audio controls (masterVolume, musicVolume, sfxVolume, muted) to the live audio system. The game is currently silent — this goal makes it sound like a game.
 
@@ -208,11 +208,11 @@ __Deliverables:__
 
 ### G11: Character System & Selection Flow
 
-> __Status:__ not-started
+> __Status:__ in-progress
 > __Requires:__ G10
 > __Benefits from:__ none
 > __Unlocks:__ G12
-> __Branch:__ —
+> __Branch:__ feat/character-system
 
 Build the full menu selection pipeline: Title → MainMenu → CharacterSelect → WorldSelect → LevelSelect → Platformer. Port the character select card UI and main menu level grid from wynisbuff2, rewritten for hexagonal architecture with TypeScript, Zod schemas, zone defense, and thin scenes. Requires building the character catalog module and the navigation flow controller.
 
@@ -312,6 +312,7 @@ __Deliverables:__
 
 ## Completed Log
 
+- __2026-02-15__ — G10: Audio System — PhaserAudio adapter (layered volume, crossfade, AudioContext unlock), audio-keys domain module (SFX variants), 26 audio assets, scene integration across all 8 scenes, settings round-trip (348 tests) [feat/audio-system]
 - __2026-02-14__ — G9: Vertical Slice Safety Net — Event emission (level:completed), SessionSave with schema-validated persistence, boot-sequence loading, title-screen progress indicator, Phaser global fix for Vite (284 tests) [chore/agentic-infra-refinement]
 - __2026-02-12__ — G8: Minigame Architecture & Shake Rush — IMinigameLogic interface, MinigameRegistry/Manager, Shake Rush complete rewrite (config, lane system, scoring, game logic), MinigameScene/MinigameHudScene, portal triggers (264 tests) [feat/minigame-architecture]
 - __2026-02-12__ — G7: Runtime & Observability — Server config validation, ServerDiagnostics with ring buffer, health + diagnostics endpoints, unified dev command (218 tests) [feat/runtime-observability]
