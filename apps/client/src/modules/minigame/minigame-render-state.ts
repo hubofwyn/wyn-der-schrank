@@ -13,6 +13,8 @@ export interface MinigameRenderStateBase {
 		readonly x: number;
 		readonly y: number;
 		readonly isInvincible: boolean;
+		/** If set, the scene uses this tint instead of the view config default. */
+		readonly tintOverride?: number;
 	};
 	readonly entities: readonly MinigameEntitySnapshot[];
 	readonly phase: MinigamePhase;

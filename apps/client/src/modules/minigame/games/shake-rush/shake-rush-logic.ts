@@ -278,6 +278,7 @@ export class ShakeRushLogic implements IMinigameLogic {
 				carrying: this.carrying,
 				isDashing: this.isDashing,
 				isInvincible: this.invincibilityMs > 0,
+				...(this.carrying ? { tintOverride: SHAKE_RUSH.PLAYER_CARRYING_TINT } : {}),
 			},
 			entities: this.laneState.entities.map((e) => ({
 				id: e.id,

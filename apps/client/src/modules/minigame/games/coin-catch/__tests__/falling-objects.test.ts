@@ -3,6 +3,7 @@ import { COIN_CATCH } from '../coin-catch-config.js';
 import {
 	checkCatch,
 	createFallingObjectsState,
+	removeInactive,
 	removeOffscreen,
 	spawnEntity,
 	updatePositions,
@@ -141,6 +142,42 @@ describe('FallingObjects', () => {
 			const removed = removeOffscreen(state, 750);
 			expect(removed).toHaveLength(0);
 			expect(state.entities).toHaveLength(1);
+		});
+	});
+
+	describe('removeInactive', () => {
+		it('removes entities marked inactive', () => {
+			const state = createFallingObjectsState();
+			spawnEntity(state, 'coin', 100);
+			spawnEntity(state, 'bomb', 200);
+			spawnEntity(state, 'gold-coin', 300);
+
+			state.entities[1]!.active = false;
+			removeInactive(state);
+
+			expect(state.entities).toHaveLength(2);
+			expect(state.entities.map((e) => e.kind)).toEqual(['coin', 'gold-coin']);
+		});
+
+		it('no-ops when all entities are active', () => {
+			const state = createFallingObjectsState();
+			spawnEntity(state, 'coin', 100);
+			spawnEntity(state, 'bomb', 200);
+
+			removeInactive(state);
+			expect(state.entities).toHaveLength(2);
+		});
+
+		it('removes all entities when all are inactive', () => {
+			const state = createFallingObjectsState();
+			spawnEntity(state, 'coin', 100);
+			spawnEntity(state, 'bomb', 200);
+
+			state.entities[0]!.active = false;
+			state.entities[1]!.active = false;
+			removeInactive(state);
+
+			expect(state.entities).toHaveLength(0);
 		});
 	});
 

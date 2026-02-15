@@ -10,6 +10,7 @@ import {
 	checkCatch,
 	createFallingObjectsState,
 	type FallingObjectsState,
+	removeInactive,
 	removeOffscreen,
 	spawnEntity,
 	updatePositions,
@@ -166,7 +167,8 @@ export class CoinCatchLogic implements IMinigameLogic {
 			}
 		}
 
-		// Remove offscreen (no penalty for missed coins)
+		// Clean up caught entities and remove offscreen (no penalty for missed coins)
+		removeInactive(this.fallingState);
 		removeOffscreen(this.fallingState, COIN_CATCH.WORLD_HEIGHT + 50);
 
 		// Win/lose checks

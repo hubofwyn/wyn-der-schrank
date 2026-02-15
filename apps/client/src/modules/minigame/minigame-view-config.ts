@@ -6,7 +6,6 @@ export interface EntityStyle {
 
 export interface MinigameViewConfig {
 	readonly entityStyles: Record<string, EntityStyle>;
-	readonly backgroundColor: number;
 	readonly playerSize: { readonly width: number; readonly height: number };
 	readonly playerTint: number;
 }
@@ -20,7 +19,6 @@ export const MINIGAME_VIEW_CONFIGS: Record<string, MinigameViewConfig> = {
 			'obstacle-cone': { width: 28, height: 28, tint: 0xff8c00 },
 			'obstacle-bird': { width: 28, height: 28, tint: 0x4488cc },
 		},
-		backgroundColor: 0x2a2a3e,
 		playerSize: { width: 32, height: 40 },
 		playerTint: 0xff4444,
 	},
@@ -30,7 +28,6 @@ export const MINIGAME_VIEW_CONFIGS: Record<string, MinigameViewConfig> = {
 			'gold-coin': { width: 24, height: 24, tint: 0xffaa00 },
 			bomb: { width: 28, height: 28, tint: 0xff2222 },
 		},
-		backgroundColor: 0x1a1a2e,
 		playerSize: { width: 48, height: 32 },
 		playerTint: 0x44aaff,
 	},

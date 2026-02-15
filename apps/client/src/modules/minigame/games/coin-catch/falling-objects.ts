@@ -55,6 +55,11 @@ export function removeOffscreen(state: FallingObjectsState, maxY: number): Falli
 	return removed;
 }
 
+/** Removes entities that have been marked inactive (e.g. caught). */
+export function removeInactive(state: FallingObjectsState): void {
+	state.entities = state.entities.filter((e) => e.active);
+}
+
 /**
  * Finds the closest active entity within the catch zone around the catcher.
  * If found, marks it inactive and returns it. Otherwise returns null.

@@ -91,10 +91,11 @@ export class MinigameScene extends BaseScene {
 		// ── Game-specific background decoration (branch once in create) ──
 		this.setupBackground(minigameId);
 
-		// ── Player ──
+		// ── Player (position from initial snapshot so it isn't at 0,0 during intro) ──
+		const initialSnap = this.logic.renderSnapshot() as MinigameRenderStateBase;
 		this.playerRect = this.add.rectangle(
-			0,
-			0,
+			initialSnap.player.x,
+			initialSnap.player.y,
 			this.viewConfig.playerSize.width,
 			this.viewConfig.playerSize.height,
 			this.viewConfig.playerTint,
@@ -162,7 +163,7 @@ export class MinigameScene extends BaseScene {
 
 		// Sync player
 		this.playerRect.setPosition(snap.player.x, snap.player.y);
-		this.playerRect.setFillStyle(this.viewConfig.playerTint);
+		this.playerRect.setFillStyle(snap.player.tintOverride ?? this.viewConfig.playerTint);
 
 		// Invincibility flash
 		if (snap.player.isInvincible) {
