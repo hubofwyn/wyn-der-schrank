@@ -46,14 +46,14 @@ apps/client/             → Phaser 4 game client (@hub-of-wyn/client)
     animation/           → Shared AnimationDef type for entity animations
     assets/              → Asset manifest parser (Zod-validated), audio-keys (SFX variants)
     camera/              → Camera controller
-    character/           → Character definitions, stats (empty — G11 target)
+    character/           → CharacterCatalog (loads definitions from JSON, queries by ID)
     collectible/         → Pickup system, catalog, animation config
     enemy/               → Enemy catalog, AI, behaviors, animation config
     game-state/          → Global FSM, sync manager, event emission (level:completed)
-    level/               → Tilemap objects (world-catalog and tile registry — G11 target)
+    level/               → WorldCatalog (world/level structure, unlock logic, next-level traversal), tile registry
     minigame/            → Registry, manager, IMinigameLogic interface, MinigameHudState
       games/shake-rush/  → Shake Rush: config, lane system, scoring, ShakeRushLogic
-    navigation/          → Scene keys (flow-controller — G11 target)
+    navigation/          → Scene keys, FlowController (typed FSM: idle → character-selected → world-selected → ready)
     physics/             → Platformer physics, collision
     player/              → Player controller, state, animation config
     progression/         → SessionSave (schema-validated persistence), progress summary
@@ -323,7 +323,9 @@ shared/  X any app dependency except Zod
 | Session save & progress | `apps/client/src/modules/progression/` (SessionSave, progressSummary) |
 | UI design tokens | `apps/client/src/modules/ui/design-tokens.ts` |
 | Audio system | `apps/client/src/core/adapters/phaser-audio.ts` + `modules/assets/audio-keys.ts` |
-| Scene navigation | `apps/client/src/modules/navigation/scene-keys.ts` |
+| Character catalog | `apps/client/src/modules/character/character-catalog.ts` |
+| World/level catalog | `apps/client/src/modules/level/world-catalog.ts` |
+| Scene navigation | `apps/client/src/modules/navigation/scene-keys.ts` + `flow-controller.ts` |
 | Engine abstraction | `apps/client/src/core/ports/` |
 | Phaser adapters | `apps/client/src/core/adapters/` |
 | DI wiring | `apps/client/src/core/container.ts` + `apps/client/src/main.ts` |

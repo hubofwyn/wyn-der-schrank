@@ -55,28 +55,21 @@ BootScene
   ▼
 PreloadScene
   │  (load all assets with progress bar, parse asset manifests)
+  │  (init CharacterCatalog + WorldCatalog from JSON cache)
   ▼
 TitleScene ◄─────────────────────────────────────┐
   │  (title + Play / Settings buttons)            │
-  │  NOTE: MainMenu deferred — TitleScene serves  │
-  │  as entry point for G5. MainMenuScene reserved │
-  │  for future character/world/level select flow. │
   ├──▶ SettingsScene ────────────────────────────▶┤
-  ▼                                                │
-MainMenuScene (DEFERRED) ◄───────────────────────┤
-  │  Play / Settings / Leaderboard / Credits      │
-  ├──▶ SettingsScene ────────────────────────────▶┤
-  ├──▶ LeaderboardScene ─────────────────────────▶┤
-  ├──▶ CreditsScene ─────────────────────────────▶┤
   ▼                                                │
 CharacterSelectScene                               │
-  │  (choose character, preview stats/abilities)   │
+  │  (3 cards: stats, abilities, color-coded)      │
+  │  Back → flowController.reset() → Title         │
   ▼                                                │
-WorldSelectScene                                   │
-  │  (choose world/biome, shows lock/unlock state) │
-  ▼                                                │
-LevelSelectScene                                   │
-  │  (choose level within world, star ratings)     │
+MainMenuScene ◄────────────────────────────────────┤
+  │  (world sections, level grids, star ratings)   │
+  │  Back → CharacterSelect (keeps selection)      │
+  ├──▶ SettingsScene ────────────────────────────▶┤
+  ├──▶ WorldSelectScene (alternate drill-down) ──▶┤
   ▼                                                │
 PlatformerScene ◄─────────────────────────┐        │
   │  (gameplay — parallel scenes below)    │        │
@@ -91,11 +84,22 @@ PlatformerScene ◄────────────────────�
   │      └── results → return to platformer│        │
   │                                        │        │
   └──▶ LevelCompleteScene ─────────────────┘        │
-         (score tally, stars, rewards)              │
-         └── Next Level / World Map / Menu ────────▶┘
+         (score tally, stars, next level via        │
+          WorldCatalog.getNextLevel)                │
+         └── Next Level / Menu ────────────────────▶┘
 
 GameOverScene
-  └── Retry / World Map / Menu ────────────────────▶MainMenuScene
+  └── Retry / Menu ──────────────────────────────▶MainMenuScene
+
+WorldSelectScene ◄──── MainMenuScene
+  │  (3 world cards, unlock state)
+  │  Back → MainMenu
+  ▼
+LevelSelectScene
+  │  (levels for selected world, star ratings)
+  │  Back → WorldSelect
+  ▼
+PlatformerScene (via flowController.selectLevel)
 ```
 
 ### Scene Key Registry

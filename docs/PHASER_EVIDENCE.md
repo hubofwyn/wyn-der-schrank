@@ -122,6 +122,13 @@ Do not duplicate entries — if a symbol is already listed, additional usages do
 | `BaseSound.isPaused` | `/classes/Phaser.Sound.BaseSound.html#isPaused` — `phaser.d.ts:86404` | `core/adapters/phaser-audio.ts` | 2026-02-15 | type-verified |
 | `WebAudioSound.setVolume()` | `/classes/Phaser.Sound.WebAudioSound.html#setVolume` — `phaser.d.ts:88230` | `core/adapters/phaser-audio.ts` | 2026-02-15 | type-verified |
 | `SoundConfig` (Types) | `/types/Phaser.Types.Sound.SoundConfig.html` — `phaser.d.ts:116908` | `core/adapters/phaser-audio.ts` | 2026-02-15 | type-verified |
+| `Phaser.GameObjects.Container` | `/classes/Phaser.GameObjects.Container.html` — `phaser.d.ts:20609` | `scenes/character-select-scene.ts` | 2026-02-15 | type-verified |
+| `scene.add.container()` | `/classes/Phaser.GameObjects.GameObjectFactory.html#container` — `phaser.d.ts:12463` | `scenes/character-select-scene.ts` | 2026-02-15 | type-verified |
+| `Container.add()` | `/classes/Phaser.GameObjects.Container.html#add` — `phaser.d.ts:25866` | `scenes/character-select-scene.ts` | 2026-02-15 | type-verified |
+| `Shape.setStrokeStyle()` | `/classes/Phaser.GameObjects.Shape.html#setStrokeStyle` — `phaser.d.ts:40547` | `scenes/character-select-scene.ts` | 2026-02-15 | type-verified |
+| `GameObject.setAlpha()` | `/classes/Phaser.GameObjects.Components.AlphaSingle.html#setAlpha` — `phaser.d.ts:17600` | `scenes/world-select-scene.ts` | 2026-02-15 | type-verified |
+| `TweenManager.add()` | `/classes/Phaser.Tweens.TweenManager.html#add` — `phaser.d.ts:124032` | `scenes/character-select-scene.ts` | 2026-02-15 | type-verified |
+| `Phaser.Tweens.Tween` | `/classes/Phaser.Tweens.Tween.html` — `phaser.d.ts:123942` (ref) | `scenes/character-select-scene.ts` | 2026-02-15 | type-verified |
 | `SpriteGPULayer` | `/classes/Phaser.GameObjects.SpriteGPULayer.html` | (planned) | — | — |
 | `Texture#setWrap` | `/classes/Phaser.Textures.Texture.html#setWrap` | (planned) | — | — |
 
