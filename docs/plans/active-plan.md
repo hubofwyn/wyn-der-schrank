@@ -1,17 +1,17 @@
 ---
 title: Active Plan
-last_updated: 2026-02-15
+last_updated: 2026-02-16
 ---
 
 # Active Plan
 
 ## Snapshot
 
-- __Active:__ G10 Audio System [feat/audio-system]
-- __Next ready:__ G11 (blocked by G10)
+- __Active:__ none (G11 complete, awaiting merge)
+- __Next ready:__ G12
 - __Blocked:__ none
-- __Last milestone:__ 2026-02-14 — G9 Vertical Slice Safety Net (284 tests) [chore/agentic-infra-refinement]
-- __Gates:__ all green (284 tests)
+- __Last milestone:__ 2026-02-15 — G11 Character System & Selection Flow (396 tests) [feat/character-system]
+- __Gates:__ all green (396 tests)
 
 ## Goals
 
@@ -174,11 +174,11 @@ Wire one event end-to-end through the network port, build session persistence wi
 
 ### G10: Audio System
 
-> __Status:__ in-progress
+> __Status:__ done
 > __Requires:__ none (G1–G9 done)
 > __Benefits from:__ none
 > __Unlocks:__ G11 (menus need audio feedback for interactions)
-> __Branch:__ feat/audio-system
+> __Branch:__ merged
 
 Replace `NoopAudio` with a real `PhaserAudio` adapter that implements the existing `IAudioPlayer` port (`core/ports/audio.ts`). Add SFX and music playback across all existing scenes. Wire the `SettingsManager` audio controls (masterVolume, musicVolume, sfxVolume, muted) to the live audio system. The game is currently silent — this goal makes it sound like a game.
 
@@ -208,11 +208,11 @@ __Deliverables:__
 
 ### G11: Character System & Selection Flow
 
-> __Status:__ not-started
+> __Status:__ done
 > __Requires:__ G10
 > __Benefits from:__ none
 > __Unlocks:__ G12
-> __Branch:__ —
+> __Branch:__ feat/character-system
 
 Build the full menu selection pipeline: Title → MainMenu → CharacterSelect → WorldSelect → LevelSelect → Platformer. Port the character select card UI and main menu level grid from wynisbuff2, rewritten for hexagonal architecture with TypeScript, Zod schemas, zone defense, and thin scenes. Requires building the character catalog module and the navigation flow controller.
 
@@ -237,20 +237,20 @@ __Architecture notes:__
 
 __Deliverables:__
 
-- [ ] Character catalog module (`modules/character/character-catalog.ts`) — loads definitions from JSON data, queries by ID, returns all unlocked characters. Pure TS, zone-safe, with co-located tests.
-- [ ] World catalog module (`modules/level/world-catalog.ts`) — loads world definitions from JSON data, queries levels by world, checks unlock conditions against SessionSave. Pure TS, zone-safe, with co-located tests.
-- [ ] Flow controller module (`modules/navigation/flow-controller.ts`) — tracks selected character, selected world, selected level. Determines valid next scene based on current selection state. Pure TS, zone-safe, with co-located tests.
-- [ ] Character and world JSON data files (`public/assets/data/characters.json`, `public/assets/data/worlds.json`) validated against shared schemas, loaded in PreloadScene
-- [ ] `CharacterSelectScene` (`scenes/character-select-scene.ts`) — 3-character card layout ported from wynisbuff2. Hover glow, color-coded borders, staggered entrance, selection persisted via flow controller. Thin scene.
-- [ ] `MainMenuScene` (`scenes/main-menu-scene.ts`) — level grid with responsive layout ported from wynisbuff2. Shows world sections, level cards with star ratings from SessionSave, locked/unlocked state. Keyboard navigation. Thin scene.
-- [ ] `WorldSelectScene` and `LevelSelectScene` (`scenes/world-select-scene.ts`, `scenes/level-select-scene.ts`) — world selection shows 3 worlds (forest unlocked, cave/castle locked), level selection shows levels within selected world with star display
-- [ ] Container updated: `characterCatalog` and `flowController` added to `Container` interface and wired in `main.ts`
-- [ ] `TitleScene` updated: Play navigates to `CHARACTER_SELECT` instead of directly to `PLATFORMER`
-- [ ] Navigation chain verified end-to-end: Title → CharacterSelect → MainMenu → Platformer → LevelComplete → MainMenu
+- [x] Character catalog module (`modules/character/character-catalog.ts`) — loads definitions from JSON data, queries by ID, returns all unlocked characters. Pure TS, zone-safe, with co-located tests.
+- [x] World catalog module (`modules/level/world-catalog.ts`) — loads world definitions from JSON data, queries levels by world, checks unlock conditions against SessionSave. Pure TS, zone-safe, with co-located tests.
+- [x] Flow controller module (`modules/navigation/flow-controller.ts`) — tracks selected character, selected world, selected level. Determines valid next scene based on current selection state. Pure TS, zone-safe, with co-located tests.
+- [x] Character and world JSON data files (`public/assets/data/characters.json`, `public/assets/data/worlds.json`) validated against shared schemas, loaded in PreloadScene
+- [x] `CharacterSelectScene` (`scenes/character-select-scene.ts`) — 3-character card layout ported from wynisbuff2. Hover glow, color-coded borders, staggered entrance, selection persisted via flow controller. Thin scene.
+- [x] `MainMenuScene` (`scenes/main-menu-scene.ts`) — level grid with responsive layout ported from wynisbuff2. Shows world sections, level cards with star ratings from SessionSave, locked/unlocked state. Keyboard navigation. Thin scene.
+- [x] `WorldSelectScene` and `LevelSelectScene` (`scenes/world-select-scene.ts`, `scenes/level-select-scene.ts`) — world selection shows 3 worlds (forest unlocked, cave/castle locked), level selection shows levels within selected world with star display
+- [x] Container updated: `characterCatalog` and `flowController` added to `Container` interface and wired in `main.ts`
+- [x] `TitleScene` updated: Play navigates to `CHARACTER_SELECT` instead of directly to `PLATFORMER`
+- [x] Navigation chain verified end-to-end: Title → CharacterSelect → MainMenu → Platformer → LevelComplete → MainMenu
 
 ### G12: Second Minigame (Coin Catch)
 
-> __Status:__ not-started
+> __Status:__ ready
 > __Requires:__ G11
 > __Benefits from:__ G10 (audio feedback during gameplay)
 > __Unlocks:__ future minigames (dice-duel, memory-match)
@@ -312,6 +312,8 @@ __Deliverables:__
 
 ## Completed Log
 
+- __2026-02-15__ — G11: Character System & Selection Flow — CharacterCatalog, WorldCatalog, FlowController (FSM), 4 new scenes (CharacterSelect, MainMenu, WorldSelect, LevelSelect), character/world JSON data, navigation chain rewiring (396 tests) [feat/character-system]
+- __2026-02-15__ — G10: Audio System — PhaserAudio adapter (layered volume, crossfade, AudioContext unlock), audio-keys domain module (SFX variants), 26 audio assets, scene integration across all 8 scenes, settings round-trip (348 tests) [feat/audio-system]
 - __2026-02-14__ — G9: Vertical Slice Safety Net — Event emission (level:completed), SessionSave with schema-validated persistence, boot-sequence loading, title-screen progress indicator, Phaser global fix for Vite (284 tests) [chore/agentic-infra-refinement]
 - __2026-02-12__ — G8: Minigame Architecture & Shake Rush — IMinigameLogic interface, MinigameRegistry/Manager, Shake Rush complete rewrite (config, lane system, scoring, game logic), MinigameScene/MinigameHudScene, portal triggers (264 tests) [feat/minigame-architecture]
 - __2026-02-12__ — G7: Runtime & Observability — Server config validation, ServerDiagnostics with ring buffer, health + diagnostics endpoints, unified dev command (218 tests) [feat/runtime-observability]

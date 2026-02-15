@@ -9,10 +9,6 @@ import { SceneKeys } from '../modules/navigation/scene-keys.js';
 import { Colors, Typography } from '../modules/ui/design-tokens.js';
 import { BaseScene } from './base-scene.js';
 
-const LEVEL_MAP: Record<string, string | undefined> = {
-	'map-forest-1': 'map-forest-2',
-};
-
 function formatStars(count: number): string {
 	const filled = '*'.repeat(Math.min(count, 3));
 	const empty = '-'.repeat(3 - Math.min(count, 3));
@@ -30,7 +26,8 @@ function formatTime(ms: number): string {
  * LevelCompleteScene — shown after the player reaches the exit.
  *
  * Reads final GameplayState from registry to display score, stars,
- * coins, and time. Offers "Next Level", "Replay", and "Menu" navigation.
+ * coins, and time. Uses WorldCatalog.getNextLevel() for "Next Level"
+ * navigation (replaces hardcoded LEVEL_MAP). Menu goes to MainMenu.
  *
  * Audio policy:
  *   Music  — none (gameplay music faded out by PlatformerScene on exit)
@@ -95,9 +92,12 @@ export class LevelCompleteScene extends BaseScene {
 
 		// ── Buttons ──
 		let buttonY = height - 200;
-		const nextMapKey = LEVEL_MAP[state.levelId];
 
-		if (nextMapKey) {
+		// Determine next level via WorldCatalog
+		const worldId = this.container.flowController.selection.worldId;
+		const nextLevelId = worldId ? this.container.worldCatalog.getNextLevel(levelId, worldId) : null;
+
+		if (nextLevelId) {
 			const nextBtn = this.add.text(cx, buttonY, 'Next Level', {
 				...Typography.button,
 				color: Colors.button,
@@ -108,7 +108,8 @@ export class LevelCompleteScene extends BaseScene {
 			nextBtn.on('pointerout', () => nextBtn.setColor(Colors.button));
 			nextBtn.on('pointerdown', () => {
 				this.playButtonSfx();
-				this.scene.start(SceneKeys.PLATFORMER, { mapKey: nextMapKey });
+				this.container.flowController.selectLevel(nextLevelId);
+				this.scene.start(SceneKeys.PLATFORMER);
 			});
 			buttonY += 60;
 		}
@@ -123,7 +124,7 @@ export class LevelCompleteScene extends BaseScene {
 		replayBtn.on('pointerout', () => replayBtn.setColor(Colors.button));
 		replayBtn.on('pointerdown', () => {
 			this.playButtonSfx();
-			this.scene.start(SceneKeys.PLATFORMER, { mapKey: state.levelId || 'map-forest-1' });
+			this.scene.start(SceneKeys.PLATFORMER);
 		});
 
 		// ── Menu button ──
@@ -139,7 +140,7 @@ export class LevelCompleteScene extends BaseScene {
 			this.playButtonSfx();
 			this.scene.stop(SceneKeys.HUD);
 			this.scene.stop(SceneKeys.PAUSE);
-			this.navigateTo(SceneKeys.TITLE);
+			this.navigateTo(SceneKeys.MAIN_MENU);
 		});
 	}
 

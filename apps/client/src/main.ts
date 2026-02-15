@@ -15,15 +15,21 @@ import { PhaserAudio } from './core/adapters/phaser-audio.js';
 import { PhaserClock } from './core/adapters/phaser-clock.js';
 import type { Container, MinigameScope } from './core/container.js';
 import type { IInputProvider } from './core/ports/input.js';
+import { CharacterCatalog } from './modules/character/character-catalog.js';
+import { WorldCatalog } from './modules/level/world-catalog.js';
 import { ShakeRushLogic } from './modules/minigame/games/shake-rush/shake-rush-logic.js';
 import { MinigameManager } from './modules/minigame/minigame-manager.js';
 import { MinigameRegistry } from './modules/minigame/minigame-registry.js';
+import { FlowController } from './modules/navigation/flow-controller.js';
 import { SessionSave } from './modules/progression/session-save.js';
 import { SettingsManager } from './modules/settings/settings-manager.js';
 import { BootScene } from './scenes/boot-scene.js';
+import { CharacterSelectScene } from './scenes/character-select-scene.js';
 import { GameOverScene } from './scenes/game-over-scene.js';
 import { HudScene } from './scenes/hud-scene.js';
 import { LevelCompleteScene } from './scenes/level-complete-scene.js';
+import { LevelSelectScene } from './scenes/level-select-scene.js';
+import { MainMenuScene } from './scenes/main-menu-scene.js';
 import { MinigameHudScene } from './scenes/minigame-hud-scene.js';
 import { MinigameScene } from './scenes/minigame-scene.js';
 import { PauseScene } from './scenes/pause-scene.js';
@@ -31,6 +37,7 @@ import { PlatformerScene } from './scenes/platformer-scene.js';
 import { PreloadScene } from './scenes/preload-scene.js';
 import { SettingsScene } from './scenes/settings-scene.js';
 import { TitleScene } from './scenes/title-scene.js';
+import { WorldSelectScene } from './scenes/world-select-scene.js';
 
 /**
  * Build the DI container with all infrastructure services.
@@ -53,6 +60,10 @@ function createContainer(): Container {
 		settingsManager,
 		settingsManager.current.diagnostics.ringBufferSize,
 	);
+
+	const characterCatalog = new CharacterCatalog();
+	const worldCatalog = new WorldCatalog();
+	const flowController = new FlowController();
 
 	const registry = new MinigameRegistry();
 	registry.register('shake-rush', (deps) => new ShakeRushLogic(deps));
@@ -83,6 +94,9 @@ function createContainer(): Container {
 		settingsManager,
 		sessionSave,
 		diagnostics,
+		characterCatalog,
+		worldCatalog,
+		flowController,
 		createMinigameScope,
 	};
 }
@@ -110,6 +124,10 @@ const game = new Phaser.Game({
 		BootScene,
 		PreloadScene,
 		TitleScene,
+		CharacterSelectScene,
+		MainMenuScene,
+		WorldSelectScene,
+		LevelSelectScene,
 		PlatformerScene,
 		HudScene,
 		PauseScene,

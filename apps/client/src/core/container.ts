@@ -1,5 +1,8 @@
 import type { PlatformerConfig } from '@hub-of-wyn/shared';
+import type { CharacterCatalog } from '../modules/character/character-catalog.js';
+import type { WorldCatalog } from '../modules/level/world-catalog.js';
 import type { IMinigameLogic } from '../modules/minigame/minigame-logic.js';
+import type { FlowController } from '../modules/navigation/flow-controller.js';
 import type { SessionSave } from '../modules/progression/session-save.js';
 import type { IAudioPlayer } from './ports/audio.js';
 import type { IDiagnostics } from './ports/diagnostics.js';
@@ -30,6 +33,11 @@ export interface Container {
 	readonly settingsManager: ISettingsManager;
 	readonly sessionSave: SessionSave;
 	readonly diagnostics: IDiagnostics;
+
+	// ── Domain catalogs (initialized from JSON data in PreloadScene) ──
+	readonly characterCatalog: CharacterCatalog;
+	readonly worldCatalog: WorldCatalog;
+	readonly flowController: FlowController;
 
 	// ── Scoped Factories (per-scene lifecycle) ──
 	// Optional until wired — TypeScript enforces callers check before use.
