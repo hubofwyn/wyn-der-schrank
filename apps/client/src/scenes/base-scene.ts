@@ -1,4 +1,5 @@
 import type { Container } from '../core/container.js';
+import { pickSfxVariant } from '../modules/assets/audio-keys.js';
 import type { SceneKey } from '../modules/navigation/scene-keys.js';
 
 /**
@@ -40,5 +41,11 @@ export abstract class BaseScene extends Phaser.Scene {
 	/** Resume a paused scene. */
 	protected resumeScene(key: SceneKey): void {
 		this.scene.resume(key);
+	}
+
+	/** Play the standard menu-select SFX (random variant). */
+	protected playButtonSfx(): void {
+		const sfx = pickSfxVariant('menu-select');
+		if (sfx) this.container.audio.playSfx(sfx);
 	}
 }

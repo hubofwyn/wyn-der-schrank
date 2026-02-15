@@ -1,3 +1,4 @@
+import { MusicKeys } from '../modules/assets/audio-keys.js';
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
 import { progressSummary } from '../modules/progression/progress-summary.js';
 import { Colors, Typography } from '../modules/ui/design-tokens.js';
@@ -8,6 +9,10 @@ import { BaseScene } from './base-scene.js';
  *
  * Shows title text with Play and Settings buttons.
  * Serves as both title and main menu for G5 (MainMenu deferred).
+ *
+ * Audio policy:
+ *   Music  — title-theme (loop, crossfade from any prior track)
+ *   SFX    — menu-select on button clicks
  */
 export class TitleScene extends BaseScene {
 	constructor() {
@@ -19,6 +24,9 @@ export class TitleScene extends BaseScene {
 		const cx = width / 2;
 
 		this.cameras.main.setBackgroundColor(Colors.background);
+
+		// ── Music: crossfade into title theme ──
+		this.container.audio.playMusic(MusicKeys.TITLE, { loop: true, fadeInMs: 1000 });
 
 		// ── Title ──
 		const title = this.add.text(
@@ -50,6 +58,7 @@ export class TitleScene extends BaseScene {
 		playBtn.on('pointerover', () => playBtn.setColor(Colors.buttonHover));
 		playBtn.on('pointerout', () => playBtn.setColor(Colors.button));
 		playBtn.on('pointerdown', () => {
+			this.playButtonSfx();
 			this.navigateTo(SceneKeys.PLATFORMER);
 		});
 
@@ -63,6 +72,7 @@ export class TitleScene extends BaseScene {
 		settingsBtn.on('pointerover', () => settingsBtn.setColor(Colors.buttonHover));
 		settingsBtn.on('pointerout', () => settingsBtn.setColor(Colors.button));
 		settingsBtn.on('pointerdown', () => {
+			this.playButtonSfx();
 			this.scene.start(SceneKeys.SETTINGS, { returnTo: SceneKeys.TITLE });
 		});
 	}

@@ -2,6 +2,7 @@ import { SettingsSchema } from '@hub-of-wyn/shared';
 import { PhaserInput } from '../core/adapters/phaser-input.js';
 import type { MinigameScope } from '../core/container.js';
 import type { IGameClock } from '../core/ports/engine.js';
+import { MusicKeys } from '../modules/assets/audio-keys.js';
 import type { ShakeRushRenderState } from '../modules/minigame/games/shake-rush/shake-rush-config.js';
 import { getLaneY, SHAKE_RUSH } from '../modules/minigame/games/shake-rush/shake-rush-config.js';
 import { MINIGAME_HUD_STATE_KEY } from '../modules/minigame/minigame-hud-state.js';
@@ -32,6 +33,10 @@ const FINISH_DELAY_MS = 2000;
  * registry for MinigameHudScene to display.
  *
  * All game rules live in modules/. This scene is a thin Phaser rendering layer.
+ *
+ * Audio policy:
+ *   Music  — minigame-theme (loop, crossfade from platformer track)
+ *   SFX    — none yet (minigame-specific SFX deferred to G12)
  */
 export class MinigameScene extends BaseScene {
 	private clock!: IGameClock;
@@ -81,6 +86,9 @@ export class MinigameScene extends BaseScene {
 		}
 		this.scope = createScope(minigameId, this.phaserInput);
 		this.logic = this.scope.logic;
+
+		// ── Music: crossfade into minigame theme ──
+		this.container.audio.playMusic(MusicKeys.MINIGAME, { loop: true, fadeInMs: 600 });
 
 		// ── Lane backgrounds ──
 		for (let i = 0; i < SHAKE_RUSH.LANE_COUNT; i++) {

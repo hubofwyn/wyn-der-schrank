@@ -22,6 +22,11 @@ const TOGGLES: readonly ToggleDef[] = [
  *
  * Reads returnTo from scene data to know where to go on Back.
  * Never touches Platformer or HUD scene state.
+ *
+ * Audio policy:
+ *   Music  — no change (inherits whatever is playing from the caller scene)
+ *   SFX    — menu-select on toggle clicks and back button
+ *   Live   — mute toggle applies immediately to the audio system
  */
 export class SettingsScene extends BaseScene {
 	private toggleTexts: Phaser.GameObjects.Text[] = [];
@@ -75,6 +80,7 @@ export class SettingsScene extends BaseScene {
 
 			const idx = i;
 			valueBtn.on('pointerdown', () => {
+				this.playButtonSfx();
 				this.onToggle(idx);
 			});
 
@@ -91,6 +97,7 @@ export class SettingsScene extends BaseScene {
 		backBtn.on('pointerover', () => backBtn.setColor(Colors.buttonHover));
 		backBtn.on('pointerout', () => backBtn.setColor(Colors.button));
 		backBtn.on('pointerdown', () => {
+			this.playButtonSfx();
 			this.navigateTo(this.returnTo);
 		});
 	}
@@ -109,6 +116,15 @@ export class SettingsScene extends BaseScene {
 		this.container.settingsManager.updateSection(toggle.section, {
 			[toggle.field]: !current,
 		});
+
+		// Apply audio-related settings immediately
+		if (toggle.section === 'audio' && toggle.field === 'muted') {
+			if (!current) {
+				this.container.audio.mute();
+			} else {
+				this.container.audio.unmute();
+			}
+		}
 
 		// Update display
 		const btn = this.toggleTexts[index];

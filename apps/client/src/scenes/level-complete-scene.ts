@@ -1,3 +1,4 @@
+import { SfxKeys } from '../modules/assets/audio-keys.js';
 import { emitLevelCompleted } from '../modules/game-state/game-events.js';
 import type { GameplayState } from '../modules/game-state/gameplay-state.js';
 import {
@@ -30,6 +31,11 @@ function formatTime(ms: number): string {
  *
  * Reads final GameplayState from registry to display score, stars,
  * coins, and time. Offers "Next Level", "Replay", and "Menu" navigation.
+ *
+ * Audio policy:
+ *   Music  — none (gameplay music faded out by PlatformerScene on exit)
+ *   SFX    — level-complete jingle on create, menu-select on buttons
+ *   Silent — no looping music; the jingle plays once as a celebratory sting
  */
 export class LevelCompleteScene extends BaseScene {
 	constructor() {
@@ -51,6 +57,10 @@ export class LevelCompleteScene extends BaseScene {
 			state.coins,
 			state.timeElapsedMs,
 		);
+
+		// ── Audio: stop any lingering music, play victory jingle ──
+		this.container.audio.stopMusic(300);
+		this.container.audio.playSfx(SfxKeys.LEVEL_COMPLETE);
 
 		const { width, height } = this.scale;
 		const cx = width / 2;
@@ -97,6 +107,7 @@ export class LevelCompleteScene extends BaseScene {
 			nextBtn.on('pointerover', () => nextBtn.setColor(Colors.buttonHover));
 			nextBtn.on('pointerout', () => nextBtn.setColor(Colors.button));
 			nextBtn.on('pointerdown', () => {
+				this.playButtonSfx();
 				this.scene.start(SceneKeys.PLATFORMER, { mapKey: nextMapKey });
 			});
 			buttonY += 60;
@@ -111,6 +122,7 @@ export class LevelCompleteScene extends BaseScene {
 		replayBtn.on('pointerover', () => replayBtn.setColor(Colors.buttonHover));
 		replayBtn.on('pointerout', () => replayBtn.setColor(Colors.button));
 		replayBtn.on('pointerdown', () => {
+			this.playButtonSfx();
 			this.scene.start(SceneKeys.PLATFORMER, { mapKey: state.levelId || 'map-forest-1' });
 		});
 
@@ -124,6 +136,7 @@ export class LevelCompleteScene extends BaseScene {
 		menuBtn.on('pointerover', () => menuBtn.setColor(Colors.buttonHover));
 		menuBtn.on('pointerout', () => menuBtn.setColor(Colors.button));
 		menuBtn.on('pointerdown', () => {
+			this.playButtonSfx();
 			this.scene.stop(SceneKeys.HUD);
 			this.scene.stop(SceneKeys.PAUSE);
 			this.navigateTo(SceneKeys.TITLE);

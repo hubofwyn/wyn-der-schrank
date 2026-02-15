@@ -7,6 +7,14 @@ import { SceneKeys } from '../modules/navigation/scene-keys.js';
 import { Colors, Typography } from '../modules/ui/design-tokens.js';
 import { BaseScene } from './base-scene.js';
 
+/**
+ * GameOverScene — shown when the player loses all lives.
+ *
+ * Audio policy:
+ *   Music  — none (PlatformerScene fades out music and plays game-over sting
+ *            before transitioning here; silence reinforces the loss)
+ *   SFX    — menu-select on Retry/Menu buttons
+ */
 export class GameOverScene extends BaseScene {
 	constructor() {
 		super({ key: SceneKeys.GAME_OVER });
@@ -44,6 +52,7 @@ export class GameOverScene extends BaseScene {
 		retryBtn.on('pointerover', () => retryBtn.setColor(Colors.buttonHover));
 		retryBtn.on('pointerout', () => retryBtn.setColor(Colors.button));
 		retryBtn.on('pointerdown', () => {
+			this.playButtonSfx();
 			this.scene.start(SceneKeys.PLATFORMER, {
 				mapKey: state.levelId || 'map-forest-1',
 			});
@@ -59,6 +68,7 @@ export class GameOverScene extends BaseScene {
 		menuBtn.on('pointerover', () => menuBtn.setColor(Colors.buttonHover));
 		menuBtn.on('pointerout', () => menuBtn.setColor(Colors.button));
 		menuBtn.on('pointerdown', () => {
+			this.playButtonSfx();
 			this.scene.stop(SceneKeys.HUD);
 			this.scene.stop(SceneKeys.PAUSE);
 			this.navigateTo(SceneKeys.TITLE);

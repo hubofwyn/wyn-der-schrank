@@ -1,14 +1,14 @@
 ---
 title: Active Plan
-last_updated: 2026-02-14
+last_updated: 2026-02-15
 ---
 
 # Active Plan
 
 ## Snapshot
 
-- __Active:__ none
-- __Next ready:__ none (all goals complete)
+- __Active:__ G10 Audio System [feat/audio-system]
+- __Next ready:__ G11 (blocked by G10)
 - __Blocked:__ none
 - __Last milestone:__ 2026-02-14 — G9 Vertical Slice Safety Net (284 tests) [chore/agentic-infra-refinement]
 - __Gates:__ all green (284 tests)
@@ -171,6 +171,113 @@ Wire one event end-to-end through the network port, build session persistence wi
 - [x] `SessionSave.load()` wired into boot sequence (`PreloadScene` via `Promise.all`)
 - [x] Progress indicator on Title scene (conditional, zero regression for new players)
 - [x] Fix Phaser global: Vite alias to browser build + side-effect import in `main.ts`
+
+### G10: Audio System
+
+> __Status:__ in-progress
+> __Requires:__ none (G1–G9 done)
+> __Benefits from:__ none
+> __Unlocks:__ G11 (menus need audio feedback for interactions)
+> __Branch:__ feat/audio-system
+
+Replace `NoopAudio` with a real `PhaserAudio` adapter that implements the existing `IAudioPlayer` port (`core/ports/audio.ts`). Add SFX and music playback across all existing scenes. Wire the `SettingsManager` audio controls (masterVolume, musicVolume, sfxVolume, muted) to the live audio system. The game is currently silent — this goal makes it sound like a game.
+
+__Porting reference:__ `wynisbuff2/src/core/AudioManager.js` (Howler.js wrapper — rewrite using Phaser 4 native audio API, not Howler), `wynisbuff2/src/core/AudioUnlockManager.js` (browser gesture pattern — adapt for Phaser 4 AudioContext).
+
+__Architecture notes:__
+
+- `IAudioPlayer` port already defines 15 methods including `playSfx`, `playMusic`, `stopMusic`, `crossfadeMusic`, volume controls, and `unlockAudioContext`.
+- `NoopAudio` at `core/adapters/noop-audio.ts` is the current placeholder — replace with `PhaserAudio` in `main.ts` container wiring.
+- `SettingsSchema` (`packages/shared/src/schema/settings.ts`) already has `audio.masterVolume`, `audio.musicVolume`, `audio.sfxVolume`, `audio.muted` fields.
+- `SettingsScene` (`scenes/settings-scene.ts`) currently has a mute toggle — extend with volume sliders in this goal or G11.
+- PhaserAudio adapter lives in `core/adapters/` (view zone) — it may import Phaser.
+- No audio asset files exist yet. Deliverable includes sourcing or generating placeholder audio files (OGG format preferred, free/CC0 licensed). Organize under `public/assets/audio/sfx/` and `public/assets/audio/music/`.
+- wynisbuff2 uses SFX variant arrays (4 variants per sound type for natural variation) — adopt this pattern via a `SfxVariantMap` config in `modules/` (pure TS, zone-safe) that the PhaserAudio adapter reads.
+- Phaser 4 audio API must be verified against rc.6 docs. Record all new Phaser audio symbols in `docs/PHASER_EVIDENCE.md`.
+- Browser audio unlock is critical: browsers require a user gesture before playing audio. The `unlockAudioContext()` method on `IAudioPlayer` handles this. Wire it to the first user interaction in `TitleScene` (pointerdown on Play or Settings).
+
+__Deliverables:__
+
+- [x] `PhaserAudio` adapter (`core/adapters/phaser-audio.ts`) implementing all 15 `IAudioPlayer` methods using Phaser 4 native audio — verify every Phaser audio symbol against rc.6 docs
+- [x] Audio context unlock wired to first user interaction in `TitleScene` — port browser gesture pattern from wynisbuff2 `AudioUnlockManager`
+- [x] Replace `NoopAudio` with `PhaserAudio` in `main.ts` `createContainer()` — PhaserAudio receives the `Phaser.Game` instance for sound manager access
+- [x] SFX asset files (OGG, CC0/free): jump, land, coin-pickup, hurt, enemy-defeat, menu-select, menu-confirm — added to asset manifest and loaded in PreloadScene
+- [x] Music asset files (OGG, CC0/free): title-theme, platformer-theme, minigame-theme — added to asset manifest with loop/fadeIn config
+- [x] SFX integration across existing scenes: PlatformerScene (jump, land, coin, hurt, enemy-defeat), TitleScene (menu-select), PauseScene (menu-select), SettingsScene (menu-select), LevelCompleteScene (level-complete), GameOverScene (game-over)
+- [x] `SettingsManager` audio round-trip: on boot, apply persisted audio settings to PhaserAudio (volumes + mute state); on settings change, update PhaserAudio in real-time
+
+### G11: Character System & Selection Flow
+
+> __Status:__ not-started
+> __Requires:__ G10
+> __Benefits from:__ none
+> __Unlocks:__ G12
+> __Branch:__ —
+
+Build the full menu selection pipeline: Title → MainMenu → CharacterSelect → WorldSelect → LevelSelect → Platformer. Port the character select card UI and main menu level grid from wynisbuff2, rewritten for hexagonal architecture with TypeScript, Zod schemas, zone defense, and thin scenes. Requires building the character catalog module and the navigation flow controller.
+
+__Porting reference:__ `wynisbuff2/src/scenes/CharacterSelect.js` (3-character card UI with hover/select effects, color-coded, staggered entrance animation), `wynisbuff2/src/scenes/MainMenu.js` (responsive 4-section layout, level grid with 1-3 columns, keyboard navigation, event banner, reset progress confirmation dialog).
+
+__Architecture notes:__
+
+- Scene keys already defined: `MAIN_MENU`, `CHARACTER_SELECT`, `WORLD_SELECT`, `LEVEL_SELECT` in `modules/navigation/scene-keys.ts`.
+- `CharacterIdSchema` (`knight`, `mage`, `rogue`), `CharacterDefinitionSchema`, `CharacterStatsSchema` all exist in `packages/shared/src/schema/character.ts`.
+- `modules/character/` directory exists but is empty (only `__tests__/.gitkeep`) — build `character-catalog.ts` here.
+- `WorldDefinitionSchema`, `WorldIdSchema` (`forest`, `cave`, `castle`), `LevelIdSchema` exist in `packages/shared/src/schema/level.ts`.
+- `modules/level/` currently only has `tilemap-objects.ts` — add `world-catalog.ts` here for world/level definitions and unlock queries.
+- `modules/navigation/` currently only has `scene-keys.ts` — add `flow-controller.ts` here for scene transition FSM.
+- `SessionSave` exists in `modules/progression/` with level completion tracking — use for unlock state and star display.
+- `Container` interface (`core/container.ts`) currently has 9 services — extend with `characterCatalog` and `flowController` at minimum.
+- `main.ts` scene array must add the 4 new scenes.
+- Character data: define 3 characters matching wynisbuff2 (rebranded for Wyn der Schrank theme) as a JSON data file loaded via PreloadScene, validated against `CharacterDefinitionSchema`.
+- World/level data: define forest world (already has 2 levels) and stub cave/castle as locked worlds, as a JSON data file loaded via PreloadScene, validated against `WorldDefinitionSchema`.
+- All new scenes follow thin-scene pattern. Domain logic (catalog queries, unlock checks, selection state) lives in `modules/`. Scenes call module functions and render results.
+- `TitleScene` Play button changes from navigating to `PLATFORMER` to navigating to `CHARACTER_SELECT` (or `MAIN_MENU` if that's the entry point).
+- Audio feedback for menu interactions uses `IAudioPlayer` from G10.
+
+__Deliverables:__
+
+- [ ] Character catalog module (`modules/character/character-catalog.ts`) — loads definitions from JSON data, queries by ID, returns all unlocked characters. Pure TS, zone-safe, with co-located tests.
+- [ ] World catalog module (`modules/level/world-catalog.ts`) — loads world definitions from JSON data, queries levels by world, checks unlock conditions against SessionSave. Pure TS, zone-safe, with co-located tests.
+- [ ] Flow controller module (`modules/navigation/flow-controller.ts`) — tracks selected character, selected world, selected level. Determines valid next scene based on current selection state. Pure TS, zone-safe, with co-located tests.
+- [ ] Character and world JSON data files (`public/assets/data/characters.json`, `public/assets/data/worlds.json`) validated against shared schemas, loaded in PreloadScene
+- [ ] `CharacterSelectScene` (`scenes/character-select-scene.ts`) — 3-character card layout ported from wynisbuff2. Hover glow, color-coded borders, staggered entrance, selection persisted via flow controller. Thin scene.
+- [ ] `MainMenuScene` (`scenes/main-menu-scene.ts`) — level grid with responsive layout ported from wynisbuff2. Shows world sections, level cards with star ratings from SessionSave, locked/unlocked state. Keyboard navigation. Thin scene.
+- [ ] `WorldSelectScene` and `LevelSelectScene` (`scenes/world-select-scene.ts`, `scenes/level-select-scene.ts`) — world selection shows 3 worlds (forest unlocked, cave/castle locked), level selection shows levels within selected world with star display
+- [ ] Container updated: `characterCatalog` and `flowController` added to `Container` interface and wired in `main.ts`
+- [ ] `TitleScene` updated: Play navigates to `CHARACTER_SELECT` instead of directly to `PLATFORMER`
+- [ ] Navigation chain verified end-to-end: Title → CharacterSelect → MainMenu → Platformer → LevelComplete → MainMenu
+
+### G12: Second Minigame (Coin Catch)
+
+> __Status:__ not-started
+> __Requires:__ G11
+> __Benefits from:__ G10 (audio feedback during gameplay)
+> __Unlocks:__ future minigames (dice-duel, memory-match)
+> __Branch:__ —
+
+Implement Coin Catch as the second minigame using the established `IMinigameLogic` interface, `MinigameRegistry`, and `MinigameScope` pattern from G8. Coin Catch is an action-oriented falling-object collection game: coins fall from the top of the screen, the player moves a basket/character left and right to catch them, avoiding bombs/obstacles. Timed rounds with scoring multipliers.
+
+__Architecture notes:__
+
+- `MinigameIdSchema` already includes `'coin-catch'` — no schema changes needed.
+- Follow the `shake-rush` reference implementation exactly: config module, game state module, scoring module, orchestrating logic class, all in `modules/minigame/games/coin-catch/`.
+- `IMinigameLogic` interface (snapshot/intent pattern): `init()`, `update(dt)`, `handleIntent(intent)`, `snapshot()`, `isFinished()`, `result()`.
+- `MinigameRegistry.register('coin-catch', factory)` in `main.ts`.
+- `MinigameScene` and `MinigameHudScene` are already generic — they read the logic snapshot and render. No new scene files needed unless Coin Catch needs unique rendering (evaluate during implementation; prefer reusing existing scenes).
+- Portal trigger in PlatformerScene already works for any registered minigame ID — just needs a tilemap object with `type: 'minigame-portal'` and `minigameId: 'coin-catch'` property.
+- All game logic is pure TS in `modules/` (zone-safe). Falling object positions, collision detection, scoring — all computed in the logic module. The scene just reads snapshot positions and renders sprites.
+- wynisbuff2 doesn't have a coin-catch minigame — this is a new design. Use the shake-rush architecture as the template.
+
+__Deliverables:__
+
+- [ ] Coin Catch config module (`modules/minigame/games/coin-catch/config.ts`) — round duration, spawn rate, speed ranges, coin/bomb ratios, scoring values, difficulty progression
+- [ ] Coin Catch game state module (`modules/minigame/games/coin-catch/game-state.ts`) — falling objects array (position, type, active), catcher position, score, lives, combo streak
+- [ ] Coin Catch scoring module (`modules/minigame/games/coin-catch/scoring.ts`) — base coin value, combo multiplier, streak bonus, penalty for bombs, final tally
+- [ ] `CoinCatchLogic` class (`modules/minigame/games/coin-catch/coin-catch-logic.ts`) implementing `IMinigameLogic` — orchestrates spawn timing, gravity simulation, collision detection, game-over condition
+- [ ] Full test coverage for all Coin Catch modules (co-located `__tests__/` directory, same pattern as shake-rush tests)
+- [ ] Registered in `MinigameRegistry` in `main.ts`: `registry.register('coin-catch', (deps) => new CoinCatchLogic(deps))`
+- [ ] At least one tilemap level includes a `minigame-portal` object with `minigameId: 'coin-catch'` for end-to-end verification
 
 ## Update Protocol
 
