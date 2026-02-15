@@ -8,6 +8,7 @@ export interface MinigameLogicDeps {
 	readonly input: IInputProvider;
 	readonly clock: IGameClock;
 	readonly diagnostics: IDiagnostics;
+	readonly rng: () => number;
 }
 
 export type MinigameFactory = (deps: MinigameLogicDeps) => IMinigameLogic;

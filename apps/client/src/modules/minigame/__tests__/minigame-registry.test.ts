@@ -13,6 +13,7 @@ function createDeps(): MinigameLogicDeps {
 			isEnabled: () => true,
 			query: () => [],
 		},
+		rng: Math.random,
 	};
 }
 

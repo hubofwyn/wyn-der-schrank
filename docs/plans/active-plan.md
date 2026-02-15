@@ -1,17 +1,17 @@
 ---
 title: Active Plan
-last_updated: 2026-02-16
+last_updated: 2026-02-15
 ---
 
 # Active Plan
 
 ## Snapshot
 
-- __Active:__ none (G11 complete, awaiting merge)
-- __Next ready:__ G12
+- __Active:__ none
+- __Next ready:__ none
 - __Blocked:__ none
-- __Last milestone:__ 2026-02-15 — G11 Character System & Selection Flow (396 tests) [feat/character-system]
-- __Gates:__ all green (396 tests)
+- __Last milestone:__ 2026-02-15 — G12 Second Minigame (Coin Catch) (457 tests) [feat/coin-catch]
+- __Gates:__ all green (457 tests)
 
 ## Goals
 
@@ -250,11 +250,11 @@ __Deliverables:__
 
 ### G12: Second Minigame (Coin Catch)
 
-> __Status:__ ready
+> __Status:__ done
 > __Requires:__ G11
 > __Benefits from:__ G10 (audio feedback during gameplay)
 > __Unlocks:__ future minigames (dice-duel, memory-match)
-> __Branch:__ —
+> __Branch:__ merged
 
 Implement Coin Catch as the second minigame using the established `IMinigameLogic` interface, `MinigameRegistry`, and `MinigameScope` pattern from G8. Coin Catch is an action-oriented falling-object collection game: coins fall from the top of the screen, the player moves a basket/character left and right to catch them, avoiding bombs/obstacles. Timed rounds with scoring multipliers.
 
@@ -271,13 +271,15 @@ __Architecture notes:__
 
 __Deliverables:__
 
-- [ ] Coin Catch config module (`modules/minigame/games/coin-catch/config.ts`) — round duration, spawn rate, speed ranges, coin/bomb ratios, scoring values, difficulty progression
-- [ ] Coin Catch game state module (`modules/minigame/games/coin-catch/game-state.ts`) — falling objects array (position, type, active), catcher position, score, lives, combo streak
-- [ ] Coin Catch scoring module (`modules/minigame/games/coin-catch/scoring.ts`) — base coin value, combo multiplier, streak bonus, penalty for bombs, final tally
-- [ ] `CoinCatchLogic` class (`modules/minigame/games/coin-catch/coin-catch-logic.ts`) implementing `IMinigameLogic` — orchestrates spawn timing, gravity simulation, collision detection, game-over condition
-- [ ] Full test coverage for all Coin Catch modules (co-located `__tests__/` directory, same pattern as shake-rush tests)
-- [ ] Registered in `MinigameRegistry` in `main.ts`: `registry.register('coin-catch', (deps) => new CoinCatchLogic(deps))`
-- [ ] At least one tilemap level includes a `minigame-portal` object with `minigameId: 'coin-catch'` for end-to-end verification
+- [x] Coin Catch config module (`modules/minigame/games/coin-catch/coin-catch-config.ts`) — round duration, spawn rate, speed ranges, coin/bomb ratios, scoring values, difficulty progression
+- [x] Coin Catch falling-objects module (`modules/minigame/games/coin-catch/falling-objects.ts`) — falling objects array (position, type, active), spawn, update, remove, catch detection (19 tests)
+- [x] Coin Catch scoring module (`modules/minigame/games/coin-catch/scoring.ts`) — base coin value, combo multiplier, speed bonus, catch messages (14 tests)
+- [x] `CoinCatchLogic` class (`modules/minigame/games/coin-catch/coin-catch-logic.ts`) implementing `IMinigameLogic` — catcher movement, spawn timing, gravity simulation, collision detection, fairness guard, delta clamping, difficulty progression, game-over condition (25 tests)
+- [x] Full test coverage for all Coin Catch modules (co-located `__tests__/` directory, same pattern as shake-rush tests) — 58 new tests total
+- [x] Registered in `MinigameRegistry` in `main.ts`: `registry.register('coin-catch', (deps) => new CoinCatchLogic(deps))`
+- [x] forest-2 tilemap includes a `minigame-portal` object with `minigameId: 'coin-catch'` for end-to-end verification
+- [x] Shared minigame infrastructure: `MinigameRenderStateBase`, `clampDelta`, `MinigameViewConfig`, `rng` injection in `MinigameLogicDeps`
+- [x] `MinigameScene` refactored to generic renderer using `MinigameRenderStateBase` + data-driven view config (no switch in update loop)
 
 ## Update Protocol
 
@@ -312,6 +314,7 @@ __Deliverables:__
 
 ## Completed Log
 
+- __2026-02-15__ — G12: Second Minigame (Coin Catch) — MinigameRenderStateBase, clampDelta, data-driven view config, injected RNG, falling-objects module, scoring module, CoinCatchLogic, MinigameScene refactored to generic renderer, coin-catch portal in forest-2, regression fixes (tintOverride, intro position, removeInactive) (457 tests) [feat/coin-catch]
 - __2026-02-15__ — G11: Character System & Selection Flow — CharacterCatalog, WorldCatalog, FlowController (FSM), 4 new scenes (CharacterSelect, MainMenu, WorldSelect, LevelSelect), character/world JSON data, navigation chain rewiring (396 tests) [feat/character-system]
 - __2026-02-15__ — G10: Audio System — PhaserAudio adapter (layered volume, crossfade, AudioContext unlock), audio-keys domain module (SFX variants), 26 audio assets, scene integration across all 8 scenes, settings round-trip (348 tests) [feat/audio-system]
 - __2026-02-14__ — G9: Vertical Slice Safety Net — Event emission (level:completed), SessionSave with schema-validated persistence, boot-sequence loading, title-screen progress indicator, Phaser global fix for Vite (284 tests) [chore/agentic-infra-refinement]

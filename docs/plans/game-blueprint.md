@@ -302,16 +302,27 @@ apps/client/
     │   ├── minigame/                   # Minigame subsystem
     │   │   ├── minigame-manager.ts     # Lifecycle: enter, play, exit
     │   │   ├── minigame-registry.ts    # Registry + Factory
-    │   │   ├── minigame-logic.ts       # MinigameLogic interface
+    │   │   ├── minigame-logic.ts       # IMinigameLogic interface + MinigameLogicDeps
+    │   │   ├── minigame-hud-state.ts   # MinigameHudState interface
+    │   │   ├── minigame-render-state.ts # MinigameRenderStateBase (shared render contract)
+    │   │   ├── minigame-time.ts        # clampDelta utility (single delta policy)
+    │   │   ├── minigame-view-config.ts # Data-driven entity styles per game
     │   │   ├── games/
-    │   │   │   ├── dice-duel/
-    │   │   │   │   ├── logic.ts
+    │   │   │   ├── shake-rush/         # Shake Rush (3-lane collect-and-deliver)
+    │   │   │   │   ├── shake-rush-config.ts
+    │   │   │   │   ├── shake-rush-logic.ts
+    │   │   │   │   ├── lane-system.ts
+    │   │   │   │   ├── scoring.ts
     │   │   │   │   └── __tests__/
-    │   │   │   ├── coin-catch/
-    │   │   │   │   ├── logic.ts
+    │   │   │   ├── coin-catch/         # Coin Catch (falling-object collection)
+    │   │   │   │   ├── coin-catch-config.ts
+    │   │   │   │   ├── coin-catch-logic.ts
+    │   │   │   │   ├── falling-objects.ts
+    │   │   │   │   ├── scoring.ts
     │   │   │   │   └── __tests__/
-    │   │   │   └── memory-match/
-    │   │   │       ├── logic.ts
+    │   │   │   ├── dice-duel/          # (stub — not yet implemented)
+    │   │   │   │   └── __tests__/
+    │   │   │   └── memory-match/       # (stub — not yet implemented)
     │   │   │       └── __tests__/
     │   │   └── __tests__/
     │   │

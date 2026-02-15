@@ -400,6 +400,24 @@
 					"height": 0,
 					"rotation": 0,
 					"visible": true
+				},
+				{
+					"id": 16,
+					"name": "CoinCatchPortal",
+					"type": "minigame-portal",
+					"x": 1800,
+					"y": 520,
+					"width": 0,
+					"height": 0,
+					"rotation": 0,
+					"visible": true,
+					"properties": [
+						{
+							"name": "minigameId",
+							"type": "string",
+							"value": "coin-catch"
+						}
+					]
 				}
 			],
 			"opacity": 1,
@@ -410,7 +428,7 @@
 		}
 	],
 	"nextlayerid": 3,
-	"nextobjectid": 16,
+	"nextobjectid": 17,
 	"orientation": "orthogonal",
 	"renderorder": "right-down",
 	"tiledversion": "1.11.2",

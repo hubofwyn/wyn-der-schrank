@@ -17,6 +17,7 @@ import type { Container, MinigameScope } from './core/container.js';
 import type { IInputProvider } from './core/ports/input.js';
 import { CharacterCatalog } from './modules/character/character-catalog.js';
 import { WorldCatalog } from './modules/level/world-catalog.js';
+import { CoinCatchLogic } from './modules/minigame/games/coin-catch/coin-catch-logic.js';
 import { ShakeRushLogic } from './modules/minigame/games/shake-rush/shake-rush-logic.js';
 import { MinigameManager } from './modules/minigame/minigame-manager.js';
 import { MinigameRegistry } from './modules/minigame/minigame-registry.js';
@@ -67,6 +68,7 @@ function createContainer(): Container {
 
 	const registry = new MinigameRegistry();
 	registry.register('shake-rush', (deps) => new ShakeRushLogic(deps));
+	registry.register('coin-catch', (deps) => new CoinCatchLogic(deps));
 	const manager = new MinigameManager(registry, diagnostics);
 
 	function createMinigameScope(minigameId: string, sceneInput: IInputProvider): MinigameScope {
@@ -74,6 +76,7 @@ function createContainer(): Container {
 			input: sceneInput,
 			clock,
 			diagnostics,
+			rng: Math.random,
 		});
 		return {
 			minigameId,

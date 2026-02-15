@@ -49,6 +49,9 @@ export const SHAKE_RUSH = {
 
 	// Invincibility
 	INVINCIBILITY_DURATION_MS: 1000,
+
+	// Visuals (used by tintOverride in render snapshot)
+	PLAYER_CARRYING_TINT: 0x44ff44,
 } as const;
 
 export type EntityKind =
@@ -77,6 +80,7 @@ export interface ShakeRushRenderState {
 		readonly carrying: CarryingType;
 		readonly isDashing: boolean;
 		readonly isInvincible: boolean;
+		readonly tintOverride?: number;
 	};
 	readonly entities: ReadonlyArray<{
 		readonly id: number;
