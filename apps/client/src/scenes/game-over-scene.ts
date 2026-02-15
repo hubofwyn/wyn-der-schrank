@@ -10,6 +10,9 @@ import { BaseScene } from './base-scene.js';
 /**
  * GameOverScene — shown when the player loses all lives.
  *
+ * Retry uses flowController.getMapKey() for level key.
+ * Menu navigates to MainMenu (selection preserved).
+ *
  * Audio policy:
  *   Music  — none (PlatformerScene fades out music and plays game-over sting
  *            before transitioning here; silence reinforces the loss)
@@ -53,9 +56,7 @@ export class GameOverScene extends BaseScene {
 		retryBtn.on('pointerout', () => retryBtn.setColor(Colors.button));
 		retryBtn.on('pointerdown', () => {
 			this.playButtonSfx();
-			this.scene.start(SceneKeys.PLATFORMER, {
-				mapKey: state.levelId || 'map-forest-1',
-			});
+			this.scene.start(SceneKeys.PLATFORMER);
 		});
 
 		// ── Menu button ──
@@ -71,7 +72,7 @@ export class GameOverScene extends BaseScene {
 			this.playButtonSfx();
 			this.scene.stop(SceneKeys.HUD);
 			this.scene.stop(SceneKeys.PAUSE);
-			this.navigateTo(SceneKeys.TITLE);
+			this.navigateTo(SceneKeys.MAIN_MENU);
 		});
 	}
 

@@ -69,12 +69,22 @@ export class PlatformerScene extends BaseScene {
 		this.portalTriggered = false;
 
 		// ── Level parameterization ──
+		// Priority: explicit scene data > flowController > hardcoded fallback
 		const settingsData = this.scene.settings.data as Record<string, unknown> | undefined;
 		const rawKey = data?.mapKey ?? settingsData?.mapKey;
 		if (typeof rawKey === 'string') {
 			this.mapKey = rawKey;
 		} else {
-			this.mapKey = 'map-forest-1';
+			const flowMapKey = this.container.flowController.getMapKey();
+			if (flowMapKey) {
+				this.mapKey = flowMapKey;
+			} else {
+				this.mapKey = 'map-forest-1';
+				this.container.diagnostics.emit('scene', 'warn', 'fallback-mapkey', {
+					reason: 'no explicit mapKey or flowController selection',
+					fallback: this.mapKey,
+				});
+			}
 		}
 
 		// ── Music: crossfade into platformer theme ──
@@ -136,13 +146,24 @@ export class PlatformerScene extends BaseScene {
 		const playerBody = new PhaserBody(arcadeBody);
 
 		const config = PlatformerConfigSchema.parse({});
-		const stats: CharacterStats = {
+
+		// Read character stats: flowController selection > catalog default > hardcoded
+		const charId = this.container.flowController.selection.characterId;
+		const charDef = charId ? this.container.characterCatalog.getById(charId) : null;
+		const defaultChar = this.container.characterCatalog.getDefault();
+		const resolvedStats = charDef?.stats ?? defaultChar?.stats;
+		const stats: CharacterStats = resolvedStats ?? {
 			maxHealth: 100,
 			speed: 250,
 			jumpForce: 420,
 			attackPower: 10,
 			defense: 5,
 		};
+		if (!resolvedStats) {
+			this.container.diagnostics.emit('scene', 'warn', 'fallback-stats', {
+				reason: 'no character selected and catalog empty',
+			});
+		}
 
 		this.playerController = new PlayerController({
 			input: this.phaserInput,
