@@ -1,5 +1,6 @@
 import type { PlatformerConfig } from '@hub-of-wyn/shared';
 import type { IMinigameLogic } from '../modules/minigame/minigame-logic.js';
+import type { SessionSave } from '../modules/progression/session-save.js';
 import type { IAudioPlayer } from './ports/audio.js';
 import type { IDiagnostics } from './ports/diagnostics.js';
 import type { IGameClock } from './ports/engine.js';
@@ -27,6 +28,7 @@ export interface Container {
 	readonly network: INetworkClient;
 	readonly storage: IStorageProvider;
 	readonly settingsManager: ISettingsManager;
+	readonly sessionSave: SessionSave;
 	readonly diagnostics: IDiagnostics;
 
 	// ── Scoped Factories (per-scene lifecycle) ──

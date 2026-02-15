@@ -14,6 +14,7 @@ import type { IInputProvider } from './core/ports/input.js';
 import { ShakeRushLogic } from './modules/minigame/games/shake-rush/shake-rush-logic.js';
 import { MinigameManager } from './modules/minigame/minigame-manager.js';
 import { MinigameRegistry } from './modules/minigame/minigame-registry.js';
+import { SessionSave } from './modules/progression/session-save.js';
 import { SettingsManager } from './modules/settings/settings-manager.js';
 import { BootScene } from './scenes/boot-scene.js';
 import { GameOverScene } from './scenes/game-over-scene.js';
@@ -42,6 +43,7 @@ function createContainer(): Container {
 	const network = new NoopNetwork();
 	const storage = new LocalStorageAdapter();
 	const settingsManager = new SettingsManager(storage);
+	const sessionSave = new SessionSave(storage);
 	const diagnostics = new ConsoleDiagnostics(
 		clock,
 		settingsManager,
@@ -75,6 +77,7 @@ function createContainer(): Container {
 		network,
 		storage,
 		settingsManager,
+		sessionSave,
 		diagnostics,
 		createMinigameScope,
 	};
