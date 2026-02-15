@@ -108,6 +108,20 @@ Do not duplicate entries — if a symbol is already listed, additional usages do
 | `Text.setVisible()` | `/classes/Phaser.GameObjects.Components.Visible.html#setVisible` — `phaser.d.ts:14801` | `scenes/minigame-hud-scene.ts` | 2026-02-12 | type-verified |
 | `Shape.setPosition()` | `/classes/Phaser.GameObjects.Components.Transform.html#setPosition` — inherited via Shape | `scenes/minigame-scene.ts` | 2026-02-12 | type-verified |
 | `Shape.alpha` | `/classes/Phaser.GameObjects.Components.AlphaSingle.html#alpha` — inherited via Shape | `scenes/minigame-scene.ts` | 2026-02-12 | type-verified |
+| `game.sound` (BaseSoundManager) | `/classes/Phaser.Sound.BaseSoundManager.html` — `phaser.d.ts:86703` | `core/adapters/phaser-audio.ts` | 2026-02-15 | type-verified |
+| `BaseSoundManager.play()` | `/classes/Phaser.Sound.BaseSoundManager.html#play` — `phaser.d.ts:87100` | `core/adapters/phaser-audio.ts` | 2026-02-15 | type-verified |
+| `BaseSoundManager.add()` | `/classes/Phaser.Sound.BaseSoundManager.html#add` — `phaser.d.ts:86820` | `core/adapters/phaser-audio.ts` | 2026-02-15 | type-verified |
+| `BaseSoundManager.mute` | `/classes/Phaser.Sound.BaseSoundManager.html#mute` — `phaser.d.ts:86753` | `core/adapters/phaser-audio.ts` | 2026-02-15 | type-verified |
+| `BaseSoundManager.locked` | `/classes/Phaser.Sound.BaseSoundManager.html#locked` — `phaser.d.ts:86786` | `core/adapters/phaser-audio.ts` | 2026-02-15 | type-verified |
+| `BaseSound.play()` | `/classes/Phaser.Sound.BaseSound.html#play` — `phaser.d.ts:86342` | `core/adapters/phaser-audio.ts` | 2026-02-15 | type-verified |
+| `BaseSound.stop()` | `/classes/Phaser.Sound.BaseSound.html#stop` — `phaser.d.ts:86360` | `core/adapters/phaser-audio.ts` | 2026-02-15 | type-verified |
+| `BaseSound.pause()` | `/classes/Phaser.Sound.BaseSound.html#pause` — `phaser.d.ts:86348` | `core/adapters/phaser-audio.ts` | 2026-02-15 | type-verified |
+| `BaseSound.resume()` | `/classes/Phaser.Sound.BaseSound.html#resume` — `phaser.d.ts:86354` | `core/adapters/phaser-audio.ts` | 2026-02-15 | type-verified |
+| `BaseSound.destroy()` | `/classes/Phaser.Sound.BaseSound.html#destroy` — `phaser.d.ts:86452` | `core/adapters/phaser-audio.ts` | 2026-02-15 | type-verified |
+| `BaseSound.isPlaying` | `/classes/Phaser.Sound.BaseSound.html#isPlaying` — `phaser.d.ts:86398` | `core/adapters/phaser-audio.ts` | 2026-02-15 | type-verified |
+| `BaseSound.isPaused` | `/classes/Phaser.Sound.BaseSound.html#isPaused` — `phaser.d.ts:86404` | `core/adapters/phaser-audio.ts` | 2026-02-15 | type-verified |
+| `WebAudioSound.setVolume()` | `/classes/Phaser.Sound.WebAudioSound.html#setVolume` — `phaser.d.ts:88230` | `core/adapters/phaser-audio.ts` | 2026-02-15 | type-verified |
+| `SoundConfig` (Types) | `/types/Phaser.Types.Sound.SoundConfig.html` — `phaser.d.ts:116908` | `core/adapters/phaser-audio.ts` | 2026-02-15 | type-verified |
 | `SpriteGPULayer` | `/classes/Phaser.GameObjects.SpriteGPULayer.html` | (planned) | — | — |
 | `Texture#setWrap` | `/classes/Phaser.Textures.Texture.html#setWrap` | (planned) | — | — |
 
