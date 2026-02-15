@@ -31,7 +31,8 @@ docs/
   agents/                → Subagent definitions (architect, tester, security-reviewer)
   commands/              → Slash commands (investigate, zone-check, implement-feature, drift-report, session-stats)
   skills/                → Repeatable workflows (fix-issue, add-module, add-minigame, review-diff, ship-small, phaser-doc)
-  hooks/                 → Enforcement scripts (zone lint, Phaser guard, telemetry logging)
+  hooks/                 → Enforcement scripts (zone lint, Phaser guard, telemetry, branch protection, notifications)
+  rules/                 → Path-scoped conventions (modules-zone, scenes-thin, shared-schemas, phaser-evidence)
 packages/shared/         → Zod schemas + inferred types (@hub-of-wyn/shared, npm: @hub-of-wyn/shared@1.0.0)
   src/schema/            → 15 schema files: common, character, player, enemy, level, collectible,
                            minigame, scoring, progression, settings, events, sync, assets,
@@ -286,15 +287,18 @@ shared/  X any app dependency except Zod
 
 ### Hooks (enforcement)
 
-| Hook | Event | What It Does |
-|------|-------|-------------|
-| `lefthook.yml` | git pre-push | Runs all 6 CI gates locally before push |
-| `block-phaser3-urls.sh` | PreToolUse | Blocks Phaser 3 doc URL access |
-| `zone-lint-on-edit.sh` | PostToolUse | ESLint + grep on modules/ edits |
-| `phaser-version-guard.sh` | PostToolUse | Warns on undocumented Phaser symbols |
-| `telemetry-log.sh` | PostToolUse | Appends event to `.claude/telemetry/events.jsonl` |
-| `session-summary.sh` | Stop | Tallies violations/warnings for response cycle |
-| `session-end-report.sh` | SessionEnd | Writes session summary + drift report |
+| Hook | Event | Async? | What It Does |
+|------|-------|--------|-------------|
+| `lefthook.yml` | git pre-push | — | Runs all 6 CI gates locally before push |
+| `block-phaser3-urls.sh` | PreToolUse | No | Blocks Phaser 3 doc URL access (JSON deny protocol) |
+| `protect-main-branch.sh` | PreToolUse | No | Blocks Edit/Write on main branch (allowlist: .claude/, docs/, root config) |
+| `zone-lint-on-edit.sh` | PostToolUse | No | ESLint + grep on modules/ edits |
+| `phaser-version-guard.sh` | PostToolUse | No | Warns on undocumented Phaser symbols |
+| `telemetry-log.sh` | PostToolUse | Yes | Appends event to `.claude/telemetry/events.jsonl` |
+| `notify-attention.sh` | Notification | — | macOS desktop alert when permission needed |
+| `pre-compact-backup.sh` | PreCompact | — | Transcript backup before context compaction |
+| `session-summary.sh` | Stop | No | Tallies violations/warnings for response cycle |
+| `session-end-report.sh` | SessionEnd | No | Writes session summary + drift report |
 
 ## Code Style
 
