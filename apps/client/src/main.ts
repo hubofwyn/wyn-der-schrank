@@ -13,6 +13,7 @@ import { NoopNetwork } from './core/adapters/noop-network.js';
 import { NoopPhysics } from './core/adapters/noop-physics.js';
 import { PhaserAudio } from './core/adapters/phaser-audio.js';
 import { PhaserClock } from './core/adapters/phaser-clock.js';
+import { PhaserViewport } from './core/adapters/phaser-viewport.js';
 import type { Container, MinigameScope } from './core/container.js';
 import type { IInputProvider } from './core/ports/input.js';
 import { CharacterCatalog } from './modules/character/character-catalog.js';
@@ -48,6 +49,7 @@ import { WorldSelectScene } from './scenes/world-select-scene.js';
  * for those ports — they satisfy the interface without real behavior.
  */
 function createContainer(): Container {
+	const viewport = new PhaserViewport(window.innerWidth, window.innerHeight);
 	const clock = new PhaserClock();
 	const input = new NoopInput();
 	const audio = new PhaserAudio();
@@ -97,6 +99,7 @@ function createContainer(): Container {
 		settingsManager,
 		sessionSave,
 		diagnostics,
+		viewport,
 		characterCatalog,
 		worldCatalog,
 		flowController,
@@ -104,10 +107,13 @@ function createContainer(): Container {
 	};
 }
 
+const container = createContainer();
+const { worldSize } = container.viewport;
+
 const game = new Phaser.Game({
 	type: Phaser.AUTO,
-	width: 1280,
-	height: 720,
+	width: worldSize.width,
+	height: worldSize.height,
 	parent: document.body,
 	pixelArt: true,
 	physics: {
@@ -142,7 +148,6 @@ const game = new Phaser.Game({
 	],
 });
 
-const container = createContainer();
 game.registry.set('container', container);
 
 // Bind PhaserAudio to the game's sound manager now that the game is created.

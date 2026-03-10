@@ -1,6 +1,10 @@
 import { z } from 'zod';
 import { DiagnosticsConfigSchema } from './diagnostics.js';
 
+export const ControlSchemeSchema = z.enum(['keyboard', 'touch', 'auto']);
+export const TouchStyleSchema = z.enum(['virtual-buttons', 'joystick']);
+export const TouchButtonSizeSchema = z.enum(['small', 'medium', 'large']);
+
 export const SettingsSchema = z.object({
 	audio: z.object({
 		masterVolume: z.number().min(0).max(1).default(0.8),
@@ -13,6 +17,8 @@ export const SettingsSchema = z.object({
 		showMinimap: z.boolean().default(true),
 		screenShake: z.boolean().default(true),
 		particleQuality: z.enum(['low', 'medium', 'high']).default('medium'),
+		touchButtonOpacity: z.number().min(0).max(1).default(0.5),
+		touchButtonSize: TouchButtonSizeSchema.default('medium'),
 	}),
 	controls: z.object({
 		jump: z.string().default('Space'),
@@ -23,6 +29,9 @@ export const SettingsSchema = z.object({
 		interact: z.string().default('KeyE'),
 		pause: z.string().default('Escape'),
 		ability: z.string().default('KeyK'),
+		controlScheme: ControlSchemeSchema.default('auto'),
+		touchControlsEnabled: z.boolean().default(true),
+		touchStyle: TouchStyleSchema.default('virtual-buttons'),
 	}),
 	accessibility: z.object({
 		highContrast: z.boolean().default(false),
