@@ -5,6 +5,7 @@ import { getCoinAnimationDefs } from '../modules/collectible/animation-config.js
 import { getSkeletonAnimationDefs } from '../modules/enemy/animation-config.js';
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
 import { getPlayerAnimationDefs } from '../modules/player/animation-config.js';
+import { safeCenterX, safeCenterY } from '../modules/ui/scene-layout.js';
 import { BaseScene } from './base-scene.js';
 
 /**
@@ -62,18 +63,19 @@ export class PreloadScene extends BaseScene {
 	}
 
 	private createProgressBar(): void {
-		const { width, height } = this.scale;
+		const safeZone = this.container.viewport.safeZone;
+		const cx = safeCenterX(safeZone);
+		const cy = safeCenterY(safeZone);
 		const barHeight = 28;
-		const x = (width - this.progressBarWidth) / 2;
-		const y = height / 2;
+		const x = cx - this.progressBarWidth / 2;
 
-		const bg = this.add.rectangle(width / 2, y, this.progressBarWidth, barHeight, 0x222222);
+		const bg = this.add.rectangle(cx, cy, this.progressBarWidth, barHeight, 0x222222);
 		bg.setOrigin(0.5);
 
-		this.progressFill = this.add.rectangle(x, y, 0, barHeight, 0x3355ff);
+		this.progressFill = this.add.rectangle(x, cy, 0, barHeight, 0x3355ff);
 		this.progressFill.setOrigin(0, 0.5);
 
-		const text = this.add.text(width / 2, y - 30, 'Loading...', {
+		const text = this.add.text(cx, cy - 30, 'Loading...', {
 			fontSize: '18px',
 			color: '#cccccc',
 		});

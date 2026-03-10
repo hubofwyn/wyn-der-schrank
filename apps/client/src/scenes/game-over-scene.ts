@@ -5,6 +5,7 @@ import {
 } from '../modules/game-state/gameplay-state.js';
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
 import { Colors, Typography } from '../modules/ui/design-tokens.js';
+import { buttonStack, menuLayout, safeCenterX } from '../modules/ui/scene-layout.js';
 import { BaseScene } from './base-scene.js';
 
 /**
@@ -25,13 +26,15 @@ export class GameOverScene extends BaseScene {
 
 	create(): void {
 		const state = this.readGameplayState();
-		const { width, height } = this.scale;
-		const cx = width / 2;
+		const safeZone = this.container.viewport.safeZone;
+		const cx = safeCenterX(safeZone);
+		const header = menuLayout(safeZone, [0.19, 0.36]);
+		const buttons = buttonStack(safeZone, 0.72, 2, 60);
 
 		this.cameras.main.setBackgroundColor(Colors.background);
 
 		// ── Title ──
-		const title = this.add.text(cx, 140, 'Game Over', {
+		const title = this.add.text(cx, header.items[0]!, 'Game Over', {
 			...Typography.title,
 			color: Colors.danger,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
@@ -39,14 +42,14 @@ export class GameOverScene extends BaseScene {
 
 		// ── Stats ──
 		const statsLines = [`Score: ${state.score}`, `Coins: ${state.coins}/${state.coinsTotal}`];
-		const statsText = this.add.text(cx, 260, statsLines.join('\n'), {
+		const statsText = this.add.text(cx, header.items[1]!, statsLines.join('\n'), {
 			...Typography.body,
 			color: Colors.text,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
 		statsText.setOrigin(0.5, 0.5);
 
 		// ── Retry button ──
-		const retryBtn = this.add.text(cx, height - 160, 'Retry', {
+		const retryBtn = this.add.text(cx, buttons.items[0]!, 'Retry', {
 			...Typography.button,
 			color: Colors.button,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
@@ -60,7 +63,7 @@ export class GameOverScene extends BaseScene {
 		});
 
 		// ── Menu button ──
-		const menuBtn = this.add.text(cx, height - 100, 'Menu', {
+		const menuBtn = this.add.text(cx, buttons.items[1]!, 'Menu', {
 			...Typography.button,
 			color: Colors.button,
 		} as Phaser.Types.GameObjects.Text.TextStyle);

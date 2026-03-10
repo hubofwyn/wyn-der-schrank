@@ -2,6 +2,7 @@ import { MusicKeys } from '../modules/assets/audio-keys.js';
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
 import { progressSummary } from '../modules/progression/progress-summary.js';
 import { Colors, Typography } from '../modules/ui/design-tokens.js';
+import { menuLayout } from '../modules/ui/scene-layout.js';
 import { BaseScene } from './base-scene.js';
 
 /**
@@ -20,8 +21,9 @@ export class TitleScene extends BaseScene {
 	}
 
 	create(): void {
-		const { width, height } = this.scale;
-		const cx = width / 2;
+		const safeZone = this.container.viewport.safeZone;
+		const layout = menuLayout(safeZone, [0.3, 0.38, 0.55, 0.65]);
+		const cx = layout.cx;
 
 		this.cameras.main.setBackgroundColor(Colors.background);
 
@@ -31,7 +33,7 @@ export class TitleScene extends BaseScene {
 		// ── Title ──
 		const title = this.add.text(
 			cx,
-			height * 0.3,
+			layout.items[0]!,
 			'Wyn der Schrank',
 			Typography.title as Phaser.Types.GameObjects.Text.TextStyle,
 		);
@@ -41,7 +43,7 @@ export class TitleScene extends BaseScene {
 		// ── Progress indicator (only when save data exists) ──
 		const summary = progressSummary(this.container.sessionSave.current);
 		if (summary) {
-			const progressText = this.add.text(cx, height * 0.38, summary, {
+			const progressText = this.add.text(cx, layout.items[1]!, summary, {
 				...Typography.small,
 				color: Colors.textMuted,
 			} as Phaser.Types.GameObjects.Text.TextStyle);
@@ -49,7 +51,7 @@ export class TitleScene extends BaseScene {
 		}
 
 		// ── Play button ──
-		const playBtn = this.add.text(cx, height * 0.55, 'Play', {
+		const playBtn = this.add.text(cx, layout.items[2]!, 'Play', {
 			...Typography.button,
 			color: Colors.button,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
@@ -64,7 +66,7 @@ export class TitleScene extends BaseScene {
 		});
 
 		// ── Settings button ──
-		const settingsBtn = this.add.text(cx, height * 0.65, 'Settings', {
+		const settingsBtn = this.add.text(cx, layout.items[3]!, 'Settings', {
 			...Typography.button,
 			color: Colors.button,
 		} as Phaser.Types.GameObjects.Text.TextStyle);

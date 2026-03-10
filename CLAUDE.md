@@ -38,7 +38,7 @@ Never commit directly to `main`. Never push without pre-push passing.
 - Types inferred from Zod schemas. Never hand-written.
 - Services wired through `core/container.ts`. Scenes are thin.
 - Phaser 4 renderer is WebGL, not WebGPU.
-- Layout math in `modules/viewport/`. HUD anchored to safe zone. Touch targets >= 44px.
+- Layout math in `modules/viewport/`. Scene positioning via `modules/ui/scene-layout.ts`. HUD anchored to safe zone. Touch targets >= 44px.
 
 ## Plan Protocol
 

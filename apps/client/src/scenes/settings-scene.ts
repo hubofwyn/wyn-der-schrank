@@ -1,6 +1,7 @@
 import type { SceneKey } from '../modules/navigation/scene-keys.js';
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
 import { Colors, Spacing, Typography } from '../modules/ui/design-tokens.js';
+import { menuLayout } from '../modules/ui/scene-layout.js';
 import { BaseScene } from './base-scene.js';
 
 interface ToggleDef {
@@ -42,20 +43,21 @@ export class SettingsScene extends BaseScene {
 			this.returnTo = data.returnTo as SceneKey;
 		}
 
-		const { width, height } = this.scale;
-		const cx = width / 2;
+		const safeZone = this.container.viewport.safeZone;
+		const layout = menuLayout(safeZone, [0.12, 0.85]);
+		const cx = layout.cx;
 		this.cameras.main.setBackgroundColor(Colors.background);
 		this.toggleTexts = [];
 
 		// ── Title ──
-		const title = this.add.text(cx, height * 0.12, 'Settings', {
+		const title = this.add.text(cx, layout.items[0]!, 'Settings', {
 			...Typography.heading,
 			color: Colors.accent,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
 		title.setOrigin(0.5, 0.5);
 
 		// ── Toggle rows ──
-		const startY = height * 0.28;
+		const startY = Math.round(safeZone.y + safeZone.height * 0.28);
 		const rowHeight = Spacing.xxl + Spacing.sm;
 
 		for (let i = 0; i < TOGGLES.length; i++) {
@@ -88,7 +90,7 @@ export class SettingsScene extends BaseScene {
 		}
 
 		// ── Back button ──
-		const backBtn = this.add.text(cx, height * 0.85, 'Back', {
+		const backBtn = this.add.text(cx, layout.items[1]!, 'Back', {
 			...Typography.button,
 			color: Colors.button,
 		} as Phaser.Types.GameObjects.Text.TextStyle);

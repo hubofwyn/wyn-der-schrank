@@ -4,6 +4,7 @@ import {
 	GAMEPLAY_STATE_KEY,
 } from '../modules/game-state/gameplay-state.js';
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
+import { hudColumn } from '../modules/ui/scene-layout.js';
 import { BaseScene } from './base-scene.js';
 
 const HUD_STYLE: Phaser.Types.GameObjects.Text.TextStyle = {
@@ -11,8 +12,6 @@ const HUD_STYLE: Phaser.Types.GameObjects.Text.TextStyle = {
 	color: '#ffffff',
 	fontFamily: 'monospace',
 };
-
-const HUD_PADDING = 16;
 
 /**
  * HudScene — rendered in parallel with PlatformerScene.
@@ -34,13 +33,16 @@ export class HudScene extends BaseScene {
 	}
 
 	create(): void {
-		this.healthText = this.add.text(HUD_PADDING, HUD_PADDING, '', HUD_STYLE);
-		this.scoreText = this.add.text(HUD_PADDING, HUD_PADDING + 24, '', HUD_STYLE);
-		this.coinsText = this.add.text(HUD_PADDING, HUD_PADDING + 48, '', HUD_STYLE);
-		this.livesText = this.add.text(HUD_PADDING, HUD_PADDING + 72, '', HUD_STYLE);
+		const safeZone = this.container.viewport.safeZone;
+		const left = hudColumn('top-left', safeZone, 4);
+		const right = hudColumn('top-right', safeZone, 1);
 
-		const { width } = this.scale;
-		this.levelText = this.add.text(width - HUD_PADDING, HUD_PADDING, '', HUD_STYLE);
+		this.healthText = this.add.text(left.x, left.lines[0]!, '', HUD_STYLE);
+		this.scoreText = this.add.text(left.x, left.lines[1]!, '', HUD_STYLE);
+		this.coinsText = this.add.text(left.x, left.lines[2]!, '', HUD_STYLE);
+		this.livesText = this.add.text(left.x, left.lines[3]!, '', HUD_STYLE);
+
+		this.levelText = this.add.text(right.x, right.lines[0]!, '', HUD_STYLE);
 		this.levelText.setOrigin(1, 0);
 	}
 

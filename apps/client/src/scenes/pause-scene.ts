@@ -1,5 +1,6 @@
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
 import { Colors, Typography, ZIndex } from '../modules/ui/design-tokens.js';
+import { menuLayout, safeCenterX } from '../modules/ui/scene-layout.js';
 import { BaseScene } from './base-scene.js';
 
 /**
@@ -21,19 +22,21 @@ export class PauseScene extends BaseScene {
 	}
 
 	create(): void {
+		const safeZone = this.container.viewport.safeZone;
 		const { width, height } = this.scale;
-		const cx = width / 2;
+		const cx = safeCenterX(safeZone);
+		const layout = menuLayout(safeZone, [0.25, 0.45, 0.55, 0.65]);
 
 		// ── Pause music while paused ──
 		this.container.audio.pauseMusic();
 
-		// ── Dark overlay ──
-		const overlay = this.add.rectangle(cx, height / 2, width, height, 0x000000);
+		// ── Dark overlay (full world, not just safe zone) ──
+		const overlay = this.add.rectangle(width / 2, height / 2, width, height, 0x000000);
 		overlay.alpha = 0.6;
 		overlay.setDepth(ZIndex.overlay);
 
 		// ── Title ──
-		const title = this.add.text(cx, height * 0.25, 'Paused', {
+		const title = this.add.text(cx, layout.items[0]!, 'Paused', {
 			...Typography.title,
 			color: Colors.text,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
@@ -41,7 +44,7 @@ export class PauseScene extends BaseScene {
 		title.setDepth(ZIndex.modal);
 
 		// ── Resume button ──
-		const resumeBtn = this.add.text(cx, height * 0.45, 'Resume', {
+		const resumeBtn = this.add.text(cx, layout.items[1]!, 'Resume', {
 			...Typography.button,
 			color: Colors.button,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
@@ -56,7 +59,7 @@ export class PauseScene extends BaseScene {
 		});
 
 		// ── Settings button ──
-		const settingsBtn = this.add.text(cx, height * 0.55, 'Settings', {
+		const settingsBtn = this.add.text(cx, layout.items[2]!, 'Settings', {
 			...Typography.button,
 			color: Colors.button,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
@@ -71,7 +74,7 @@ export class PauseScene extends BaseScene {
 		});
 
 		// ── Quit button ──
-		const quitBtn = this.add.text(cx, height * 0.65, 'Quit', {
+		const quitBtn = this.add.text(cx, layout.items[3]!, 'Quit', {
 			...Typography.button,
 			color: Colors.danger,
 		} as Phaser.Types.GameObjects.Text.TextStyle);

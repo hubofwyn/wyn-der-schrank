@@ -1,6 +1,7 @@
 import type { WorldDefinition, WorldId } from '@hub-of-wyn/shared';
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
 import { Colors, Spacing, Typography } from '../modules/ui/design-tokens.js';
+import { cornerButton, menuLayout, safeCenterX } from '../modules/ui/scene-layout.js';
 import { BaseScene } from './base-scene.js';
 
 const LEVEL_CARD_SIZE = 100;
@@ -43,8 +44,9 @@ export class MainMenuScene extends BaseScene {
 	}
 
 	create(): void {
-		const { width, height } = this.scale;
-		const cx = width / 2;
+		const safeZone = this.container.viewport.safeZone;
+		const cx = safeCenterX(safeZone);
+		const headerLayout = menuLayout(safeZone, [0.056]);
 
 		this.cameras.main.setBackgroundColor(Colors.background);
 
@@ -53,7 +55,7 @@ export class MainMenuScene extends BaseScene {
 		const charDef = charId ? this.container.characterCatalog.getById(charId) : null;
 		const charName = charDef?.name ?? 'Unknown';
 
-		const header = this.add.text(cx, 40, `${charName}'s Adventure`, {
+		const header = this.add.text(cx, headerLayout.items[0]!, `${charName}'s Adventure`, {
 			...Typography.heading,
 			color: Colors.accent,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
@@ -62,7 +64,7 @@ export class MainMenuScene extends BaseScene {
 		// ── World sections ──
 		const worlds = this.container.worldCatalog.getOrdered();
 		const saveData = this.container.sessionSave.current;
-		let yOffset = 100;
+		let yOffset = Math.round(safeZone.y + safeZone.height * 0.14);
 
 		for (const world of worlds) {
 			const unlocked = this.container.worldCatalog.isWorldUnlocked(world.id, saveData);
@@ -70,7 +72,8 @@ export class MainMenuScene extends BaseScene {
 		}
 
 		// ── Back button ──
-		const backBtn = this.add.text(80, height - 50, 'Back', {
+		const backPos = cornerButton('bottom-left', safeZone);
+		const backBtn = this.add.text(backPos.x, backPos.y, 'Back', {
 			...Typography.button,
 			color: Colors.button,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
@@ -84,7 +87,8 @@ export class MainMenuScene extends BaseScene {
 		});
 
 		// ── Settings button ──
-		const settingsBtn = this.add.text(width - 80, height - 50, 'Settings', {
+		const settingsPos = cornerButton('bottom-right', safeZone);
+		const settingsBtn = this.add.text(settingsPos.x, settingsPos.y, 'Settings', {
 			...Typography.button,
 			color: Colors.button,
 		} as Phaser.Types.GameObjects.Text.TextStyle);

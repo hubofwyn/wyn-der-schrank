@@ -1,5 +1,6 @@
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
 import { Colors, Spacing, Typography } from '../modules/ui/design-tokens.js';
+import { cornerButton, menuLayout, safeCenterY } from '../modules/ui/scene-layout.js';
 import { BaseScene } from './base-scene.js';
 
 const CARD_SIZE = 120;
@@ -30,8 +31,9 @@ export class LevelSelectScene extends BaseScene {
 	}
 
 	create(): void {
-		const { width, height } = this.scale;
-		const cx = width / 2;
+		const safeZone = this.container.viewport.safeZone;
+		const layout = menuLayout(safeZone, [0.07]);
+		const cx = layout.cx;
 
 		this.cameras.main.setBackgroundColor(Colors.background);
 
@@ -46,7 +48,7 @@ export class LevelSelectScene extends BaseScene {
 		const worldName = world?.name ?? worldId;
 
 		// ── Title ──
-		const title = this.add.text(cx, 50, worldName, {
+		const title = this.add.text(cx, layout.items[0]!, worldName, {
 			...Typography.heading,
 			color: Colors.accent,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
@@ -57,7 +59,7 @@ export class LevelSelectScene extends BaseScene {
 		const saveData = this.container.sessionSave.current;
 
 		if (levels.length === 0) {
-			const emptyText = this.add.text(cx, height / 2, 'No levels yet...', {
+			const emptyText = this.add.text(cx, safeCenterY(safeZone), 'No levels yet...', {
 				...Typography.body,
 				color: Colors.textMuted,
 			} as Phaser.Types.GameObjects.Text.TextStyle);
@@ -66,7 +68,7 @@ export class LevelSelectScene extends BaseScene {
 			const cols = Math.min(levels.length, MAX_COLUMNS);
 			const gridWidth = cols * CARD_SIZE + (cols - 1) * CARD_GAP;
 			const startX = cx - gridWidth / 2 + CARD_SIZE / 2;
-			const startY = height / 2 - 40;
+			const startY = safeCenterY(safeZone) - 40;
 
 			for (let i = 0; i < levels.length; i++) {
 				const levelId = levels[i];
@@ -82,7 +84,8 @@ export class LevelSelectScene extends BaseScene {
 		}
 
 		// ── Back button ──
-		const backBtn = this.add.text(80, height - 50, 'Back', {
+		const backPos = cornerButton('bottom-left', safeZone);
+		const backBtn = this.add.text(backPos.x, backPos.y, 'Back', {
 			...Typography.button,
 			color: Colors.button,
 		} as Phaser.Types.GameObjects.Text.TextStyle);

@@ -7,6 +7,7 @@ import {
 } from '../modules/game-state/gameplay-state.js';
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
 import { Colors, Typography } from '../modules/ui/design-tokens.js';
+import { buttonStack, menuLayout } from '../modules/ui/scene-layout.js';
 import { BaseScene } from './base-scene.js';
 
 function formatStars(count: number): string {
@@ -59,20 +60,21 @@ export class LevelCompleteScene extends BaseScene {
 		this.container.audio.stopMusic(300);
 		this.container.audio.playSfx(SfxKeys.LEVEL_COMPLETE);
 
-		const { width, height } = this.scale;
-		const cx = width / 2;
+		const safeZone = this.container.viewport.safeZone;
+		const header = menuLayout(safeZone, [0.14, 0.25, 0.39]);
+		const cx = header.cx;
 
 		this.cameras.main.setBackgroundColor(Colors.background);
 
 		// ── Title ──
-		const title = this.add.text(cx, 100, 'Level Complete!', {
+		const title = this.add.text(cx, header.items[0]!, 'Level Complete!', {
 			...Typography.title,
 			color: Colors.accent,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
 		title.setOrigin(0.5, 0.5);
 
 		// ── Stars ──
-		const starsText = this.add.text(cx, 180, formatStars(state.stars), {
+		const starsText = this.add.text(cx, header.items[1]!, formatStars(state.stars), {
 			...Typography.heading,
 			color: Colors.text,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
@@ -84,21 +86,22 @@ export class LevelCompleteScene extends BaseScene {
 			`Coins: ${state.coins}/${state.coinsTotal}`,
 			`Time:  ${formatTime(state.timeElapsedMs)}`,
 		];
-		const statsText = this.add.text(cx, 280, statsLines.join('\n'), {
+		const statsText = this.add.text(cx, header.items[2]!, statsLines.join('\n'), {
 			...Typography.body,
 			color: Colors.text,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
 		statsText.setOrigin(0.5, 0.5);
 
 		// ── Buttons ──
-		let buttonY = height - 200;
+		const buttons = buttonStack(safeZone, 0.72, 3, 60);
+		let btnIdx = 0;
 
 		// Determine next level via WorldCatalog
 		const worldId = this.container.flowController.selection.worldId;
 		const nextLevelId = worldId ? this.container.worldCatalog.getNextLevel(levelId, worldId) : null;
 
 		if (nextLevelId) {
-			const nextBtn = this.add.text(cx, buttonY, 'Next Level', {
+			const nextBtn = this.add.text(cx, buttons.items[btnIdx]!, 'Next Level', {
 				...Typography.button,
 				color: Colors.button,
 			} as Phaser.Types.GameObjects.Text.TextStyle);
@@ -111,10 +114,10 @@ export class LevelCompleteScene extends BaseScene {
 				this.container.flowController.selectLevel(nextLevelId);
 				this.scene.start(SceneKeys.PLATFORMER);
 			});
-			buttonY += 60;
+			btnIdx++;
 		}
 
-		const replayBtn = this.add.text(cx, buttonY, 'Replay', {
+		const replayBtn = this.add.text(cx, buttons.items[btnIdx]!, 'Replay', {
 			...Typography.button,
 			color: Colors.button,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
@@ -128,7 +131,7 @@ export class LevelCompleteScene extends BaseScene {
 		});
 
 		// ── Menu button ──
-		const menuBtn = this.add.text(cx, buttonY + 60, 'Menu', {
+		const menuBtn = this.add.text(cx, buttons.items[btnIdx + 1]!, 'Menu', {
 			...Typography.button,
 			color: Colors.button,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
