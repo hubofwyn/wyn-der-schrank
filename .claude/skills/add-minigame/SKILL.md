@@ -31,4 +31,9 @@ Minigames live in `modules/minigame/games/<name>/` and are registered via the Mi
    Add a rendering helper in `scenes/` that reads `MinigameLogic.getState()` and draws sprites.
    Keep it thin — zero game logic in the scene.
 
-6. **Verify.** `bun run check`.
+6. **Viewport compliance.** Minigame HUD elements must use safe zone anchoring and
+   `scaleFontSize()` for text. Touch targets must be >= 44px. If the minigame uses
+   custom input (e.g., tapping objects), implement via `IInputProvider` port or
+   DOM PointerEvent on canvas with proper coordinate conversion and cleanup.
+
+7. **Verify.** `bun run check`.

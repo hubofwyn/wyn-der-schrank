@@ -15,3 +15,6 @@ REVIEW FOR:
 4. Direct DOM manipulation outside scenes/ (XSS vectors)
 5. Network requests outside core/services/network-manager (fetch, XMLHttpRequest)
 6. eval(), Function(), or dynamic code execution
+7. Touch input: DOM PointerEvent coordinates validated/clamped before use (CSS-to-world conversion required)
+8. DOM listener leaks: all addEventListener calls have matching removeEventListener on cleanup/shutdown
+9. Safe area inset probe: no innerHTML or unsafe DOM operations (createElement + getComputedStyle only)

@@ -12,7 +12,7 @@ This package is the **shared contract** between client, server, and the asset st
 - **z.infer<> only.** All types are inferred from Zod schemas. Never hand-write a type that Zod can generate.
 - **No app dependencies.** The only runtime dependency is Zod. Never import from `client/`, `server/`, `phaser`, or any app-level package.
 - **Contract coordination.** Schema changes affect the studio repo. Always coordinate via `docs/plans/studio-asset-interface.md`.
-- **Schemas in `src/schema/`, types in `src/types/`.** 15 schema files, 40+ inferred types re-exported from `src/types/index.ts`.
+- **Schemas in `src/schema/`, types in `src/types/`.** 16 schema files, 54+ inferred types re-exported from `src/types/index.ts`. Verify count after any schema change.
 
 ## Publishing
 

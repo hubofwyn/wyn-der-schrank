@@ -19,16 +19,18 @@ Implement the feature described in $ARGUMENTS. Follow this sequence exactly:
 2. Identify which zone each file belongs to
 3. Identify new port interfaces or container changes needed
 4. Identify schema changes in @hub-of-wyn/shared
-5. If the deliverable will touch >8 files, decompose into sub-deliverables first
-6. Present plan — stop for approval if it touches >5 files
+5. Viewport impact: does this feature add UI or rendering? If so, plan for safe zone anchoring, HUD scaling via `scaleFontSize()`, and 44px minimum touch targets
+6. If the deliverable will touch >8 files, decompose into sub-deliverables first
+7. Present plan — stop for approval if it touches >5 files
 
 **Gate 3 — Implement**
 1. Schema changes first (if any) in packages/shared/
 2. Port interfaces second (if any) in core/ports/
-3. Domain logic in modules/ (with tests)
+3. Domain logic in modules/ (with tests) — layout math in modules/viewport/ if applicable
 4. Container wiring in core/container.ts + main.ts
 5. Scene integration in scenes/ (thin — read state, move sprites)
 6. Verify: scenes reference container ports by **interface type** (e.g. `IGameClock`), never cast to concrete adapters (e.g. `as PhaserClock`)
+7. Verify: HUD/UI uses `container.viewportProvider.safeZone` for positioning and `scaleFontSize()` for text
 
 **Gate 4 — Verify**
 1. `bun run check` — must pass with zero warnings

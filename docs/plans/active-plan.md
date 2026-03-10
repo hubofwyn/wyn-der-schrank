@@ -1,6 +1,6 @@
 ---
 title: Active Plan
-last_updated: 2026-02-15
+last_updated: 2026-03-09
 ---
 
 # Active Plan
@@ -11,7 +11,7 @@ last_updated: 2026-02-15
 - __Next ready:__ none
 - __Blocked:__ none
 - __Last milestone:__ 2026-02-15 — G12 Second Minigame (Coin Catch) (457 tests) [feat/coin-catch]
-- __Gates:__ all green (457 tests)
+- __Gates:__ all green (458 tests)
 
 ## Goals
 

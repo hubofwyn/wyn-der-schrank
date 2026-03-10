@@ -15,6 +15,7 @@ Read `AGENTS.md` first. It is the project contract.
 | Diagnostics | `docs/plans/diagnostics.md` | Runtime diagnostics: ports, channels, adapters |
 | Agentic setup | `docs/plans/agentic-setup.md` | Design of .claude/ infrastructure |
 | Lint & hooks | `docs/plans/lint-format-hooks.md` | Tool roles, config, git hook pipeline |
+| Mobile responsive | `docs/plans/mobile-responsive-plan.md` | Viewport, safe zone, touch, HUD scaling guide |
 | Phaser evidence | `docs/PHASER_EVIDENCE.md` | Verified Phaser 4 API usage log |
 
 ## Workflow
@@ -35,6 +36,7 @@ Never commit directly to `main`. Never push without pre-push passing.
 - Types inferred from Zod schemas. Never hand-written.
 - Services wired through `core/container.ts`. Scenes are thin.
 - Phaser 4 renderer is WebGL, not WebGPU.
+- Layout math in `modules/viewport/`. HUD anchored to safe zone. Touch targets >= 44px.
 
 ## Plan Protocol
 

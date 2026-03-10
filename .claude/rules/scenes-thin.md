@@ -20,6 +20,13 @@ Scenes are the **view zone** — they render state, they don't compute it.
 - `core/` — services, adapters, container, ports
 - `@hub-of-wyn/shared` — schemas + types
 
+## Viewport & Layout
+
+- **Safe zone anchoring.** Position HUD and menu UI relative to `container.viewportProvider.safeZone`, not raw world origin.
+- **Scaled text.** Use `scaleFontSize()` from `modules/viewport/hud-scale` for any text that must remain readable across devices.
+- **No inline layout math.** World size computation, safe zone calculation, and HUD scaling live in `modules/viewport/`. Scenes consume results via `container.viewportProvider`.
+- **Resize cleanup.** Track registry listeners and remove them on scene shutdown to prevent listener accumulation across scene restarts.
+
 ## Forbidden imports
 
 - `server/`, `hono`, raw `fetch` — use `core/services/network-manager`
