@@ -11,6 +11,7 @@ import {
 	menuLayout,
 	safeCenterX,
 	safeCenterY,
+	scaledStyle,
 } from '../scene-layout.js';
 
 // Reference safe zone: 1280x720 centered in a 1280-wide world (x=0)
@@ -177,5 +178,40 @@ describe('centeredGridStartX', () => {
 	it('offsets for wide zone', () => {
 		const startX = centeredGridStartX(WIDE_ZONE, 100, 1, 0);
 		expect(startX).toBe(800);
+	});
+});
+
+describe('scaledStyle', () => {
+	const BASE_STYLE = { fontSize: '28px', fontFamily: 'monospace' } as const;
+
+	it('returns base fontSize at reference width (1280)', () => {
+		const result = scaledStyle(BASE_STYLE, 1280);
+		expect(result.fontSize).toBe('28px');
+		expect(result.fontFamily).toBe('monospace');
+	});
+
+	it('scales up fontSize for wider worlds', () => {
+		const result = scaledStyle(BASE_STYLE, 1600);
+		// 28 * (1600/1280) = 35
+		expect(result.fontSize).toBe('35px');
+	});
+
+	it('preserves base fontSize for narrow worlds (floor = 1.0)', () => {
+		const result = scaledStyle(BASE_STYLE, 960);
+		// scale = 960/1280 = 0.75, clamped to 1.0
+		expect(result.fontSize).toBe('28px');
+	});
+
+	it('preserves fontStyle if present', () => {
+		const bold = { fontSize: '48px', fontFamily: 'monospace', fontStyle: 'bold' } as const;
+		const result = scaledStyle(bold, 1280);
+		expect(result.fontStyle).toBe('bold');
+		expect(result.fontSize).toBe('48px');
+	});
+
+	it('does not mutate the original style', () => {
+		const original = { fontSize: '24px', fontFamily: 'monospace' };
+		scaledStyle(original, 1600);
+		expect(original.fontSize).toBe('24px');
 	});
 });

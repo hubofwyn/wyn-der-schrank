@@ -6,7 +6,12 @@
  */
 
 import type { SafeZone } from '../viewport/viewport-math.js';
-import { anchorInSafeZone, MIN_TOUCH_TARGET_PX } from '../viewport/viewport-math.js';
+import {
+	anchorInSafeZone,
+	MIN_TOUCH_TARGET_PX,
+	scaleFontSizeStr,
+} from '../viewport/viewport-math.js';
+import type { TextStyleDef } from './design-tokens.js';
 import { Spacing } from './design-tokens.js';
 
 // ── Types ──
@@ -163,4 +168,18 @@ export function centeredGridStartX(
 ): number {
 	const totalWidth = cardCount * cardWidth + (cardCount - 1) * gap;
 	return safeCenterX(safeZone) - totalWidth / 2 + cardWidth / 2;
+}
+
+/**
+ * Scale a TextStyleDef's fontSize for the current world width.
+ *
+ * Parses the numeric base from the style's fontSize string (e.g. '28px' → 28),
+ * runs it through scaleFontSizeStr(), and returns a new TextStyleDef.
+ *
+ * @param style  Design token text style (Typography.button, etc.)
+ * @param worldWidth Current world width from container.viewport.worldSize.width
+ */
+export function scaledStyle(style: TextStyleDef, worldWidth: number): TextStyleDef {
+	const basePx = Number.parseInt(style.fontSize, 10);
+	return { ...style, fontSize: scaleFontSizeStr(basePx, worldWidth) };
 }

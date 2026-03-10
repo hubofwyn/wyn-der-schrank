@@ -1,6 +1,6 @@
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
 import { Colors, Spacing, Typography } from '../modules/ui/design-tokens.js';
-import { cornerButton, menuLayout, safeCenterY } from '../modules/ui/scene-layout.js';
+import { cornerButton, menuLayout, safeCenterY, scaledStyle } from '../modules/ui/scene-layout.js';
 import { BaseScene } from './base-scene.js';
 
 const CARD_SIZE = 120;
@@ -32,6 +32,7 @@ export class LevelSelectScene extends BaseScene {
 
 	create(): void {
 		const safeZone = this.container.viewport.safeZone;
+		const ww = this.container.viewport.worldSize.width;
 		const layout = menuLayout(safeZone, [0.07]);
 		const cx = layout.cx;
 
@@ -49,7 +50,7 @@ export class LevelSelectScene extends BaseScene {
 
 		// ── Title ──
 		const title = this.add.text(cx, layout.items[0]!, worldName, {
-			...Typography.heading,
+			...scaledStyle(Typography.heading, ww),
 			color: Colors.accent,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
 		title.setOrigin(0.5, 0.5);
@@ -60,7 +61,7 @@ export class LevelSelectScene extends BaseScene {
 
 		if (levels.length === 0) {
 			const emptyText = this.add.text(cx, safeCenterY(safeZone), 'No levels yet...', {
-				...Typography.body,
+				...scaledStyle(Typography.body, ww),
 				color: Colors.textMuted,
 			} as Phaser.Types.GameObjects.Text.TextStyle);
 			emptyText.setOrigin(0.5, 0.5);
@@ -79,18 +80,18 @@ export class LevelSelectScene extends BaseScene {
 				const ly = startY + row * (CARD_SIZE + CARD_GAP);
 				const completion = saveData.levels[levelId];
 
-				this.createLevelCard(lx, ly, levelId, completion?.stars);
+				this.createLevelCard(lx, ly, levelId, completion?.stars, ww);
 			}
 		}
 
 		// ── Back button ──
 		const backPos = cornerButton('bottom-left', safeZone);
 		const backBtn = this.add.text(backPos.x, backPos.y, 'Back', {
-			...Typography.button,
+			...scaledStyle(Typography.button, ww),
 			color: Colors.button,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
 		backBtn.setOrigin(0.5, 0.5);
-		backBtn.setInteractive({ useHandCursor: true });
+		this.makeButton(backBtn);
 		backBtn.on('pointerover', () => backBtn.setColor(Colors.buttonHover));
 		backBtn.on('pointerout', () => backBtn.setColor(Colors.button));
 		backBtn.on('pointerdown', () => {
@@ -99,7 +100,13 @@ export class LevelSelectScene extends BaseScene {
 		});
 	}
 
-	private createLevelCard(x: number, y: number, levelId: string, stars?: number): void {
+	private createLevelCard(
+		x: number,
+		y: number,
+		levelId: string,
+		stars: number | undefined,
+		ww: number,
+	): void {
 		const bg = this.add.rectangle(x, y, CARD_SIZE, CARD_SIZE, Colors.panel);
 		bg.setStrokeStyle(2, 0x444444);
 		bg.setInteractive({ useHandCursor: true });
@@ -107,7 +114,7 @@ export class LevelSelectScene extends BaseScene {
 		// ── Level name ──
 		const displayName = levelId.replace(/-/g, ' ');
 		const label = this.add.text(x, y - 14, displayName, {
-			...Typography.small,
+			...scaledStyle(Typography.small, ww),
 			color: Colors.text,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
 		label.setOrigin(0.5, 0.5);
@@ -115,7 +122,7 @@ export class LevelSelectScene extends BaseScene {
 		// ── Star rating ──
 		if (stars !== undefined) {
 			const starsText = this.add.text(x, y + 16, formatStars(stars), {
-				...Typography.small,
+				...scaledStyle(Typography.small, ww),
 				color: Colors.accent,
 			} as Phaser.Types.GameObjects.Text.TextStyle);
 			starsText.setOrigin(0.5, 0.5);

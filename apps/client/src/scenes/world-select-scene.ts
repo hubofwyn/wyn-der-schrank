@@ -1,7 +1,7 @@
 import type { WorldDefinition } from '@hub-of-wyn/shared';
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
 import { Colors, Spacing, Typography } from '../modules/ui/design-tokens.js';
-import { cornerButton, menuLayout, safeCenterY } from '../modules/ui/scene-layout.js';
+import { cornerButton, menuLayout, safeCenterY, scaledStyle } from '../modules/ui/scene-layout.js';
 import { BaseScene } from './base-scene.js';
 
 const CARD_WIDTH = 600;
@@ -27,6 +27,7 @@ export class WorldSelectScene extends BaseScene {
 
 	create(): void {
 		const safeZone = this.container.viewport.safeZone;
+		const ww = this.container.viewport.worldSize.width;
 		const layout = menuLayout(safeZone, [0.07]);
 		const cx = layout.cx;
 
@@ -34,7 +35,7 @@ export class WorldSelectScene extends BaseScene {
 
 		// ── Title ──
 		const title = this.add.text(cx, layout.items[0]!, 'Select World', {
-			...Typography.heading,
+			...scaledStyle(Typography.heading, ww),
 			color: Colors.accent,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
 		title.setOrigin(0.5, 0.5);
@@ -51,17 +52,17 @@ export class WorldSelectScene extends BaseScene {
 			if (!world) continue;
 			const unlocked = this.container.worldCatalog.isWorldUnlocked(world.id, saveData);
 			const cardY = startY + i * (CARD_HEIGHT + CARD_GAP);
-			this.createWorldCard(cx, cardY, world, unlocked);
+			this.createWorldCard(cx, cardY, world, unlocked, ww);
 		}
 
 		// ── Back button ──
 		const backPos = cornerButton('bottom-left', safeZone);
 		const backBtn = this.add.text(backPos.x, backPos.y, 'Back', {
-			...Typography.button,
+			...scaledStyle(Typography.button, ww),
 			color: Colors.button,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
 		backBtn.setOrigin(0.5, 0.5);
-		backBtn.setInteractive({ useHandCursor: true });
+		this.makeButton(backBtn);
 		backBtn.on('pointerover', () => backBtn.setColor(Colors.buttonHover));
 		backBtn.on('pointerout', () => backBtn.setColor(Colors.button));
 		backBtn.on('pointerdown', () => {
@@ -70,14 +71,20 @@ export class WorldSelectScene extends BaseScene {
 		});
 	}
 
-	private createWorldCard(x: number, y: number, world: WorldDefinition, unlocked: boolean): void {
+	private createWorldCard(
+		x: number,
+		y: number,
+		world: WorldDefinition,
+		unlocked: boolean,
+		ww: number,
+	): void {
 		const bg = this.add.rectangle(x, y, CARD_WIDTH, CARD_HEIGHT, Colors.panel);
 		bg.setStrokeStyle(2, unlocked ? 0x444444 : 0x333333);
 		bg.setAlpha(unlocked ? 1 : 0.5);
 
 		// ── Name ──
 		const nameText = this.add.text(x, y - 20, world.name, {
-			...Typography.body,
+			...scaledStyle(Typography.body, ww),
 			color: unlocked ? Colors.text : Colors.textMuted,
 			fontStyle: 'bold',
 		} as Phaser.Types.GameObjects.Text.TextStyle);
@@ -104,7 +111,7 @@ export class WorldSelectScene extends BaseScene {
 		}
 
 		const desc = this.add.text(x, y + 14, subText, {
-			...Typography.small,
+			...scaledStyle(Typography.small, ww),
 			color: Colors.textMuted,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
 		desc.setOrigin(0.5, 0.5);

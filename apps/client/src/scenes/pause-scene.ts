@@ -1,6 +1,6 @@
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
 import { Colors, Typography, ZIndex } from '../modules/ui/design-tokens.js';
-import { menuLayout, safeCenterX } from '../modules/ui/scene-layout.js';
+import { menuLayout, safeCenterX, scaledStyle } from '../modules/ui/scene-layout.js';
 import { BaseScene } from './base-scene.js';
 
 /**
@@ -23,6 +23,7 @@ export class PauseScene extends BaseScene {
 
 	create(): void {
 		const safeZone = this.container.viewport.safeZone;
+		const ww = this.container.viewport.worldSize.width;
 		const { width, height } = this.scale;
 		const cx = safeCenterX(safeZone);
 		const layout = menuLayout(safeZone, [0.25, 0.45, 0.55, 0.65]);
@@ -37,7 +38,7 @@ export class PauseScene extends BaseScene {
 
 		// ── Title ──
 		const title = this.add.text(cx, layout.items[0]!, 'Paused', {
-			...Typography.title,
+			...scaledStyle(Typography.title, ww),
 			color: Colors.text,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
 		title.setOrigin(0.5, 0.5);
@@ -45,12 +46,12 @@ export class PauseScene extends BaseScene {
 
 		// ── Resume button ──
 		const resumeBtn = this.add.text(cx, layout.items[1]!, 'Resume', {
-			...Typography.button,
+			...scaledStyle(Typography.button, ww),
 			color: Colors.button,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
 		resumeBtn.setOrigin(0.5, 0.5);
 		resumeBtn.setDepth(ZIndex.modal);
-		resumeBtn.setInteractive({ useHandCursor: true });
+		this.makeButton(resumeBtn);
 		resumeBtn.on('pointerover', () => resumeBtn.setColor(Colors.buttonHover));
 		resumeBtn.on('pointerout', () => resumeBtn.setColor(Colors.button));
 		resumeBtn.on('pointerdown', () => {
@@ -60,12 +61,12 @@ export class PauseScene extends BaseScene {
 
 		// ── Settings button ──
 		const settingsBtn = this.add.text(cx, layout.items[2]!, 'Settings', {
-			...Typography.button,
+			...scaledStyle(Typography.button, ww),
 			color: Colors.button,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
 		settingsBtn.setOrigin(0.5, 0.5);
 		settingsBtn.setDepth(ZIndex.modal);
-		settingsBtn.setInteractive({ useHandCursor: true });
+		this.makeButton(settingsBtn);
 		settingsBtn.on('pointerover', () => settingsBtn.setColor(Colors.buttonHover));
 		settingsBtn.on('pointerout', () => settingsBtn.setColor(Colors.button));
 		settingsBtn.on('pointerdown', () => {
@@ -75,12 +76,12 @@ export class PauseScene extends BaseScene {
 
 		// ── Quit button ──
 		const quitBtn = this.add.text(cx, layout.items[3]!, 'Quit', {
-			...Typography.button,
+			...scaledStyle(Typography.button, ww),
 			color: Colors.danger,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
 		quitBtn.setOrigin(0.5, 0.5);
 		quitBtn.setDepth(ZIndex.modal);
-		quitBtn.setInteractive({ useHandCursor: true });
+		this.makeButton(quitBtn);
 		quitBtn.on('pointerover', () => quitBtn.setColor('#ff6666'));
 		quitBtn.on('pointerout', () => quitBtn.setColor(Colors.danger));
 		quitBtn.on('pointerdown', () => {

@@ -7,7 +7,7 @@ import {
 } from '../modules/game-state/gameplay-state.js';
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
 import { Colors, Typography } from '../modules/ui/design-tokens.js';
-import { buttonStack, menuLayout } from '../modules/ui/scene-layout.js';
+import { buttonStack, menuLayout, scaledStyle } from '../modules/ui/scene-layout.js';
 import { BaseScene } from './base-scene.js';
 
 function formatStars(count: number): string {
@@ -61,6 +61,7 @@ export class LevelCompleteScene extends BaseScene {
 		this.container.audio.playSfx(SfxKeys.LEVEL_COMPLETE);
 
 		const safeZone = this.container.viewport.safeZone;
+		const ww = this.container.viewport.worldSize.width;
 		const header = menuLayout(safeZone, [0.14, 0.25, 0.39]);
 		const cx = header.cx;
 
@@ -68,14 +69,14 @@ export class LevelCompleteScene extends BaseScene {
 
 		// ── Title ──
 		const title = this.add.text(cx, header.items[0]!, 'Level Complete!', {
-			...Typography.title,
+			...scaledStyle(Typography.title, ww),
 			color: Colors.accent,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
 		title.setOrigin(0.5, 0.5);
 
 		// ── Stars ──
 		const starsText = this.add.text(cx, header.items[1]!, formatStars(state.stars), {
-			...Typography.heading,
+			...scaledStyle(Typography.heading, ww),
 			color: Colors.text,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
 		starsText.setOrigin(0.5, 0.5);
@@ -87,7 +88,7 @@ export class LevelCompleteScene extends BaseScene {
 			`Time:  ${formatTime(state.timeElapsedMs)}`,
 		];
 		const statsText = this.add.text(cx, header.items[2]!, statsLines.join('\n'), {
-			...Typography.body,
+			...scaledStyle(Typography.body, ww),
 			color: Colors.text,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
 		statsText.setOrigin(0.5, 0.5);
@@ -102,11 +103,11 @@ export class LevelCompleteScene extends BaseScene {
 
 		if (nextLevelId) {
 			const nextBtn = this.add.text(cx, buttons.items[btnIdx]!, 'Next Level', {
-				...Typography.button,
+				...scaledStyle(Typography.button, ww),
 				color: Colors.button,
 			} as Phaser.Types.GameObjects.Text.TextStyle);
 			nextBtn.setOrigin(0.5, 0.5);
-			nextBtn.setInteractive({ useHandCursor: true });
+			this.makeButton(nextBtn);
 			nextBtn.on('pointerover', () => nextBtn.setColor(Colors.buttonHover));
 			nextBtn.on('pointerout', () => nextBtn.setColor(Colors.button));
 			nextBtn.on('pointerdown', () => {
@@ -118,11 +119,11 @@ export class LevelCompleteScene extends BaseScene {
 		}
 
 		const replayBtn = this.add.text(cx, buttons.items[btnIdx]!, 'Replay', {
-			...Typography.button,
+			...scaledStyle(Typography.button, ww),
 			color: Colors.button,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
 		replayBtn.setOrigin(0.5, 0.5);
-		replayBtn.setInteractive({ useHandCursor: true });
+		this.makeButton(replayBtn);
 		replayBtn.on('pointerover', () => replayBtn.setColor(Colors.buttonHover));
 		replayBtn.on('pointerout', () => replayBtn.setColor(Colors.button));
 		replayBtn.on('pointerdown', () => {
@@ -132,11 +133,11 @@ export class LevelCompleteScene extends BaseScene {
 
 		// ── Menu button ──
 		const menuBtn = this.add.text(cx, buttons.items[btnIdx + 1]!, 'Menu', {
-			...Typography.button,
+			...scaledStyle(Typography.button, ww),
 			color: Colors.button,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
 		menuBtn.setOrigin(0.5, 0.5);
-		menuBtn.setInteractive({ useHandCursor: true });
+		this.makeButton(menuBtn);
 		menuBtn.on('pointerover', () => menuBtn.setColor(Colors.buttonHover));
 		menuBtn.on('pointerout', () => menuBtn.setColor(Colors.button));
 		menuBtn.on('pointerdown', () => {

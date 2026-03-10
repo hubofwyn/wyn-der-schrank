@@ -30,7 +30,7 @@ Implement the feature described in $ARGUMENTS. Follow this sequence exactly:
 4. Container wiring in core/container.ts + main.ts
 5. Scene integration in scenes/ (thin — read state, move sprites)
 6. Verify: scenes reference container ports by **interface type** (e.g. `IGameClock`), never cast to concrete adapters (e.g. `as PhaserClock`)
-7. Verify: HUD/UI uses `modules/ui/scene-layout.ts` helpers with `container.viewport.safeZone` for positioning and `container.viewport.scaleFontSize()` for text
+7. Verify: HUD/UI uses `modules/ui/scene-layout.ts` helpers with `container.viewport.safeZone` for positioning, `scaledStyle()` for text sizing, and `this.makeButton()` for interactive text elements
 
 **Gate 4 — Verify**
 1. `bun run check` — must pass with zero warnings

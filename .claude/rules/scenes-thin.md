@@ -23,8 +23,9 @@ Scenes are the **view zone** — they render state, they don't compute it.
 ## Viewport & Layout
 
 - **Safe zone anchoring.** Position HUD and menu UI relative to `container.viewport.safeZone`, not raw world origin or `this.scale.width/height`.
-- **Scene layout helpers.** Use functions from `modules/ui/scene-layout.ts` for positioning: `menuLayout()`, `buttonStack()`, `cornerButton()`, `hudColumn()`, `centeredGridStartX()`, `safeCenterX/Y()`, `hitArea()`. These wrap safe-zone math and design tokens into a clean API.
-- **Scaled text.** Use `container.viewport.scaleFontSize(baseSizePx)` (from `modules/viewport/viewport-math.ts`) for any text that must remain readable across devices.
+- **Scene layout helpers.** Use functions from `modules/ui/scene-layout.ts` for positioning: `menuLayout()`, `buttonStack()`, `cornerButton()`, `hudColumn()`, `centeredGridStartX()`, `safeCenterX/Y()`, `hitArea()`, `scaledStyle()`. These wrap safe-zone math and design tokens into a clean API.
+- **Scaled text.** Use `scaledStyle(Typography.xxx, worldWidth)` from scene-layout for text that follows Typography tokens. Use `scaleFontSizeStr(basePx, worldWidth)` from viewport-math for inline styles (e.g. HUD).
+- **Touch targets.** Use `this.makeButton(textObj)` from BaseScene for all interactive text elements. This applies expanded hit areas (44px minimum) via `hitArea()` + `Phaser.Geom.Rectangle`. Rectangle-based cards (>44px) use `setInteractive()` directly.
 - **No inline layout math.** World size computation, safe zone calculation, and HUD scaling live in `modules/viewport/`. Scene positioning lives in `modules/ui/scene-layout.ts`. Scenes consume results, they don't compute them.
 - **Resize cleanup.** Track registry listeners and remove them on scene shutdown to prevent listener accumulation across scene restarts.
 

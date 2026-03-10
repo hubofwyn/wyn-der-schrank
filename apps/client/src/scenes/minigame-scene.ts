@@ -15,6 +15,7 @@ import {
 } from '../modules/minigame/minigame-view-config.js';
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
 import { safeCenterX } from '../modules/ui/scene-layout.js';
+import { scaleFontSizeStr } from '../modules/viewport/viewport-math.js';
 import { BaseScene } from './base-scene.js';
 
 const FINISH_DELAY_MS = 2000;
@@ -114,8 +115,9 @@ export class MinigameScene extends BaseScene {
 			? 'Tap A to Start'
 			: 'Press SPACE to Start';
 		const introX = safeCenterX(this.container.viewport.safeZone);
+		const ww = this.container.viewport.worldSize.width;
 		this.introText = this.add.text(introX, 200, startPrompt, {
-			fontSize: '32px',
+			fontSize: scaleFontSizeStr(32, ww),
 			color: '#ffffff',
 			fontFamily: 'monospace',
 		});

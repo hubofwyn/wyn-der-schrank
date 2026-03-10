@@ -34,9 +34,9 @@ This plan covers what remains to make the game fully playable and polished on mo
 ### Key gaps
 
 1. ~~**Zero scenes use safe zone**~~ — **FIXED**: all 14 UI scenes now use `container.viewport.safeZone` via scene-layout helpers
-2. **Zero scenes use `scaleFontSize()`** — all use fixed Typography sizes from design tokens
+2. ~~**Zero scenes use `scaleFontSize()`**~~ — **FIXED**: all scenes use `scaledStyle()` or `scaleFontSizeStr()` for responsive text sizing
 3. **No resize listeners** — HUD positions set once in `create()`, never update
-4. **No touch target enforcement** — text buttons rely on glyph bounding box (~30px, below 44px minimum)
+4. ~~**No touch target enforcement**~~ — **FIXED**: `makeButton()` in BaseScene applies expanded hit areas (44px minimum) via `hitArea()` from scene-layout
 5. ~~**Hardcoded corner buttons**~~ — **FIXED**: all corner buttons now use `cornerButton()` with safe-zone anchoring
 6. **No portrait overlay** — game adapts via clamping but never prompts rotation
 7. **No PWA infrastructure** — no manifest, no service worker, no icons, no theme-color
@@ -60,11 +60,11 @@ Goals are ordered by dependency and impact. Each is scoped to be completable in 
 
 ### G13: Safe-Zone Scene Anchoring
 
-> **Status:** in-progress
+> **Status:** complete
 > **Requires:** none (viewport infrastructure from PR #21 is merged)
 > **Benefits from:** none
 > **Unlocks:** G14, G15
-> **Branch:** feat/safe-zone-anchoring
+> **Branch:** feat/safe-zone-anchoring (PR #23), feat/hit-area-font-scale (PR #25)
 
 Migrate all 14 UI scenes (excluding BootScene and BaseScene) from hardcoded/percentage positions to safe-zone anchoring using `container.viewport.safeZone` and `anchorInSafeZone()`. Add touch-target hit area expansion to all interactive text elements (44px minimum height). This is the highest-impact mobile fix — it makes the game usable on devices with notches, home indicators, and varying aspect ratios.
 
@@ -92,8 +92,8 @@ Migrate all 14 UI scenes (excluding BootScene and BaseScene) from hardcoded/perc
 - [x] LevelSelectScene migrated — grid and back button safe-zone positioned
 - [x] PreloadScene migrated — progress bar centered in safe zone
 - [x] MinigameScene intro text positioned from safe zone center
-- [ ] Hit-area expansion on text buttons (44px minimum)
-- [ ] `scaleFontSize()` integration for all text elements
+- [x] Hit-area expansion on text buttons (44px minimum) — `makeButton()` in BaseScene applies expanded Phaser.Geom.Rectangle hit areas via `hitArea()` from scene-layout
+- [x] `scaleFontSize()` integration for all text elements — `scaledStyle()` in scene-layout wraps Typography tokens with viewport-math scaling; all 14 UI scenes migrated
 
 ---
 

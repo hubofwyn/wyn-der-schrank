@@ -1,6 +1,7 @@
 import type { Container } from '../core/container.js';
 import { pickSfxVariant } from '../modules/assets/audio-keys.js';
 import type { SceneKey } from '../modules/navigation/scene-keys.js';
+import { hitArea } from '../modules/ui/scene-layout.js';
 
 /**
  * Abstract base for all game scenes.
@@ -47,5 +48,24 @@ export abstract class BaseScene extends Phaser.Scene {
 	protected playButtonSfx(): void {
 		const sfx = pickSfxVariant('menu-select');
 		if (sfx) this.container.audio.playSfx(sfx);
+	}
+
+	/**
+	 * Make a text object interactive with expanded hit area (44px minimum).
+	 *
+	 * Measures the text's rendered bounds, expands to at least MIN_TOUCH_TARGET_PX,
+	 * and sets interactive with the expanded rectangle as the hit area.
+	 */
+	protected makeButton(text: Phaser.GameObjects.Text): Phaser.GameObjects.Text {
+		const size = hitArea(text.width, text.height);
+		const offsetX = (size.width - text.width) / 2;
+		const offsetY = (size.height - text.height) / 2;
+		const rect = new Phaser.Geom.Rectangle(-offsetX, -offsetY, size.width, size.height);
+		text.setInteractive({
+			hitArea: rect,
+			hitAreaCallback: Phaser.Geom.Rectangle.Contains,
+			useHandCursor: true,
+		});
+		return text;
 	}
 }
