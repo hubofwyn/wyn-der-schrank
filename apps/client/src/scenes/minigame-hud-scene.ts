@@ -4,6 +4,7 @@ import {
 	MINIGAME_HUD_STATE_KEY,
 } from '../modules/minigame/minigame-hud-state.js';
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
+import { hudColumn, safeCenterX } from '../modules/ui/scene-layout.js';
 import { BaseScene } from './base-scene.js';
 
 const HUD_STYLE: Phaser.Types.GameObjects.Text.TextStyle = {
@@ -11,8 +12,6 @@ const HUD_STYLE: Phaser.Types.GameObjects.Text.TextStyle = {
 	color: '#ffffff',
 	fontFamily: 'monospace',
 };
-
-const HUD_PADDING = 16;
 
 /**
  * MinigameHudScene — rendered in parallel with MinigameScene.
@@ -35,16 +34,19 @@ export class MinigameHudScene extends BaseScene {
 	}
 
 	create(): void {
-		this.scoreText = this.add.text(HUD_PADDING, HUD_PADDING, '', HUD_STYLE);
-		this.livesText = this.add.text(HUD_PADDING, HUD_PADDING + 24, '', HUD_STYLE);
-		this.comboText = this.add.text(HUD_PADDING, HUD_PADDING + 48, '', HUD_STYLE);
-		this.progressText = this.add.text(HUD_PADDING, HUD_PADDING + 72, '', HUD_STYLE);
+		const safeZone = this.container.viewport.safeZone;
+		const left = hudColumn('top-left', safeZone, 4);
+		const right = hudColumn('top-right', safeZone, 1);
 
-		const { width } = this.scale;
-		this.phaseText = this.add.text(width - HUD_PADDING, HUD_PADDING, '', HUD_STYLE);
+		this.scoreText = this.add.text(left.x, left.lines[0]!, '', HUD_STYLE);
+		this.livesText = this.add.text(left.x, left.lines[1]!, '', HUD_STYLE);
+		this.comboText = this.add.text(left.x, left.lines[2]!, '', HUD_STYLE);
+		this.progressText = this.add.text(left.x, left.lines[3]!, '', HUD_STYLE);
+
+		this.phaseText = this.add.text(right.x, right.lines[0]!, '', HUD_STYLE);
 		this.phaseText.setOrigin(1, 0);
 
-		this.messageText = this.add.text(width / 2, 280, '', {
+		this.messageText = this.add.text(safeCenterX(safeZone), 280, '', {
 			fontSize: '24px',
 			color: '#ffff00',
 			fontFamily: 'monospace',

@@ -14,6 +14,7 @@ import {
 	type MinigameViewConfig,
 } from '../modules/minigame/minigame-view-config.js';
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
+import { safeCenterX } from '../modules/ui/scene-layout.js';
 import { BaseScene } from './base-scene.js';
 
 const FINISH_DELAY_MS = 2000;
@@ -112,7 +113,8 @@ export class MinigameScene extends BaseScene {
 		const startPrompt = this.container.viewport.isTouchDevice
 			? 'Tap A to Start'
 			: 'Press SPACE to Start';
-		this.introText = this.add.text(512, 200, startPrompt, {
+		const introX = safeCenterX(this.container.viewport.safeZone);
+		this.introText = this.add.text(introX, 200, startPrompt, {
 			fontSize: '32px',
 			color: '#ffffff',
 			fontFamily: 'monospace',

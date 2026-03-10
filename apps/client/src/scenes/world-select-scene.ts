@@ -1,6 +1,7 @@
 import type { WorldDefinition } from '@hub-of-wyn/shared';
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
 import { Colors, Spacing, Typography } from '../modules/ui/design-tokens.js';
+import { cornerButton, menuLayout, safeCenterY } from '../modules/ui/scene-layout.js';
 import { BaseScene } from './base-scene.js';
 
 const CARD_WIDTH = 600;
@@ -25,13 +26,14 @@ export class WorldSelectScene extends BaseScene {
 	}
 
 	create(): void {
-		const { width, height } = this.scale;
-		const cx = width / 2;
+		const safeZone = this.container.viewport.safeZone;
+		const layout = menuLayout(safeZone, [0.07]);
+		const cx = layout.cx;
 
 		this.cameras.main.setBackgroundColor(Colors.background);
 
 		// ── Title ──
-		const title = this.add.text(cx, 50, 'Select World', {
+		const title = this.add.text(cx, layout.items[0]!, 'Select World', {
 			...Typography.heading,
 			color: Colors.accent,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
@@ -41,7 +43,8 @@ export class WorldSelectScene extends BaseScene {
 		const worlds = this.container.worldCatalog.getOrdered();
 		const saveData = this.container.sessionSave.current;
 		const totalHeight = worlds.length * CARD_HEIGHT + (worlds.length - 1) * CARD_GAP;
-		const startY = height / 2 - totalHeight / 2 + CARD_HEIGHT / 2;
+		const cy = safeCenterY(safeZone);
+		const startY = cy - totalHeight / 2 + CARD_HEIGHT / 2;
 
 		for (let i = 0; i < worlds.length; i++) {
 			const world = worlds[i];
@@ -52,7 +55,8 @@ export class WorldSelectScene extends BaseScene {
 		}
 
 		// ── Back button ──
-		const backBtn = this.add.text(80, height - 50, 'Back', {
+		const backPos = cornerButton('bottom-left', safeZone);
+		const backBtn = this.add.text(backPos.x, backPos.y, 'Back', {
 			...Typography.button,
 			color: Colors.button,
 		} as Phaser.Types.GameObjects.Text.TextStyle);

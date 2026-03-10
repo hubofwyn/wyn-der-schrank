@@ -64,7 +64,7 @@ apps/client/             → Phaser 4 game client (@hub-of-wyn/client)
     progression/         → SessionSave (schema-validated persistence), progress summary
     scoring/             → Score calculator, star rating
     settings/            → Preferences manager (ISettingsManager + localStorage persistence)
-    ui/                  → Design tokens: colors, spacing, typography, z-index (pure TS, zone-safe)
+    ui/                  → Design tokens + scene-layout helpers: colors, spacing, typography, z-index, safe-zone positioning API (pure TS, zone-safe)
   src/scenes/            → View zone (Phaser scenes, thin)
 apps/server/             → Hono API + game server (@hub-of-wyn/server)
   src/routes/            → API route handlers
@@ -339,6 +339,7 @@ shared/  X any app dependency except Zod
 | Settings & persistence | `apps/client/src/modules/settings/` + `core/ports/settings.ts` |
 | Session save & progress | `apps/client/src/modules/progression/` (SessionSave, progressSummary) |
 | UI design tokens | `apps/client/src/modules/ui/design-tokens.ts` |
+| Scene layout helpers | `apps/client/src/modules/ui/scene-layout.ts` (safe-zone positioning API) |
 | Audio system | `apps/client/src/core/adapters/phaser-audio.ts` + `modules/assets/audio-keys.ts` |
 | Character catalog | `apps/client/src/modules/character/character-catalog.ts` |
 | World/level catalog | `apps/client/src/modules/level/world-catalog.ts` |

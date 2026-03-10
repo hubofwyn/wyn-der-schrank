@@ -1,6 +1,7 @@
 ---
 paths:
   - apps/client/src/modules/viewport/**
+  - apps/client/src/modules/ui/scene-layout.ts
   - apps/client/src/core/ports/viewport.ts
   - apps/client/src/core/adapters/phaser-viewport.ts
   - apps/client/src/core/adapters/touch-input.ts
@@ -32,6 +33,7 @@ Shell Viewport -> Canvas Container -> World Size Computation -> Engine Display S
 ## Layout Rules (scenes)
 
 - **Safe zone anchoring.** HUD elements anchor to `container.viewport.safeZone`, not raw `(0, 0)` or `this.scale.width/height`.
+- **Scene layout API.** Use `modules/ui/scene-layout.ts` helpers: `menuLayout()`, `buttonStack()`, `cornerButton()`, `hudColumn()`, `centeredGridStartX()`, `safeCenterX/Y()`, `hitArea()`. All 14 UI scenes use these — do not introduce new positioning patterns.
 - **HUD text scaling.** Use `container.viewport.scaleFontSize(baseSizePx)`. Never hardcode pixel font sizes in scenes without scale compensation.
 - **Resize response.** Scenes listen for viewport changes through the registry pattern, not ad-hoc `window.addEventListener('resize', ...)`.
 - **Physics bounds.** Update `physics.world.setBounds()` on resize to match new world dimensions.

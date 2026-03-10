@@ -861,9 +861,15 @@ The game supports desktop and mobile from a single codebase using a responsive v
 | `TEXT_SCALE_FLOOR` | 1.0 | Prevents double-dip with FIT scaling |
 | `MIN_TOUCH_TARGET_PX` | 44 | WCAG 2.5.8 minimum touch target |
 
+### Scene Layout API
+
+`modules/ui/scene-layout.ts` provides pure TS positioning helpers that wrap safe-zone math and design tokens:
+`safeCenterX/Y()`, `menuLayout()`, `buttonStack()`, `cornerButton()`, `hitArea()`, `hudColumn()`, `centeredGridStartX()`.
+All 14 UI scenes use these helpers — no scene computes positions from raw `this.scale.width/height`.
+
 ### Container Integration
 
-`container.viewport` provides `worldSize`, `safeZone`, `safeAreaInsets`, `isTouchDevice`, `scaleFontSize()`, `onResize()`. Scenes position UI relative to safe zone, never raw `this.scale.width/height`.
+`container.viewport` provides `worldSize`, `safeZone`, `safeAreaInsets`, `isTouchDevice`, `scaleFontSize()`, `onResize()`. Scenes access `container.viewport.safeZone` and pass it to scene-layout helpers.
 
 ### Reference Documents
 

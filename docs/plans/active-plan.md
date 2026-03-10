@@ -7,11 +7,11 @@ last_updated: 2026-03-09
 
 ## Snapshot
 
-- __Active:__ none
+- __Active:__ G13 Safe-Zone Scene Anchoring [feat/safe-zone-anchoring]
 - __Next ready:__ none
 - __Blocked:__ none
 - __Last milestone:__ 2026-02-15 — G12 Second Minigame (Coin Catch) (457 tests) [feat/coin-catch]
-- __Gates:__ all green (540 tests)
+- __Gates:__ all green (564 tests)
 
 ## Goals
 

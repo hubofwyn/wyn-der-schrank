@@ -1,6 +1,12 @@
 import type { CharacterDefinition, CharacterId } from '@hub-of-wyn/shared';
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
 import { Colors, Spacing, Typography } from '../modules/ui/design-tokens.js';
+import {
+	centeredGridStartX,
+	cornerButton,
+	menuLayout,
+	safeCenterY,
+} from '../modules/ui/scene-layout.js';
 import { BaseScene } from './base-scene.js';
 
 /** Color-coded border colors per character. */
@@ -34,13 +40,14 @@ export class CharacterSelectScene extends BaseScene {
 	}
 
 	create(): void {
-		const { width, height } = this.scale;
-		const cx = width / 2;
+		const safeZone = this.container.viewport.safeZone;
+		const layout = menuLayout(safeZone, [0.07]);
+		const cx = layout.cx;
 
 		this.cameras.main.setBackgroundColor(Colors.background);
 
 		// ── Title ──
-		const title = this.add.text(cx, 50, 'Choose Your Hero', {
+		const title = this.add.text(cx, layout.items[0]!, 'Choose Your Hero', {
 			...Typography.heading,
 			color: Colors.accent,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
@@ -48,9 +55,8 @@ export class CharacterSelectScene extends BaseScene {
 
 		// ── Character cards ──
 		const characters = this.container.characterCatalog.getUnlocked();
-		const totalWidth = characters.length * CARD_WIDTH + (characters.length - 1) * CARD_GAP;
-		const startX = cx - totalWidth / 2 + CARD_WIDTH / 2;
-		const cardY = height / 2 - 20;
+		const startX = centeredGridStartX(safeZone, CARD_WIDTH, characters.length, CARD_GAP);
+		const cardY = safeCenterY(safeZone) - 20;
 
 		for (let i = 0; i < characters.length; i++) {
 			const char = characters[i];
@@ -60,7 +66,8 @@ export class CharacterSelectScene extends BaseScene {
 		}
 
 		// ── Back button ──
-		const backBtn = this.add.text(80, height - 50, 'Back', {
+		const backPos = cornerButton('bottom-left', safeZone);
+		const backBtn = this.add.text(backPos.x, backPos.y, 'Back', {
 			...Typography.button,
 			color: Colors.button,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
