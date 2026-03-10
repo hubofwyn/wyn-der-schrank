@@ -1,8 +1,11 @@
 import type { CharacterStats } from '@hub-of-wyn/shared';
-import { PlatformerConfigSchema, SettingsSchema } from '@hub-of-wyn/shared';
+import { PlatformerConfigSchema } from '@hub-of-wyn/shared';
+import { AdaptiveInput } from '../core/adapters/adaptive-input.js';
 import { PhaserInput } from '../core/adapters/phaser-input.js';
 import { PhaserBody } from '../core/adapters/phaser-physics.js';
+import { TouchInput } from '../core/adapters/touch-input.js';
 import type { IGameClock } from '../core/ports/engine.js';
+import type { IInputProvider } from '../core/ports/input.js';
 import { MusicKeys, pickSfxVariant, SfxKeys } from '../modules/assets/audio-keys.js';
 import { getCoinDefaultAnim } from '../modules/collectible/animation-config.js';
 import { CollectibleManager } from '../modules/collectible/collectible-manager.js';
@@ -43,7 +46,8 @@ const DEFAULT_ENEMY_SPEED = 60;
  */
 export class PlatformerScene extends BaseScene {
 	private clock!: IGameClock;
-	private phaserInput!: PhaserInput;
+	private inputAdapter!: IInputProvider;
+	private touchInput: TouchInput | null = null;
 	private playerController!: PlayerController;
 	private playerSprite!: Phaser.GameObjects.Sprite;
 	private collectibleManager!: CollectibleManager;
@@ -93,17 +97,21 @@ export class PlatformerScene extends BaseScene {
 		// ── Game-scoped services from container ──
 		this.clock = this.container.clock;
 
-		// ── Scene-scoped adapters ──
-		this.phaserInput = new PhaserInput(
-			this.input.keyboard!,
-			SettingsSchema.parse({
-				audio: {},
-				display: {},
-				controls: {},
-				accessibility: {},
-				diagnostics: {},
-			}),
-		);
+		// ── Scene-scoped input adapters ──
+		const settings = this.container.settingsManager.current;
+		const keyboard = new PhaserInput(this.input.keyboard!, settings);
+
+		if (
+			this.container.viewport.isTouchDevice &&
+			settings.controls.touchControlsEnabled &&
+			settings.controls.controlScheme !== 'keyboard'
+		) {
+			this.touchInput = new TouchInput(document.body, settings);
+			this.inputAdapter = new AdaptiveInput(keyboard, this.touchInput);
+		} else {
+			this.touchInput = null;
+			this.inputAdapter = keyboard;
+		}
 
 		// ── Domain modules ──
 		this.collectibleManager = new CollectibleManager();
@@ -166,7 +174,7 @@ export class PlatformerScene extends BaseScene {
 		}
 
 		this.playerController = new PlayerController({
-			input: this.phaserInput,
+			input: this.inputAdapter,
 			body: playerBody,
 			clock: this.clock,
 			config,
@@ -269,8 +277,16 @@ export class PlatformerScene extends BaseScene {
 
 		// ── HUD ──
 		this.launchParallel(SceneKeys.HUD);
+
+		// ── Resume handler: restore touch overlay after unpause ──
+		this.events.on('resume', () => {
+			this.touchInput?.setVisible(true);
+		});
+
 		this.events.once('shutdown', () => {
 			this.stopParallel(SceneKeys.HUD);
+			this.touchInput?.destroy();
+			this.touchInput = null;
 		});
 
 		this.previousPlayerState = null;
@@ -284,10 +300,11 @@ export class PlatformerScene extends BaseScene {
 
 	update(time: number, delta: number): void {
 		this.clock.refresh(time, delta);
-		this.phaserInput.update();
+		this.inputAdapter.update();
 
 		// ── Pause detection ──
-		if (this.phaserInput.justPressed('pause') && !this.levelCompleted && !this.deathHandled) {
+		if (this.inputAdapter.justPressed('pause') && !this.levelCompleted && !this.deathHandled) {
+			this.touchInput?.setVisible(false);
 			this.pauseScene(SceneKeys.HUD);
 			this.pauseScene();
 			this.launchParallel(SceneKeys.PAUSE);

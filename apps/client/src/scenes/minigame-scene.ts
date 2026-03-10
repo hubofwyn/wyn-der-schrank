@@ -1,7 +1,9 @@
-import { SettingsSchema } from '@hub-of-wyn/shared';
+import { AdaptiveInput } from '../core/adapters/adaptive-input.js';
 import { PhaserInput } from '../core/adapters/phaser-input.js';
+import { TouchInput } from '../core/adapters/touch-input.js';
 import type { MinigameScope } from '../core/container.js';
 import type { IGameClock } from '../core/ports/engine.js';
+import type { IInputProvider } from '../core/ports/input.js';
 import { MusicKeys } from '../modules/assets/audio-keys.js';
 import { getLaneY, SHAKE_RUSH } from '../modules/minigame/games/shake-rush/shake-rush-config.js';
 import { MINIGAME_HUD_STATE_KEY } from '../modules/minigame/minigame-hud-state.js';
@@ -34,7 +36,8 @@ const FALLBACK_ENTITY_STYLE = { width: 24, height: 24, tint: 0xffffff } as const
  */
 export class MinigameScene extends BaseScene {
 	private clock!: IGameClock;
-	private phaserInput!: PhaserInput;
+	private inputAdapter!: IInputProvider;
+	private touchInput: TouchInput | null = null;
 	private scope!: MinigameScope;
 	private logic!: IMinigameLogic;
 	private viewConfig!: MinigameViewConfig;
@@ -65,24 +68,28 @@ export class MinigameScene extends BaseScene {
 		// ── Game-scoped services from container ──
 		this.clock = this.container.clock;
 
-		// ── Scene-scoped input adapter ──
-		this.phaserInput = new PhaserInput(
-			this.input.keyboard!,
-			SettingsSchema.parse({
-				audio: {},
-				display: {},
-				controls: {},
-				accessibility: {},
-				diagnostics: {},
-			}),
-		);
+		// ── Scene-scoped input adapters ──
+		const settings = this.container.settingsManager.current;
+		const keyboard = new PhaserInput(this.input.keyboard!, settings);
+
+		if (
+			this.container.viewport.isTouchDevice &&
+			settings.controls.touchControlsEnabled &&
+			settings.controls.controlScheme !== 'keyboard'
+		) {
+			this.touchInput = new TouchInput(document.body, settings);
+			this.inputAdapter = new AdaptiveInput(keyboard, this.touchInput);
+		} else {
+			this.touchInput = null;
+			this.inputAdapter = keyboard;
+		}
 
 		// ── Create minigame scope via container factory ──
 		const createScope = this.container.createMinigameScope;
 		if (!createScope) {
 			throw new Error('createMinigameScope not wired in container');
 		}
-		this.scope = createScope(minigameId, this.phaserInput);
+		this.scope = createScope(minigameId, this.inputAdapter);
 		this.logic = this.scope.logic;
 
 		// ── Music: crossfade into minigame theme ──
@@ -102,7 +109,10 @@ export class MinigameScene extends BaseScene {
 		);
 
 		// ── Intro prompt ──
-		this.introText = this.add.text(512, 200, 'Press SPACE to Start', {
+		const startPrompt = this.container.viewport.isTouchDevice
+			? 'Tap A to Start'
+			: 'Press SPACE to Start';
+		this.introText = this.add.text(512, 200, startPrompt, {
 			fontSize: '32px',
 			color: '#ffffff',
 			fontFamily: 'monospace',
@@ -115,6 +125,8 @@ export class MinigameScene extends BaseScene {
 			this.stopParallel(SceneKeys.MINIGAME_HUD);
 			this.cleanupEntityPool();
 			this.scope.dispose();
+			this.touchInput?.destroy();
+			this.touchInput = null;
 		});
 
 		this.container.diagnostics.emit('scene', 'state', 'lifecycle', {
@@ -126,11 +138,15 @@ export class MinigameScene extends BaseScene {
 
 	update(time: number, delta: number): void {
 		this.clock.refresh(time, delta);
-		this.phaserInput.update();
+		this.inputAdapter.update();
 
 		// ── Intro phase: await start input ──
 		if (this.logic.phase === 'intro') {
-			if (this.phaserInput.justPressed('ability')) {
+			if (
+				this.inputAdapter.justPressed('ability') ||
+				this.inputAdapter.justPressed('jump') ||
+				this.inputAdapter.justPressed('attack')
+			) {
 				this.logic.start();
 				this.introText.setVisible(false);
 			}
