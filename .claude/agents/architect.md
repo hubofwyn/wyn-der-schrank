@@ -15,5 +15,7 @@ REVIEW CHECKLIST:
 4. Port coverage: Does new engine-facing logic go through a port interface?
 5. Circular dependencies: Run `bun run deps:check` to verify.
 6. ADR compliance: Does the change conform to existing ADRs? Does it need a new one?
+7. Viewport discipline: Is layout math in modules/viewport/ (not inline in scenes)? Do HUD elements use safe zone anchoring and scaleFontSize()? Are new interactive elements >= 44px for touch?
+8. Input discipline: Do touch/input changes go through IInputProvider port? Are DOM event listeners cleaned up on scene shutdown?
 
 Report violations with file:line references. Suggest fixes.

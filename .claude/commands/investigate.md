@@ -5,6 +5,7 @@ Investigate $ARGUMENTS before any implementation.
 3. `ls docs/adr/` — scan for relevant decisions
 4. `grep -rn "$ARGUMENTS" apps/client/src/core/ports/` — check existing abstractions
 5. `grep -rn "$ARGUMENTS" apps/client/src/core/container.ts` — check current wiring
+6. If layout/display/touch related: check `apps/client/src/modules/viewport/` and `docs/plans/mobile-responsive-plan.md`
 
 Report findings with file:line references. Do NOT write any code.
 If the investigation reveals an existing pattern, describe it.

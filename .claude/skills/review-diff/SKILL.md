@@ -27,5 +27,12 @@ Run through this checklist before declaring a task complete.
 - [ ] No secrets, keys, or tokens in the diff
 - [ ] No `--no-verify`, no disabled linters, no skipped tests
 
+## Viewport & mobile compliance
+- [ ] Layout math lives in `modules/viewport/`, not inline in scenes
+- [ ] HUD text uses `scaleFontSize()`, not hardcoded pixel sizes (unless pre-viewport code)
+- [ ] New interactive elements meet 44px minimum touch target size
+- [ ] DOM event listeners (PointerEvent, resize) have matching cleanup on shutdown
+- [ ] Safe zone anchoring used for HUD and menu positioning (not raw world origin)
+
 ## Final gate
 - [ ] `bun run check` passes with zero warnings

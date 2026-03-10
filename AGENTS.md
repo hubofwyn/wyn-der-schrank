@@ -32,7 +32,7 @@ docs/
   commands/              → Slash commands (investigate, zone-check, implement-feature, drift-report, session-stats)
   skills/                → Repeatable workflows (fix-issue, add-module, add-minigame, review-diff, ship-small, phaser-doc)
   hooks/                 → Enforcement scripts (zone lint, Phaser guard, telemetry, branch protection, notifications)
-  rules/                 → Path-scoped conventions (modules-zone, scenes-thin, shared-schemas, phaser-evidence)
+  rules/                 → Path-scoped conventions (modules-zone, scenes-thin, shared-schemas, phaser-evidence, viewport-responsive)
 packages/shared/         → Zod schemas + inferred types (@hub-of-wyn/shared, npm: @hub-of-wyn/shared@1.0.0)
   src/schema/            → 16 schema files: common, character, player, enemy, level, collectible,
                            minigame, scoring, progression, session-save, settings, events, sync,
@@ -40,7 +40,7 @@ packages/shared/         → Zod schemas + inferred types (@hub-of-wyn/shared, n
   src/types/index.ts     → 54 types, all z.infer<> re-exports
 apps/client/             → Phaser 4 game client (@hub-of-wyn/client)
   src/core/              → Infrastructure zone (ports, adapters, services, container)
-    ports/               → 8 interfaces: engine, input, audio, physics, network, storage, settings, diagnostics
+    ports/               → 9 interfaces: engine, input, audio, physics, network, storage, settings, diagnostics, viewport
     container.ts         → Container + PlatformerScope + MinigameScope
   src/modules/           → Domain zone (pure TS, NO Phaser/browser globals)
     animation/           → Shared AnimationDef type for entity animations
@@ -56,6 +56,7 @@ apps/client/             → Phaser 4 game client (@hub-of-wyn/client)
       games/coin-catch/  → Coin Catch: config, falling objects, scoring, CoinCatchLogic
     navigation/          → Scene keys, FlowController (typed FSM: idle → character-selected → world-selected → ready)
     physics/             → Platformer physics, collision
+    viewport/            → Pure layout math: world sizing, safe zone, HUD scaling (zone-safe, no DOM)
     player/              → Player controller, state, animation config
     progression/         → SessionSave (schema-validated persistence), progress summary
     scoring/             → Score calculator, star rating
@@ -214,6 +215,9 @@ main (updated) ←── pull ←── human merges/squashes ←─────
 - Use port interfaces (`core/ports/`) — never import Phaser directly in domain code.
 - Scenes reference container ports by **interface type** (e.g. `IGameClock`), never cast to concrete adapters (e.g. `as PhaserClock`). The port abstraction exists so implementations can be swapped without changing scene code.
 - Verify Phaser symbols against rc.6 docs before use. Record in `docs/PHASER_EVIDENCE.md`.
+- Layout math in `modules/viewport/` (pure TS). Never compute world size, safe zones, or HUD scale factors inline in scenes.
+- HUD and menu UI anchored to safe zone coordinates. Use `scaleFontSize()` for text readability across devices.
+- Touch targets must be >= 44px (WCAG 2.5.8). DOM event listeners must have matching cleanup on shutdown.
 - Ensure `bun run check` passes before requesting a push or PR.
 
 ### Ask First
@@ -275,6 +279,15 @@ shared/  X any app dependency except Zod
 - Modules receive dependencies via constructor params (port interfaces only)
 - Tests use plain mock objects that satisfy port interfaces
 
+### Viewport & Mobile Responsive
+
+- **Fixed height (720), variable width (960–1600)** based on device aspect ratio.
+- **Safe zone (1280x720)** centered in world — all authored content fits within this rectangle.
+- **HUD scaling** compensates for FIT mode shrink — text scale floor at 1.0 prevents double-dip.
+- **Touch input** via DOM PointerEvent on canvas, mapped to ActionKey model (same as keyboard).
+- **Pure math in `modules/viewport/`**, DOM probe in `core/adapters/phaser-viewport.ts`.
+- Full guide: `docs/plans/mobile-responsive-plan.md`
+
 ### Phaser 4
 
 - WebGL renderer (WebGL2-class). Not WebGPU.
@@ -327,6 +340,8 @@ shared/  X any app dependency except Zod
 | Character catalog | `apps/client/src/modules/character/character-catalog.ts` |
 | World/level catalog | `apps/client/src/modules/level/world-catalog.ts` |
 | Scene navigation | `apps/client/src/modules/navigation/scene-keys.ts` + `flow-controller.ts` |
+| Viewport & layout | `apps/client/src/modules/viewport/` (pure math) + `core/ports/viewport.ts` |
+| Mobile responsive | `docs/plans/mobile-responsive-plan.md` (guide) + `.claude/rules/viewport-responsive.md` |
 | Engine abstraction | `apps/client/src/core/ports/` |
 | Phaser adapters | `apps/client/src/core/adapters/` |
 | DI wiring | `apps/client/src/core/container.ts` + `apps/client/src/main.ts` |

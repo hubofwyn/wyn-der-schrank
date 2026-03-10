@@ -20,3 +20,9 @@ MOCK PATTERN:
 import { createMockInput, createMockPhysics, createMockClock } from '../../__test-utils__/mocks';
 const controller = new PlayerController(createMockInput(), createMockPhysics(), createMockClock());
 ```
+
+VIEWPORT TESTING:
+- `modules/viewport/` functions are **pure** — test exhaustively with zero mocks
+- Use device-scenario tables covering: 4:3 (960x720), 16:9 (1280x720), 20:9 phone, iPad landscape, 21:9 ultra-wide
+- Verify safe zone centering, width clamping, text scale floor (never < 1.0)
+- Touch input adapter tests: mock Phaser first (`vi.mock('phaser')`), then dynamic import the adapter
