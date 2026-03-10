@@ -11,11 +11,14 @@ import { LocalStorageAdapter } from './core/adapters/local-storage-adapter.js';
 import { NoopInput } from './core/adapters/noop-input.js';
 import { NoopNetwork } from './core/adapters/noop-network.js';
 import { NoopPhysics } from './core/adapters/noop-physics.js';
+import { NoopWakeLock } from './core/adapters/noop-wake-lock.js';
 import { PhaserAudio } from './core/adapters/phaser-audio.js';
 import { PhaserClock } from './core/adapters/phaser-clock.js';
 import { PhaserViewport } from './core/adapters/phaser-viewport.js';
+import { WakeLockAdapter } from './core/adapters/wake-lock-adapter.js';
 import type { Container, MinigameScope } from './core/container.js';
 import type { IInputProvider } from './core/ports/input.js';
+import type { IWakeLock } from './core/ports/wake-lock.js';
 import { CharacterCatalog } from './modules/character/character-catalog.js';
 import { WorldCatalog } from './modules/level/world-catalog.js';
 import { CoinCatchLogic } from './modules/minigame/games/coin-catch/coin-catch-logic.js';
@@ -24,6 +27,7 @@ import { MinigameManager } from './modules/minigame/minigame-manager.js';
 import { MinigameRegistry } from './modules/minigame/minigame-registry.js';
 import { FlowController } from './modules/navigation/flow-controller.js';
 import { SessionSave } from './modules/progression/session-save.js';
+import { VisibilityHandler } from './modules/session/visibility-handler.js';
 import { SettingsManager } from './modules/settings/settings-manager.js';
 import { BootScene } from './scenes/boot-scene.js';
 import { CharacterSelectScene } from './scenes/character-select-scene.js';
@@ -64,6 +68,9 @@ function createContainer(): Container {
 		settingsManager.current.diagnostics.ringBufferSize,
 	);
 
+	// Wake lock: use real adapter if supported, noop otherwise
+	const wakeLock: IWakeLock = 'wakeLock' in navigator ? new WakeLockAdapter() : new NoopWakeLock();
+
 	const characterCatalog = new CharacterCatalog();
 	const worldCatalog = new WorldCatalog();
 	const flowController = new FlowController();
@@ -100,6 +107,7 @@ function createContainer(): Container {
 		sessionSave,
 		diagnostics,
 		viewport,
+		wakeLock,
 		characterCatalog,
 		worldCatalog,
 		flowController,
@@ -169,3 +177,24 @@ if (audioSettings.muted) {
 container.viewport.onResize((newWorldSize) => {
 	game.scale.setGameSize(newWorldSize.width, newWorldSize.height);
 });
+
+// Page visibility: pause/resume game when tab/app switches.
+new VisibilityHandler({
+	onVisibilityChange: (callback) => {
+		const handler = () => callback(document.visibilityState === 'visible');
+		document.addEventListener('visibilitychange', handler);
+		return () => document.removeEventListener('visibilitychange', handler);
+	},
+	onHidden: () => {
+		game.scene.getScenes(true).forEach((scene) => scene.scene.pause());
+		container.audio.pauseMusic();
+	},
+	onVisible: () => {
+		game.scene.getScenes(true).forEach((scene) => scene.scene.resume());
+		container.audio.resumeMusic();
+	},
+});
+
+// Wake lock: keep screen on during gameplay. Requested once at startup;
+// auto-reacquires on visibility restore via WakeLockManager.
+container.wakeLock.request().catch(() => {});
