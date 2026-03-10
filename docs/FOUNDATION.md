@@ -864,7 +864,9 @@ The game supports desktop and mobile from a single codebase using a responsive v
 ### Scene Layout API
 
 `modules/ui/scene-layout.ts` provides pure TS positioning helpers that wrap safe-zone math and design tokens:
-`safeCenterX/Y()`, `menuLayout()`, `buttonStack()`, `cornerButton()`, `hitArea()`, `hudColumn()`, `centeredGridStartX()`.
+`safeCenterX/Y()`, `menuLayout()`, `buttonStack()`, `cornerButton()`, `hitArea()`, `hudColumn()`, `centeredGridStartX()`, `scaledStyle()`.
+`scaledStyle(Typography.button, worldWidth)` wraps a design-token `TextStyleDef` with responsive font scaling via `scaleFontSizeStr()`.
+`BaseScene.makeButton(text)` applies expanded hit areas (44px minimum) using `hitArea()` + `Phaser.Geom.Rectangle`.
 All 14 UI scenes use these helpers — no scene computes positions from raw `this.scale.width/height`.
 
 ### Container Integration

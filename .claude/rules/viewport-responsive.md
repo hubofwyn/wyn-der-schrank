@@ -33,8 +33,9 @@ Shell Viewport -> Canvas Container -> World Size Computation -> Engine Display S
 ## Layout Rules (scenes)
 
 - **Safe zone anchoring.** HUD elements anchor to `container.viewport.safeZone`, not raw `(0, 0)` or `this.scale.width/height`.
-- **Scene layout API.** Use `modules/ui/scene-layout.ts` helpers: `menuLayout()`, `buttonStack()`, `cornerButton()`, `hudColumn()`, `centeredGridStartX()`, `safeCenterX/Y()`, `hitArea()`. All 14 UI scenes use these — do not introduce new positioning patterns.
-- **HUD text scaling.** Use `container.viewport.scaleFontSize(baseSizePx)`. Never hardcode pixel font sizes in scenes without scale compensation.
+- **Scene layout API.** Use `modules/ui/scene-layout.ts` helpers: `menuLayout()`, `buttonStack()`, `cornerButton()`, `hudColumn()`, `centeredGridStartX()`, `safeCenterX/Y()`, `hitArea()`, `scaledStyle()`. All 14 UI scenes use these — do not introduce new positioning patterns.
+- **Text scaling.** Use `scaledStyle(Typography.xxx, worldWidth)` for design-token text styles. Use `scaleFontSizeStr(basePx, worldWidth)` for inline styles. Never hardcode pixel font sizes without scale compensation.
+- **Touch targets.** Use `this.makeButton(textObj)` from BaseScene for interactive text elements (expands hit area to 44px minimum). Rectangle-based UI elements (cards, panels) already exceed 44px.
 - **Resize response.** Scenes listen for viewport changes through the registry pattern, not ad-hoc `window.addEventListener('resize', ...)`.
 - **Physics bounds.** Update `physics.world.setBounds()` on resize to match new world dimensions.
 

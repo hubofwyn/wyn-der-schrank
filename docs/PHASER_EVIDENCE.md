@@ -138,6 +138,9 @@ Do not duplicate entries — if a symbol is already listed, additional usages do
 | `GameObject.setAlpha()` | `/classes/Phaser.GameObjects.Components.AlphaSingle.html#setAlpha` — `phaser.d.ts:17600` | `scenes/world-select-scene.ts` | 2026-02-15 | type-verified |
 | `TweenManager.add()` | `/classes/Phaser.Tweens.TweenManager.html#add` — `phaser.d.ts:124032` | `scenes/character-select-scene.ts` | 2026-02-15 | type-verified |
 | `Phaser.Tweens.Tween` | `/classes/Phaser.Tweens.Tween.html` — `phaser.d.ts:123942` (ref) | `scenes/character-select-scene.ts` | 2026-02-15 | type-verified |
+| `Phaser.Geom.Rectangle` | `/classes/Phaser.Geom.Rectangle.html` — `phaser.d.ts:97401` | `scenes/base-scene.ts` | 2026-03-09 | source-verified |
+| `Phaser.Geom.Rectangle.Contains` | `/functions/Phaser.Geom.Rectangle.Contains.html` — `phaser.d.ts:97518` | `scenes/base-scene.ts` | 2026-03-09 | source-verified |
+| `setInteractive({ hitArea, hitAreaCallback })` | `/classes/Phaser.GameObjects.GameObject.html#setInteractive` — config object form at line 34170 | `scenes/base-scene.ts` | 2026-03-09 | source-verified |
 | `SpriteGPULayer` | `/classes/Phaser.GameObjects.SpriteGPULayer.html` | (planned) | — | — |
 | `Texture#setWrap` | `/classes/Phaser.Textures.Texture.html#setWrap` | (planned) | — | — |
 
