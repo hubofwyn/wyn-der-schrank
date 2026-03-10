@@ -59,7 +59,12 @@ export { FacingSchema, PlayerSchema, PlayerStateSchema } from './schema/player.j
 export { PlayerProfileSchema, SessionStateSchema } from './schema/progression.js';
 export { LeaderboardEntrySchema, LevelResultSchema, StarRatingSchema } from './schema/scoring.js';
 export { LevelCompletionSchema, SessionSaveSchema } from './schema/session-save.js';
-export { SettingsSchema } from './schema/settings.js';
+export {
+	ControlSchemeSchema,
+	SettingsSchema,
+	TouchButtonSizeSchema,
+	TouchStyleSchema,
+} from './schema/settings.js';
 export { SyncStateSchema } from './schema/sync.js';
 
 // Types (re-exports of z.infer<>)
@@ -76,6 +81,7 @@ export type {
 	CollectibleDefinition,
 	CollectibleInstance,
 	CollectibleType,
+	ControlScheme,
 	DiagnosticChannel,
 	DiagnosticChannelConfig,
 	DiagnosticLevel,
@@ -115,6 +121,8 @@ export type {
 	SyncState,
 	TileLayerRef,
 	TilemapMeta,
+	TouchButtonSize,
+	TouchStyle,
 	Vec2,
 	WorldDefinition,
 	WorldId,

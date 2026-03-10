@@ -62,7 +62,12 @@ import type {
 	StarRatingSchema,
 } from '../schema/scoring.js';
 import type { LevelCompletionSchema, SessionSaveSchema } from '../schema/session-save.js';
-import type { SettingsSchema } from '../schema/settings.js';
+import type {
+	ControlSchemeSchema,
+	SettingsSchema,
+	TouchButtonSizeSchema,
+	TouchStyleSchema,
+} from '../schema/settings.js';
 import type { SyncStateSchema } from '../schema/sync.js';
 
 // Common
@@ -130,6 +135,9 @@ export type SessionSaveData = z.infer<typeof SessionSaveSchema>;
 
 // Settings
 export type Settings = z.infer<typeof SettingsSchema>;
+export type ControlScheme = z.infer<typeof ControlSchemeSchema>;
+export type TouchStyle = z.infer<typeof TouchStyleSchema>;
+export type TouchButtonSize = z.infer<typeof TouchButtonSizeSchema>;
 
 // Events
 export type GameEvent = z.infer<typeof GameEventSchema>;

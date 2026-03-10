@@ -179,6 +179,8 @@ export class PhaserInput implements IInputProvider {
 				showMinimap: true,
 				screenShake: true,
 				particleQuality: 'medium',
+				touchButtonOpacity: 0.5,
+				touchButtonSize: 'medium',
 			},
 			controls: {
 				jump: 'Space',
@@ -189,6 +191,9 @@ export class PhaserInput implements IInputProvider {
 				interact: 'KeyE',
 				pause: 'Escape',
 				ability: 'KeyK',
+				controlScheme: 'auto',
+				touchControlsEnabled: true,
+				touchStyle: 'virtual-buttons',
 			},
 			accessibility: { highContrast: false, largeText: false },
 			diagnostics: { enabled: false, channels: {}, ringBufferSize: 500 },

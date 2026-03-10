@@ -3,6 +3,13 @@ import { vi } from 'vitest';
 import type { IGameClock } from '../../core/ports/engine.js';
 import type { ActionKey, IInputProvider } from '../../core/ports/input.js';
 import type { BlockedState, IBody } from '../../core/ports/physics.js';
+import type { IViewportProvider } from '../../core/ports/viewport.js';
+import {
+	computeWorldSize,
+	createSafeZone,
+	scaleFontSize,
+	scaleFontSizeStr,
+} from '../viewport/viewport-math.js';
 
 /**
  * Shared mock factories for module tests.
@@ -162,6 +169,22 @@ export function createDefaultConfig(): PlatformerConfig {
 		},
 		fastFall: { multiplier: 1.5, threshold: 0 },
 		body: { width: 24, height: 40, offsetX: 4, offsetY: 8 },
+	};
+}
+
+export function createMockViewport(screenWidth = 1920, screenHeight = 1080): IViewportProvider {
+	const worldSize = computeWorldSize(screenWidth, screenHeight);
+	const safeZone = createSafeZone(worldSize.width);
+
+	return {
+		worldSize,
+		safeZone,
+		safeAreaInsets: { top: 0, right: 0, bottom: 0, left: 0 },
+		isTouchDevice: false,
+		scaleFontSize: (baseSizePx: number) => scaleFontSize(baseSizePx, worldSize.width),
+		scaleFontSizeStr: (baseSizePx: number) => scaleFontSizeStr(baseSizePx, worldSize.width),
+		onResize: vi.fn(() => vi.fn()),
+		destroy: vi.fn(),
 	};
 }
 

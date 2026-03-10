@@ -12,6 +12,7 @@ import type { INetworkClient } from './ports/network.js';
 import type { IBody, IPhysicsWorld } from './ports/physics.js';
 import type { ISettingsManager } from './ports/settings.js';
 import type { IStorageProvider } from './ports/storage.js';
+import type { IViewportProvider } from './ports/viewport.js';
 
 /**
  * Service container — the SINGLE location where all dependencies are declared.
@@ -33,6 +34,7 @@ export interface Container {
 	readonly settingsManager: ISettingsManager;
 	readonly sessionSave: SessionSave;
 	readonly diagnostics: IDiagnostics;
+	readonly viewport: IViewportProvider;
 
 	// ── Domain catalogs (initialized from JSON data in PreloadScene) ──
 	readonly characterCatalog: CharacterCatalog;
