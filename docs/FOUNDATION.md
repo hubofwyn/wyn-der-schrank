@@ -1,8 +1,16 @@
+---
+title: Architectural Foundation Document
+category: docs
+status: canonical
+version: 1.0.0
+last_updated: 2026-03-09
+tags: [architecture, zones, di, typescript]
+priority: critical
+---
+
 # Wyn der Schrank — Architectural Foundation Document
 
-**Version:** 1.0.0  
-**Date:** February 10, 2026  
-**Status:** CANONICAL — All downstream ADRs and implementation must conform to this document  
+**Status:** CANONICAL — All downstream ADRs and implementation must conform to this document
 **Scope:** Web-based platformer with integrated minigame subsystem
 
 ---
@@ -94,7 +102,7 @@ Designed for **Bun Workspaces**. Separates Source of Truth (Shared) from Impleme
 │       ├── package.json            # name: "@hub-of-wyn/shared", public npm package
 │       ├── tsconfig.json           # extends base + isolatedDeclarations
 │       └── src/
-│           ├── schema/             # Runtime validators (Zod 4.3.6, 15 files)
+│           ├── schema/             # Runtime validators (Zod 4.3.6, 16 files)
 │           │   ├── assets.ts       # AssetManifestSchema + meta schemas
 │           │   ├── common.ts       # Vec2, Rect, Range, EntityId
 │           │   ├── character.ts    # CharacterDefinitionSchema
@@ -823,6 +831,49 @@ KEY FACTS:
 
 ---
 
+## 10b. Viewport and Mobile Responsive System
+
+The game supports desktop and mobile from a single codebase using a responsive viewport model.
+
+### Core Model
+
+- **Fixed height (720px), variable width (960-1600px)** based on device aspect ratio
+- **Safe zone (1280x720)** centered in the variable-width world — all authored content fits within this rectangle
+- **HUD scaling** compensates for FIT mode shrink — text scale floor at 1.0 prevents double-dip reduction
+- **Touch input** via DOM PointerEvent overlay, mapped to the same `ActionKey` model as keyboard
+
+### Zone Compliance
+
+- **Pure math** in `modules/viewport/viewport-math.ts` — zero DOM, zero Phaser
+- **Port interface** at `core/ports/viewport.ts` (`IViewportProvider`)
+- **Adapter** at `core/adapters/phaser-viewport.ts` — DOM safe-area probe, touch detection, resize listener
+- **Touch input** at `core/adapters/touch-input.ts` — DOM virtual buttons with pointer capture for multi-touch
+- **Adaptive input** at `core/adapters/adaptive-input.ts` — composites keyboard + touch via logical OR
+
+### Key Constants
+
+| Constant | Value | Purpose |
+|----------|-------|---------|
+| `WORLD_HEIGHT` | 720 | Fixed world height, never changes |
+| `WORLD_WIDTH_MIN` | 960 | Narrow phones in landscape (4:3 at 720) |
+| `WORLD_WIDTH_MAX` | 1600 | Ultra-wide monitor clamp |
+| `SAFE_ZONE_WIDTH` | 1280 | Authored content area width |
+| `TEXT_SCALE_FLOOR` | 1.0 | Prevents double-dip with FIT scaling |
+| `MIN_TOUCH_TARGET_PX` | 44 | WCAG 2.5.8 minimum touch target |
+
+### Container Integration
+
+`container.viewport` provides `worldSize`, `safeZone`, `safeAreaInsets`, `isTouchDevice`, `scaleFontSize()`, `onResize()`. Scenes position UI relative to safe zone, never raw `this.scale.width/height`.
+
+### Reference Documents
+
+- **Implementation guide:** `docs/plans/mobile-responsive-plan.md`
+- **Platform research:** `docs/plans/mobile-ui-ux-research.md`
+- **Implementation roadmap:** `docs/plans/mobile-goals.md` (G13-G15)
+- **Path-scoped rule:** `.claude/rules/viewport-responsive.md`
+
+---
+
 ## 11. Agentic Development Infrastructure
 
 ### CLAUDE.md (Project Constitution)
@@ -1162,7 +1213,7 @@ bun add -d vite@7.3.1
 - [ ] Asset pipeline (sprite atlases, audio)
 - [ ] SpriteGPULayer optimization for particle effects
 - [ ] Performance profiling and Phaser 4 WebGL tuning
-- [ ] Mobile input adaptation (touch controls)
+- [x] Mobile input adaptation (touch controls) — PR #21, see §10b
 
 ---
 

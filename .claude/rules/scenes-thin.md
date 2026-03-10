@@ -22,9 +22,9 @@ Scenes are the **view zone** — they render state, they don't compute it.
 
 ## Viewport & Layout
 
-- **Safe zone anchoring.** Position HUD and menu UI relative to `container.viewportProvider.safeZone`, not raw world origin.
-- **Scaled text.** Use `scaleFontSize()` from `modules/viewport/hud-scale` for any text that must remain readable across devices.
-- **No inline layout math.** World size computation, safe zone calculation, and HUD scaling live in `modules/viewport/`. Scenes consume results via `container.viewportProvider`.
+- **Safe zone anchoring.** Position HUD and menu UI relative to `container.viewport.safeZone`, not raw world origin or `this.scale.width/height`.
+- **Scaled text.** Use `container.viewport.scaleFontSize(baseSizePx)` (from `modules/viewport/viewport-math.ts`) for any text that must remain readable across devices.
+- **No inline layout math.** World size computation, safe zone calculation, and HUD scaling live in `modules/viewport/`. Scenes consume results via `container.viewport`.
 - **Resize cleanup.** Track registry listeners and remove them on scene shutdown to prevent listener accumulation across scene restarts.
 
 ## Forbidden imports

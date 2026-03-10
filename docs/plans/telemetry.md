@@ -1,3 +1,12 @@
+---
+title: Agentic Telemetry and Phaser Version Enforcement
+category: plans
+status: reference
+last_updated: 2026-03-09
+tags: [telemetry, phaser, enforcement, hooks]
+priority: medium
+---
+
 # Wyn der Schrank — Agentic Telemetry & Phaser Version Enforcement
 
 **Companion to:** `docs/FOUNDATION.md` (architecture), `docs/plans/agentic-setup.md` (tooling), `docs/plans/game-blueprint.md` (domain)

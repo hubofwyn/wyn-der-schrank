@@ -26,6 +26,9 @@ docs/
     diagnostics.md       → Game runtime diagnostics: port interface, adapters, channel filtering
     agentic-setup.md     → Design of .claude/ infrastructure
     lint-format-hooks.md → Tool roles, config, git hook pipeline
+    mobile-responsive-plan.md → Reference guide: viewport, safe zone, touch, HUD scaling
+    mobile-ui-ux-research.md  → March 2026 mobile web platform research
+    mobile-goals.md      → G13–G15 implementation plan for mobile polish
 .claude/
   settings.json          → Permissions + hook wiring
   agents/                → Subagent definitions (architect, tester, security-reviewer)
@@ -37,7 +40,7 @@ packages/shared/         → Zod schemas + inferred types (@hub-of-wyn/shared, n
   src/schema/            → 16 schema files: common, character, player, enemy, level, collectible,
                            minigame, scoring, progression, session-save, settings, events, sync,
                            assets, physics-config, diagnostics
-  src/types/index.ts     → 54 types, all z.infer<> re-exports
+  src/types/index.ts     → 57 types, all z.infer<> re-exports
 apps/client/             → Phaser 4 game client (@hub-of-wyn/client)
   src/core/              → Infrastructure zone (ports, adapters, services, container)
     ports/               → 9 interfaces: engine, input, audio, physics, network, storage, settings, diagnostics, viewport
@@ -299,7 +302,7 @@ shared/  X any app dependency except Zod
 16 files in `packages/shared/src/schema/`:
 `common` `character` `player` `enemy` `level` `collectible` `minigame` `scoring` `progression` `session-save` `settings` `events` `sync` `assets` `physics-config` `diagnostics`
 
-54 inferred types exported from `packages/shared/src/types/index.ts`.
+57 inferred types exported from `packages/shared/src/types/index.ts`.
 
 ### Hooks (enforcement)
 

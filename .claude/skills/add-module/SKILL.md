@@ -26,5 +26,9 @@ modules/<name>/
 4. **Register in container.** Add the service to the `Container` interface in `core/container.ts`
    and wire it in the `createContainer()` factory in `main.ts`.
 5. **Tests.** Write tests using mock ports from `modules/__test-utils__/mocks.ts`.
-6. **Zone verify.** `bun run lint:zones` — must pass with zero warnings.
-7. **Full verify.** `bun run check`.
+6. **Viewport compliance** (if UI-facing). Does the module compute layout or positioning?
+   - Use `modules/viewport/viewport-math.ts` functions, not inline math
+   - If interactive, ensure >= 44px touch targets (`MIN_TOUCH_TARGET_PX`)
+   - Scenes consuming this module should use `container.viewport.safeZone` for positioning
+7. **Zone verify.** `bun run lint:zones` — must pass with zero warnings.
+8. **Full verify.** `bun run check`.

@@ -1,3 +1,12 @@
+---
+title: Game Domain and Implementation Blueprint
+category: plans
+status: reference
+last_updated: 2026-03-09
+tags: [game-design, scenes, schemas, modules, assets]
+priority: high
+---
+
 # Wyn der Schrank — Game Domain & Implementation Blueprint
 
 **Companion to:** `docs/FOUNDATION.md` (architecture), `docs/plans/agentic-setup.md` (tooling), `docs/plans/telemetry.md` (enforcement)

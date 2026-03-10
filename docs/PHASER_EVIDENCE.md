@@ -1,3 +1,12 @@
+---
+title: Phaser 4.0.0-rc.6 API Evidence Log
+category: docs
+status: active
+last_updated: 2026-03-09
+tags: [phaser, api, evidence]
+priority: high
+---
+
 # Phaser 4.0.0-rc.6 — API Evidence Log
 
 Source of truth: <https://docs.phaser.io/api-documentation/4.0.0-rc.6/>
