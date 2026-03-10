@@ -54,6 +54,8 @@ export class MinigameHudScene extends BaseScene {
 			fontFamily: 'monospace',
 		});
 		this.messageText.setOrigin(0.5, 0.5);
+
+		this.subscribeResize();
 	}
 
 	update(): void {

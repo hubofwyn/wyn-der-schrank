@@ -3,7 +3,7 @@ title: Architectural Foundation Document
 category: docs
 status: canonical
 version: 1.0.0
-last_updated: 2026-03-09
+last_updated: 2026-03-10
 tags: [architecture, zones, di, typescript]
 priority: critical
 ---
@@ -24,7 +24,7 @@ All versions are pinned. No upgrades without an ADR.
 | Tool | Version | Purpose | Install Note |
 |------|---------|---------|--------------|
 | **Phaser** | `4.0.0-rc.6` | Game engine (WebGL renderer) | Pin explicitly: `phaser@4.0.0-rc.6` |
-| **Bun** | `1.3.9` | Dev runtime, workspaces, test runner | Local dev only |
+| **Bun** | `1.3.9` | Dev runtime, workspaces, script runner | Local dev only |
 | **Node.js** | `24.13.1 LTS` | CI/CD baseline | Production/CI compatibility |
 | **Vite** | `7.3.1` | Client build | |
 | **TypeScript** | `5.9.3` | Language | `strict` + `isolatedDeclarations` |
@@ -93,7 +93,7 @@ Designed for **Bun Workspaces**. Separates Source of Truth (Shared) from Impleme
 ├── package.json                    # workspaces: ["packages/*", "apps/*"]
 ├── biome.json                      # Formatting & basic linting
 ├── eslint.config.mjs               # Architectural enforcement
-├── vitest.workspace.ts             # Unified test runner
+├── vitest.config.ts               # Unified test runner (test.projects)
 ├── .dependency-cruiser.cjs         # Structural validation rules
 ├── tsconfig.base.json              # Shared TS config (strict base)
 │
@@ -116,76 +116,85 @@ Designed for **Bun Workspaces**. Separates Source of Truth (Shared) from Impleme
 │   ├── server/                     # Hono 4.11.9 (API + Game Server)
 │   │   ├── package.json            # name: "@hub-of-wyn/server"
 │   │   ├── tsconfig.json
-│   │   ├── src/
-│   │   │   ├── index.ts            # Entry + RPC export (AppType)
-│   │   │   ├── routes/             # Hono route handlers
-│   │   │   └── services/           # Business logic
-│   │   │       ├── game-session.ts
-│   │   │       └── leaderboard.ts
-│   │   └── test/
+│   │   └── src/
+│   │       ├── index.ts            # Entry + Hono app export
+│   │       ├── config.ts           # Server config (Zod-validated)
+│   │       ├── routes/             # health.ts, diagnostics.ts
+│   │       ├── services/           # server-diagnostics.ts (ring buffer)
+│   │       └── __tests__/          # Co-located tests
 │   │
 │   └── client/                     # Phaser 4 Game Client
 │       ├── package.json            # name: "@hub-of-wyn/client"
 │       ├── tsconfig.json
 │       ├── index.html
-│       ├── vite.config.ts          # Vite 7.3.1
+│       ├── vite.config.ts          # Vite 7.3.1 + vite-plugin-pwa
 │       └── src/
 │           ├── main.ts             # COMPOSITION ROOT (DI wiring)
 │           │
 │           ├── core/               # ═══ INFRASTRUCTURE ZONE ═══
-│           │   ├── ports/          # Interfaces (the contract)
+│           │   ├── ports/          # 10 interfaces (the contract)
 │           │   │   ├── engine.ts   # IGameClock, IRendererStats
 │           │   │   ├── input.ts    # IInputProvider
 │           │   │   ├── audio.ts    # IAudioPlayer
 │           │   │   ├── physics.ts  # IPhysicsWorld, IBody
-│           │   │   └── network.ts  # INetworkClient
-│           │   ├── adapters/       # Phaser implementations of ports
+│           │   │   ├── network.ts  # INetworkClient
+│           │   │   ├── storage.ts  # IStorageProvider
+│           │   │   ├── settings.ts # ISettingsManager
+│           │   │   ├── diagnostics.ts # IDiagnostics
+│           │   │   ├── viewport.ts # IViewportProvider
+│           │   │   └── wake-lock.ts # IWakeLock
+│           │   ├── adapters/       # 17 implementations (phaser, noop, platform)
 │           │   │   ├── phaser-clock.ts
 │           │   │   ├── phaser-input.ts
 │           │   │   ├── phaser-audio.ts
-│           │   │   └── phaser-physics.ts
-│           │   ├── container.ts    # DI container (Pure DI)
-│           │   └── services/       # Cross-cutting infrastructure
-│           │       ├── network-manager.ts
-│           │       ├── asset-loader.ts
-│           │       └── scene-coordinator.ts
+│           │   │   ├── phaser-physics.ts
+│           │   │   ├── phaser-viewport.ts
+│           │   │   ├── touch-input.ts
+│           │   │   ├── adaptive-input.ts
+│           │   │   ├── console-diagnostics.ts
+│           │   │   ├── local-storage-adapter.ts
+│           │   │   ├── wake-lock-adapter.ts
+│           │   │   └── noop-*.ts   # 6 noop stubs (audio, diagnostics, input, network, physics, storage, wake-lock)
+│           │   └── container.ts    # DI container (Pure DI)
 │           │
-│           ├── modules/            # ═══ DOMAIN ZONE ═══ (Pure TS)
-│           │   ├── player/
-│           │   │   ├── player-controller.ts
-│           │   │   ├── player-state.ts
-│           │   │   └── __tests__/
-│           │   ├── physics/
-│           │   │   ├── platformer-physics.ts
-│           │   │   └── collision-system.ts
-│           │   ├── enemy/
-│           │   │   ├── enemy-ai.ts
-│           │   │   └── patrol-behavior.ts
-│           │   ├── level/
-│           │   │   ├── level-data.ts
-│           │   │   └── tile-registry.ts
-│           │   ├── collectible/
-│           │   │   └── collectible-system.ts
-│           │   ├── camera/
-│           │   │   └── camera-controller.ts
-│           │   ├── minigame/       # Minigame subsystem
-│           │   │   ├── minigame-manager.ts
-│           │   │   ├── minigame-registry.ts
-│           │   │   └── games/
-│           │   │       └── [minigame-name]/
-│           │   │           ├── logic.ts
-│           │   │           └── __tests__/
-│           │   └── game-state/
-│           │       ├── state-machine.ts
-│           │       └── sync-manager.ts
+│           ├── modules/            # ═══ DOMAIN ZONE ═══ (Pure TS, 18 modules)
+│           │   ├── animation/      # Shared AnimationDef type
+│           │   ├── assets/         # Asset manifest parser, audio-keys (SFX variants)
+│           │   ├── camera/         # Camera controller
+│           │   ├── character/      # CharacterCatalog (JSON data, queries by ID)
+│           │   ├── collectible/    # Pickup system, catalog, animation config
+│           │   ├── enemy/          # Enemy catalog, AI, behaviors, animation
+│           │   ├── game-state/     # Global FSM, sync manager, event emission
+│           │   ├── level/          # WorldCatalog, tile registry
+│           │   ├── minigame/       # Registry, manager, IMinigameLogic
+│           │   │   └── games/      # shake-rush/, coin-catch/
+│           │   ├── navigation/     # Scene keys, FlowController FSM
+│           │   ├── physics/        # Platformer physics, collision
+│           │   ├── player/         # Player controller, state, animation
+│           │   ├── progression/    # SessionSave, progress summary
+│           │   ├── scoring/        # Score calculator, star rating
+│           │   ├── session/        # Wake lock manager, visibility handler
+│           │   ├── settings/       # SettingsManager (ISettingsManager + localStorage)
+│           │   ├── ui/             # Design tokens, scene-layout helpers
+│           │   └── viewport/       # Pure layout math, safe zone, debounce
 │           │
-│           └── scenes/             # ═══ VIEW ZONE ═══ (Phaser)
+│           └── scenes/             # ═══ VIEW ZONE ═══ (16 Phaser scenes)
+│               ├── base-scene.ts   # Abstract base with container + resize lifecycle
 │               ├── boot-scene.ts
 │               ├── preload-scene.ts
+│               ├── title-scene.ts
+│               ├── character-select-scene.ts
 │               ├── main-menu-scene.ts
+│               ├── world-select-scene.ts
+│               ├── level-select-scene.ts
 │               ├── platformer-scene.ts
+│               ├── hud-scene.ts
+│               ├── pause-scene.ts
+│               ├── settings-scene.ts
+│               ├── level-complete-scene.ts
+│               ├── game-over-scene.ts
 │               ├── minigame-scene.ts
-│               └── hud-scene.ts    # Parallel scene for UI overlay
+│               └── minigame-hud-scene.ts
 ```
 
 ---
@@ -945,10 +954,15 @@ circular dependencies, and conformance with docs/adr/*.
 ---
 name: tester
 description: Writes and validates tests for domain modules
-tools: Read, Grep, Glob, Bash(bun test*), Bash(bun run check)
+tools: Read, Grep, Glob, Bash(bun run test*), Bash(bun run check)
 model: opus
 ---
 You write tests for Wyn der Schrank's domain modules.
+
+TESTING CONTRACT:
+- Framework: Vitest. Bun is only the script launcher.
+- NEVER use `bun test`. NEVER import from `bun:test`.
+- Config: `vitest.config.ts` (root, `test.projects`)
 
 RULES:
 - Tests for modules/ use mock ports, never real Phaser
@@ -995,7 +1009,7 @@ echo "▸ Format check..."
 bunx biome check --changed
 
 echo "▸ Running tests..."
-bun test --run
+bun run test:run
 
 echo "✓ All gates passed"
 ```
@@ -1242,8 +1256,8 @@ bun add -d vite@7.3.1
     "format": "biome check --write .",
     "format:check": "biome check .",
     "deps:check": "dependency-cruiser apps/ packages/ --config .dependency-cruiser.cjs --output-type err-long",
-    "test": "vitest",
-    "test:run": "vitest run",
+    "test": "vitest --config vitest.config.ts",
+    "test:run": "vitest run --config vitest.config.ts --passWithNoTests",
     "check": "bun run typecheck && bun run lint:zones && bun run deps:check && bun run test:run",
     "pre-commit": "bun run check && bun run format:check"
   }

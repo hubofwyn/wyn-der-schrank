@@ -79,5 +79,7 @@ export class TitleScene extends BaseScene {
 			this.playButtonSfx();
 			this.scene.start(SceneKeys.SETTINGS, { returnTo: SceneKeys.TITLE });
 		});
+
+		this.subscribeResize();
 	}
 }

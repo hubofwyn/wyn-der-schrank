@@ -2,7 +2,7 @@
 title: Mobile Goals — Implementation Plan
 category: plans
 status: draft
-last_updated: 2026-03-09
+last_updated: 2026-03-10
 ---
 
 # Mobile Goals — Implementation Plan
@@ -35,13 +35,13 @@ This plan covers what remains to make the game fully playable and polished on mo
 
 1. ~~**Zero scenes use safe zone**~~ — **FIXED**: all 14 UI scenes now use `container.viewport.safeZone` via scene-layout helpers
 2. ~~**Zero scenes use `scaleFontSize()`**~~ — **FIXED**: all scenes use `scaledStyle()` or `scaleFontSizeStr()` for responsive text sizing
-3. **No resize listeners** — HUD positions set once in `create()`, never update
+3. ~~**No resize listeners**~~ — **FIXED**: PhaserViewport debounces resize (100ms), `main.ts` calls `setGameSize()`, UI scenes subscribe via `subscribeResize()` in BaseScene and restart to re-layout
 4. ~~**No touch target enforcement**~~ — **FIXED**: `makeButton()` in BaseScene applies expanded hit areas (44px minimum) via `hitArea()` from scene-layout
 5. ~~**Hardcoded corner buttons**~~ — **FIXED**: all corner buttons now use `cornerButton()` with safe-zone anchoring
-6. **No portrait overlay** — game adapts via clamping but never prompts rotation
-7. **No PWA infrastructure** — no manifest, no service worker, no icons, no theme-color
-8. **No wake lock** — screen dims during gameplay on mobile
-9. **No visibility pause** — game keeps running when tab/app switches
+6. ~~**No portrait overlay**~~ — **FIXED**: CSS `@media (orientation: portrait)` overlay in `index.html` prompts landscape rotation
+7. ~~**No PWA infrastructure**~~ — **FIXED**: vite-plugin-pwa with manifest, Workbox service worker, app icons, theme-color meta
+8. ~~**No wake lock**~~ — **FIXED**: IWakeLock port + WakeLockManager (pure TS) + WakeLockAdapter + NoopWakeLock fallback, auto-reacquires on visibility
+9. ~~**No visibility pause**~~ — **FIXED**: VisibilityHandler pauses all scenes + audio on tab/app switch, resumes on return
 
 ### What's available but unused
 
@@ -99,10 +99,11 @@ Migrate all 14 UI scenes (excluding BootScene and BaseScene) from hardcoded/perc
 
 ### G14: Resize Pipeline
 
-> **Status:** not-started
+> **Status:** complete
 > **Requires:** G13 (scenes must use safe-zone positioning for resize to reposition correctly)
 > **Benefits from:** none
 > **Unlocks:** G15
+> **Branch:** feat/resize-pipeline
 
 Wire the resize event pipeline so that viewport changes (orientation rotation, browser chrome collapse, desktop window resize) update the game canvas size and reposition scene UI in real time.
 
@@ -115,22 +116,23 @@ Wire the resize event pipeline so that viewport changes (orientation rotation, b
 
 **Deliverables:**
 
-- [ ] Resize handler in `main.ts` calls `game.scale.setGameSize()` on viewport change with 100ms debounce
-- [ ] BaseScene adds optional `onViewportResize()` hook that subclasses can override
-- [ ] HudScene and MinigameHudScene implement `onViewportResize()` — reposition all elements
-- [ ] Menu scenes (Title, Pause, Settings, GameOver, LevelComplete) implement `onViewportResize()`
-- [ ] Selection scenes (CharacterSelect, MainMenu, WorldSelect, LevelSelect) implement `onViewportResize()`
-- [ ] Portrait orientation overlay — CSS `@media (orientation: portrait)` shows "Rotate to landscape" message
-- [ ] Tests for debounce logic and resize handler
+- [x] Resize handler in `main.ts` calls `game.scale.setGameSize()` on viewport change with 100ms debounce
+- [x] BaseScene adds optional `onViewportResize()` hook that subclasses can override — default restarts scene, gameplay scenes are exempt
+- [x] HudScene and MinigameHudScene implement `onViewportResize()` — subscribe via `subscribeResize()`, restart to re-layout
+- [x] Menu scenes (Title, Pause, Settings, GameOver, LevelComplete) implement `onViewportResize()` — subscribe via `subscribeResize()`
+- [x] Selection scenes (CharacterSelect, MainMenu, WorldSelect, LevelSelect) implement `onViewportResize()` — subscribe via `subscribeResize()`
+- [x] Portrait orientation overlay — CSS `@media (orientation: portrait)` shows "Rotate to landscape" message in `index.html`
+- [x] Tests for debounce logic (9 tests) — pure TS with injectable fake timer
 
 ---
 
 ### G15: PWA Shell and Session Polish
 
-> **Status:** not-started
+> **Status:** in-progress
 > **Requires:** G13 (safe-zone positioning ensures installable app looks correct)
 > **Benefits from:** G14 (resize handling makes orientation changes smooth)
 > **Unlocks:** none
+> **Branch:** feat/resize-pipeline
 
 Package the game as an installable web app with offline capability and session quality-of-life features. iOS 26 now opens all Home Screen sites as web apps by default, making this high-impact for mobile Safari users.
 
@@ -143,16 +145,16 @@ Package the game as an installable web app with offline capability and session q
 
 **Deliverables:**
 
-- [ ] Web app manifest (`manifest.webmanifest`) — name, short_name, icons (192px + 512px), start_url, display: standalone, theme_color, background_color, orientation: landscape
-- [ ] Placeholder app icons (192x192 and 512x512 PNG) — simple geometric design using game's accent color
-- [ ] `vite-plugin-pwa` configured in `vite.config.ts` — Workbox generateSW with precache of static assets
-- [ ] `<link rel="manifest">` and `<meta name="theme-color">` added to `index.html`
-- [ ] Apple touch icon meta tags for iOS compatibility
-- [ ] Wake lock module (`modules/session/wake-lock.ts`) — pure TS port interface, request/release lifecycle, auto-reacquire on visibility change
-- [ ] Wake lock adapter (`core/adapters/wake-lock-adapter.ts`) — implements port using `navigator.wakeLock.request('screen')`
-- [ ] Page visibility handler wired to Phaser scene pause/resume — `document.visibilitychange` pauses game, resumes on return
-- [ ] Container wiring for wake lock service
-- [ ] Tests for wake lock module (mock navigator.wakeLock) and visibility handler
+- [x] Web app manifest via `vite-plugin-pwa` — name, short_name, icons (192px + 512px), start_url, display: standalone, theme_color, background_color, orientation: landscape
+- [x] Placeholder app icons (192x192 and 512x512 PNG) — geometric wardrobe design using game's accent color
+- [x] `vite-plugin-pwa` configured in `vite.config.ts` — Workbox generateSW with precache of static assets, NetworkFirst for API
+- [x] `<meta name="theme-color">` and `<meta name="apple-mobile-web-app-status-bar-style">` added to `index.html`
+- [x] Apple touch icon meta tag for iOS compatibility
+- [x] Wake lock port (`core/ports/wake-lock.ts` — IWakeLock interface) + WakeLockManager (`modules/session/wake-lock-manager.ts`) — pure TS, injected deps, auto-reacquire on visibility
+- [x] Wake lock adapter (`core/adapters/wake-lock-adapter.ts`) — implements IWakeLock using `navigator.wakeLock.request('screen')`, with noop fallback
+- [x] Page visibility handler (`modules/session/visibility-handler.ts`) — pauses all scenes + audio on hidden, resumes on visible
+- [x] Container wiring: IWakeLock port in container, WakeLockAdapter/NoopWakeLock in main.ts, VisibilityHandler wired in main.ts
+- [x] Tests: wake-lock-manager (9 tests), visibility-handler (4 tests)
 
 ---
 

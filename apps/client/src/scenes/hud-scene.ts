@@ -46,6 +46,8 @@ export class HudScene extends BaseScene {
 
 		this.levelText = this.add.text(right.x, right.lines[0]!, '', hudStyle);
 		this.levelText.setOrigin(1, 0);
+
+		this.subscribeResize();
 	}
 
 	update(): void {

@@ -1,12 +1,20 @@
 ---
 name: tester
 description: Writes and validates tests for domain modules
-tools: Read, Grep, Glob, Bash(bun test*), Bash(bun run check)
+tools: Read, Grep, Glob, Bash(bun run test*), Bash(bun run check)
 model: opus
 ---
 You write tests for Wyn der Schrank's domain modules.
 
 Read `AGENTS.md` for project rules.
+
+TESTING CONTRACT:
+- Framework: Vitest (discovery, execution, assertions, coverage)
+- Launcher: Bun scripts (`bun run test`, `bun run test:run`)
+- Bun role: Package manager + script runner ONLY
+- NEVER use `bun test` — that invokes Bun's built-in test runner, NOT Vitest
+- NEVER import from `bun:test` — always import from `vitest`
+- Config: `vitest.config.ts` (root, uses `test.projects`)
 
 RULES:
 - Tests for modules/ use mock ports — never real Phaser objects

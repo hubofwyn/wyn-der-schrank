@@ -8,8 +8,16 @@ import { hitArea } from '../modules/ui/scene-layout.js';
  *
  * Provides typed access to the DI container (stored in the Phaser game
  * registry by main.ts) and navigation helpers that wrap the ScenePlugin.
+ *
+ * Resize lifecycle: subclasses that display UI call `this.subscribeResize()`
+ * in `create()`. The default handler restarts the scene so `create()` can
+ * re-lay out from the updated safe zone. Scenes that need custom behavior
+ * can override `onViewportResize()`. The subscription is automatically
+ * cleaned up on scene shutdown.
  */
 export abstract class BaseScene extends Phaser.Scene {
+	private _resizeUnsub: (() => void) | null = null;
+
 	/** Typed accessor for the DI container stored in the game registry. */
 	protected get container(): Container {
 		return this.registry.get('container') as Container;
@@ -42,6 +50,29 @@ export abstract class BaseScene extends Phaser.Scene {
 	/** Resume a paused scene. */
 	protected resumeScene(key: SceneKey): void {
 		this.scene.resume(key);
+	}
+
+	/**
+	 * Subscribe to viewport resize events. Call in `create()`.
+	 * Automatically unsubscribes on scene shutdown.
+	 */
+	protected subscribeResize(): void {
+		this._resizeUnsub = this.container.viewport.onResize(() => {
+			this.onViewportResize();
+		});
+		this.events.once('shutdown', () => {
+			this._resizeUnsub?.();
+			this._resizeUnsub = null;
+		});
+	}
+
+	/**
+	 * Called when the viewport resizes. Default: restart the scene
+	 * so `create()` re-lays out from the updated safe zone.
+	 * Override for custom behavior (e.g. gameplay scenes that should not restart).
+	 */
+	protected onViewportResize(): void {
+		this.scene.restart();
 	}
 
 	/** Play the standard menu-select SFX (random variant). */

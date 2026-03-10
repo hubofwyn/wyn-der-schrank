@@ -656,7 +656,7 @@ Root files (config):
 ├── .markdownlint-cli2.jsonc           # Markdown quality rules
 ├── lefthook.yml                       # Git hook orchestration
 ├── tsconfig.base.json                 # Base TypeScript strictness
-├── vitest.workspace.ts                # Test workspace config
+├── vitest.config.ts                   # Test config (test.projects)
 ├── bunfig.toml                        # Bun runtime config
 └── package.json                       # Scripts + dependencies
 

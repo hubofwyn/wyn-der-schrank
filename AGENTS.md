@@ -17,7 +17,6 @@ docs/
   FOUNDATION.md          → Architecture: tech stack, zones, DI, TS config
   PHASER_EVIDENCE.md     → Verified Phaser 4.0.0-rc.6 API usage log
   adr/template.md        → ADR template
-  audit/                 → Architectural audit artifacts
   plans/
     active-plan.md       → Goal roadmap, status tracking, update protocol
     game-blueprint.md    → Scenes, schemas, modules, assets, data flow
@@ -43,7 +42,7 @@ packages/shared/         → Zod schemas + inferred types (@hub-of-wyn/shared, n
   src/types/index.ts     → 57 types, all z.infer<> re-exports
 apps/client/             → Phaser 4 game client (@hub-of-wyn/client)
   src/core/              → Infrastructure zone (ports, adapters, services, container)
-    ports/               → 9 interfaces: engine, input, audio, physics, network, storage, settings, diagnostics, viewport
+    ports/               → 10 interfaces: engine, input, audio, physics, network, storage, settings, diagnostics, viewport, wake-lock
     container.ts         → Container + PlatformerScope + MinigameScope
   src/modules/           → Domain zone (pure TS, NO Phaser/browser globals)
     animation/           → Shared AnimationDef type for entity animations
@@ -63,6 +62,7 @@ apps/client/             → Phaser 4 game client (@hub-of-wyn/client)
     player/              → Player controller, state, animation config
     progression/         → SessionSave (schema-validated persistence), progress summary
     scoring/             → Score calculator, star rating
+    session/             → Wake lock manager, visibility handler (pure TS lifecycle)
     settings/            → Preferences manager (ISettingsManager + localStorage persistence)
     ui/                  → Design tokens + scene-layout helpers: colors, spacing, typography, z-index, safe-zone positioning API, scaledStyle(), hitArea() (pure TS, zone-safe)
   src/scenes/            → View zone (Phaser scenes, thin)
@@ -78,6 +78,20 @@ scripts/
   dependency-review.yml → PR dependency audit
 ```
 
+## Testing Contract
+
+This repository uses **Vitest** as the test framework. Bun is the package manager and script launcher only.
+
+| Correct | Wrong | Why |
+|---------|-------|-----|
+| `bun run test` | `bun test` | `bun test` invokes Bun's built-in test runner, NOT Vitest |
+| `bun run test:run` | `bun test --run` | Same reason — wrong test runner |
+| `import { describe } from 'vitest'` | `import { describe } from 'bun:test'` | All tests use Vitest APIs |
+
+- Test config: `vitest.config.ts` (root, uses `test.projects`)
+- Discovery: each project scoped to `src/**/*.test.ts` with explicit `dist/**` + `node_modules/**` excludes
+- Scripts pass `--config vitest.config.ts` so discovery is unambiguous
+
 ## Commands
 
 - `bun install` — Install dependencies
@@ -87,8 +101,8 @@ scripts/
 - `bun run format` — Biome format + lint fix
 - `bun run format:check` — Biome check (CI)
 - `bun run deps:check` — dependency-cruiser structural validation
-- `bun run test` — Vitest watch mode
-- `bun run test:run` — Vitest single run (CI)
+- `bun run test` — Vitest watch mode (via `bun run`, NOT `bun test`)
+- `bun run test:run` — Vitest single run (via `bun run`, NOT `bun test`)
 - **`bun run check`** — Full gate: typecheck + lint:zones + deps:check + test:run
 - `bun run lint:md` — markdownlint check
 - `bun run lint:md:fix` — markdownlint autofix
@@ -344,8 +358,10 @@ shared/  X any app dependency except Zod
 | Character catalog | `apps/client/src/modules/character/character-catalog.ts` |
 | World/level catalog | `apps/client/src/modules/level/world-catalog.ts` |
 | Scene navigation | `apps/client/src/modules/navigation/scene-keys.ts` + `flow-controller.ts` |
+| Session lifecycle | `apps/client/src/modules/session/` (wake-lock-manager, visibility-handler) |
 | Viewport & layout | `apps/client/src/modules/viewport/` (pure math) + `core/ports/viewport.ts` |
 | Mobile responsive | `docs/plans/mobile-responsive-plan.md` (guide) + `.claude/rules/viewport-responsive.md` |
+| Testing config | `vitest.config.ts` (root, `test.projects`) — see Testing Contract in this file |
 | Engine abstraction | `apps/client/src/core/ports/` |
 | Phaser adapters | `apps/client/src/core/adapters/` |
 | DI wiring | `apps/client/src/core/container.ts` + `apps/client/src/main.ts` |
