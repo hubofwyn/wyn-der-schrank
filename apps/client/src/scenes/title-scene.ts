@@ -2,7 +2,7 @@ import { MusicKeys } from '../modules/assets/audio-keys.js';
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
 import { progressSummary } from '../modules/progression/progress-summary.js';
 import { Colors, Typography } from '../modules/ui/design-tokens.js';
-import { menuLayout } from '../modules/ui/scene-layout.js';
+import { menuLayout, scaledStyle } from '../modules/ui/scene-layout.js';
 import { BaseScene } from './base-scene.js';
 
 /**
@@ -22,6 +22,7 @@ export class TitleScene extends BaseScene {
 
 	create(): void {
 		const safeZone = this.container.viewport.safeZone;
+		const ww = this.container.viewport.worldSize.width;
 		const layout = menuLayout(safeZone, [0.3, 0.38, 0.55, 0.65]);
 		const cx = layout.cx;
 
@@ -35,7 +36,7 @@ export class TitleScene extends BaseScene {
 			cx,
 			layout.items[0]!,
 			'Wyn der Schrank',
-			Typography.title as Phaser.Types.GameObjects.Text.TextStyle,
+			scaledStyle(Typography.title, ww) as Phaser.Types.GameObjects.Text.TextStyle,
 		);
 		title.setOrigin(0.5, 0.5);
 		title.setColor(Colors.accent);
@@ -44,7 +45,7 @@ export class TitleScene extends BaseScene {
 		const summary = progressSummary(this.container.sessionSave.current);
 		if (summary) {
 			const progressText = this.add.text(cx, layout.items[1]!, summary, {
-				...Typography.small,
+				...scaledStyle(Typography.small, ww),
 				color: Colors.textMuted,
 			} as Phaser.Types.GameObjects.Text.TextStyle);
 			progressText.setOrigin(0.5, 0.5);
@@ -52,11 +53,11 @@ export class TitleScene extends BaseScene {
 
 		// ── Play button ──
 		const playBtn = this.add.text(cx, layout.items[2]!, 'Play', {
-			...Typography.button,
+			...scaledStyle(Typography.button, ww),
 			color: Colors.button,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
 		playBtn.setOrigin(0.5, 0.5);
-		playBtn.setInteractive({ useHandCursor: true });
+		this.makeButton(playBtn);
 		playBtn.on('pointerover', () => playBtn.setColor(Colors.buttonHover));
 		playBtn.on('pointerout', () => playBtn.setColor(Colors.button));
 		playBtn.on('pointerdown', () => {
@@ -67,11 +68,11 @@ export class TitleScene extends BaseScene {
 
 		// ── Settings button ──
 		const settingsBtn = this.add.text(cx, layout.items[3]!, 'Settings', {
-			...Typography.button,
+			...scaledStyle(Typography.button, ww),
 			color: Colors.button,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
 		settingsBtn.setOrigin(0.5, 0.5);
-		settingsBtn.setInteractive({ useHandCursor: true });
+		this.makeButton(settingsBtn);
 		settingsBtn.on('pointerover', () => settingsBtn.setColor(Colors.buttonHover));
 		settingsBtn.on('pointerout', () => settingsBtn.setColor(Colors.button));
 		settingsBtn.on('pointerdown', () => {

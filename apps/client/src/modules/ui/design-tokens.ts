@@ -47,7 +47,13 @@ export const Spacing: Readonly<{
 	xxl: 48,
 });
 
-export const Typography: Readonly<Record<string, TextStyleDef>> = Object.freeze({
+export const Typography: Readonly<{
+	title: TextStyleDef;
+	heading: TextStyleDef;
+	body: TextStyleDef;
+	button: TextStyleDef;
+	small: TextStyleDef;
+}> = Object.freeze({
 	title: { fontSize: '48px', fontFamily: 'monospace', fontStyle: 'bold' },
 	heading: { fontSize: '32px', fontFamily: 'monospace', fontStyle: 'bold' },
 	body: { fontSize: '24px', fontFamily: 'monospace' },

@@ -6,6 +6,7 @@ import {
 	cornerButton,
 	menuLayout,
 	safeCenterY,
+	scaledStyle,
 } from '../modules/ui/scene-layout.js';
 import { BaseScene } from './base-scene.js';
 
@@ -41,6 +42,7 @@ export class CharacterSelectScene extends BaseScene {
 
 	create(): void {
 		const safeZone = this.container.viewport.safeZone;
+		const ww = this.container.viewport.worldSize.width;
 		const layout = menuLayout(safeZone, [0.07]);
 		const cx = layout.cx;
 
@@ -48,7 +50,7 @@ export class CharacterSelectScene extends BaseScene {
 
 		// ── Title ──
 		const title = this.add.text(cx, layout.items[0]!, 'Choose Your Hero', {
-			...Typography.heading,
+			...scaledStyle(Typography.heading, ww),
 			color: Colors.accent,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
 		title.setOrigin(0.5, 0.5);
@@ -62,17 +64,17 @@ export class CharacterSelectScene extends BaseScene {
 			const char = characters[i];
 			if (!char) continue;
 			const cardX = startX + i * (CARD_WIDTH + CARD_GAP);
-			this.createCharacterCard(cardX, cardY, char);
+			this.createCharacterCard(cardX, cardY, char, ww);
 		}
 
 		// ── Back button ──
 		const backPos = cornerButton('bottom-left', safeZone);
 		const backBtn = this.add.text(backPos.x, backPos.y, 'Back', {
-			...Typography.button,
+			...scaledStyle(Typography.button, ww),
 			color: Colors.button,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
 		backBtn.setOrigin(0.5, 0.5);
-		backBtn.setInteractive({ useHandCursor: true });
+		this.makeButton(backBtn);
 		backBtn.on('pointerover', () => backBtn.setColor(Colors.buttonHover));
 		backBtn.on('pointerout', () => backBtn.setColor(Colors.button));
 		backBtn.on('pointerdown', () => {
@@ -82,7 +84,7 @@ export class CharacterSelectScene extends BaseScene {
 		});
 	}
 
-	private createCharacterCard(x: number, y: number, char: CharacterDefinition): void {
+	private createCharacterCard(x: number, y: number, char: CharacterDefinition, ww: number): void {
 		const borderColor = BORDER_COLORS[char.id] ?? 0xffffff;
 
 		// ── Card background ──
@@ -95,7 +97,7 @@ export class CharacterSelectScene extends BaseScene {
 
 		// ── Name ──
 		const nameText = this.add.text(0, -CARD_HEIGHT / 2 + Spacing.lg, char.name, {
-			...Typography.heading,
+			...scaledStyle(Typography.heading, ww),
 			color: Colors.accent,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
 		nameText.setOrigin(0.5, 0);
@@ -103,7 +105,7 @@ export class CharacterSelectScene extends BaseScene {
 
 		// ── Description ──
 		const descText = this.add.text(0, -CARD_HEIGHT / 2 + Spacing.lg + 44, char.description, {
-			...Typography.small,
+			...scaledStyle(Typography.small, ww),
 			color: Colors.textMuted,
 			wordWrap: { width: CARD_WIDTH - Spacing.lg * 2 },
 		} as Phaser.Types.GameObjects.Text.TextStyle);
@@ -132,12 +134,13 @@ export class CharacterSelectScene extends BaseScene {
 				stat.value,
 				stat.max,
 				borderColor,
+				ww,
 			);
 		}
 
 		// ── Ability ──
 		const abilityText = this.add.text(0, CARD_HEIGHT / 2 - Spacing.xl - 20, char.ability.name, {
-			...Typography.small,
+			...scaledStyle(Typography.small, ww),
 			color: Colors.accent,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
 		abilityText.setOrigin(0.5, 0.5);
@@ -184,9 +187,10 @@ export class CharacterSelectScene extends BaseScene {
 		value: number,
 		max: number,
 		color: number,
+		ww: number,
 	): void {
 		const labelText = this.add.text(x - 4, y, label, {
-			...Typography.small,
+			...scaledStyle(Typography.small, ww),
 			color: Colors.textMuted,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
 		labelText.setOrigin(1, 0.5);

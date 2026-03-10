@@ -5,7 +5,7 @@ import {
 } from '../modules/game-state/gameplay-state.js';
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
 import { Colors, Typography } from '../modules/ui/design-tokens.js';
-import { buttonStack, menuLayout, safeCenterX } from '../modules/ui/scene-layout.js';
+import { buttonStack, menuLayout, safeCenterX, scaledStyle } from '../modules/ui/scene-layout.js';
 import { BaseScene } from './base-scene.js';
 
 /**
@@ -27,6 +27,7 @@ export class GameOverScene extends BaseScene {
 	create(): void {
 		const state = this.readGameplayState();
 		const safeZone = this.container.viewport.safeZone;
+		const ww = this.container.viewport.worldSize.width;
 		const cx = safeCenterX(safeZone);
 		const header = menuLayout(safeZone, [0.19, 0.36]);
 		const buttons = buttonStack(safeZone, 0.72, 2, 60);
@@ -35,7 +36,7 @@ export class GameOverScene extends BaseScene {
 
 		// ── Title ──
 		const title = this.add.text(cx, header.items[0]!, 'Game Over', {
-			...Typography.title,
+			...scaledStyle(Typography.title, ww),
 			color: Colors.danger,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
 		title.setOrigin(0.5, 0.5);
@@ -43,18 +44,18 @@ export class GameOverScene extends BaseScene {
 		// ── Stats ──
 		const statsLines = [`Score: ${state.score}`, `Coins: ${state.coins}/${state.coinsTotal}`];
 		const statsText = this.add.text(cx, header.items[1]!, statsLines.join('\n'), {
-			...Typography.body,
+			...scaledStyle(Typography.body, ww),
 			color: Colors.text,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
 		statsText.setOrigin(0.5, 0.5);
 
 		// ── Retry button ──
 		const retryBtn = this.add.text(cx, buttons.items[0]!, 'Retry', {
-			...Typography.button,
+			...scaledStyle(Typography.button, ww),
 			color: Colors.button,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
 		retryBtn.setOrigin(0.5, 0.5);
-		retryBtn.setInteractive({ useHandCursor: true });
+		this.makeButton(retryBtn);
 		retryBtn.on('pointerover', () => retryBtn.setColor(Colors.buttonHover));
 		retryBtn.on('pointerout', () => retryBtn.setColor(Colors.button));
 		retryBtn.on('pointerdown', () => {
@@ -64,11 +65,11 @@ export class GameOverScene extends BaseScene {
 
 		// ── Menu button ──
 		const menuBtn = this.add.text(cx, buttons.items[1]!, 'Menu', {
-			...Typography.button,
+			...scaledStyle(Typography.button, ww),
 			color: Colors.button,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
 		menuBtn.setOrigin(0.5, 0.5);
-		menuBtn.setInteractive({ useHandCursor: true });
+		this.makeButton(menuBtn);
 		menuBtn.on('pointerover', () => menuBtn.setColor(Colors.buttonHover));
 		menuBtn.on('pointerout', () => menuBtn.setColor(Colors.button));
 		menuBtn.on('pointerdown', () => {

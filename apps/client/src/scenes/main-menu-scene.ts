@@ -1,7 +1,7 @@
 import type { WorldDefinition, WorldId } from '@hub-of-wyn/shared';
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
 import { Colors, Spacing, Typography } from '../modules/ui/design-tokens.js';
-import { cornerButton, menuLayout, safeCenterX } from '../modules/ui/scene-layout.js';
+import { cornerButton, menuLayout, safeCenterX, scaledStyle } from '../modules/ui/scene-layout.js';
 import { BaseScene } from './base-scene.js';
 
 const LEVEL_CARD_SIZE = 100;
@@ -45,6 +45,7 @@ export class MainMenuScene extends BaseScene {
 
 	create(): void {
 		const safeZone = this.container.viewport.safeZone;
+		const ww = this.container.viewport.worldSize.width;
 		const cx = safeCenterX(safeZone);
 		const headerLayout = menuLayout(safeZone, [0.056]);
 
@@ -56,7 +57,7 @@ export class MainMenuScene extends BaseScene {
 		const charName = charDef?.name ?? 'Unknown';
 
 		const header = this.add.text(cx, headerLayout.items[0]!, `${charName}'s Adventure`, {
-			...Typography.heading,
+			...scaledStyle(Typography.heading, ww),
 			color: Colors.accent,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
 		header.setOrigin(0.5, 0.5);
@@ -68,17 +69,17 @@ export class MainMenuScene extends BaseScene {
 
 		for (const world of worlds) {
 			const unlocked = this.container.worldCatalog.isWorldUnlocked(world.id, saveData);
-			yOffset = this.createWorldSection(cx, yOffset, world, unlocked);
+			yOffset = this.createWorldSection(cx, yOffset, world, unlocked, ww);
 		}
 
 		// ── Back button ──
 		const backPos = cornerButton('bottom-left', safeZone);
 		const backBtn = this.add.text(backPos.x, backPos.y, 'Back', {
-			...Typography.button,
+			...scaledStyle(Typography.button, ww),
 			color: Colors.button,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
 		backBtn.setOrigin(0.5, 0.5);
-		backBtn.setInteractive({ useHandCursor: true });
+		this.makeButton(backBtn);
 		backBtn.on('pointerover', () => backBtn.setColor(Colors.buttonHover));
 		backBtn.on('pointerout', () => backBtn.setColor(Colors.button));
 		backBtn.on('pointerdown', () => {
@@ -89,11 +90,11 @@ export class MainMenuScene extends BaseScene {
 		// ── Settings button ──
 		const settingsPos = cornerButton('bottom-right', safeZone);
 		const settingsBtn = this.add.text(settingsPos.x, settingsPos.y, 'Settings', {
-			...Typography.button,
+			...scaledStyle(Typography.button, ww),
 			color: Colors.button,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
 		settingsBtn.setOrigin(0.5, 0.5);
-		settingsBtn.setInteractive({ useHandCursor: true });
+		this.makeButton(settingsBtn);
 		settingsBtn.on('pointerover', () => settingsBtn.setColor(Colors.buttonHover));
 		settingsBtn.on('pointerout', () => settingsBtn.setColor(Colors.button));
 		settingsBtn.on('pointerdown', () => {
@@ -107,11 +108,12 @@ export class MainMenuScene extends BaseScene {
 		y: number,
 		world: WorldDefinition,
 		unlocked: boolean,
+		ww: number,
 	): number {
 		// ── World name ──
 		const nameColor = unlocked ? Colors.text : Colors.textMuted;
 		const nameText = this.add.text(cx, y, world.name, {
-			...Typography.body,
+			...scaledStyle(Typography.body, ww),
 			color: nameColor,
 			fontStyle: 'bold',
 		} as Phaser.Types.GameObjects.Text.TextStyle);
@@ -121,7 +123,7 @@ export class MainMenuScene extends BaseScene {
 		if (!unlocked) {
 			// ── Locked: show requirement ──
 			const lockText = this.add.text(cx, y, unlockText(world), {
-				...Typography.small,
+				...scaledStyle(Typography.small, ww),
 				color: Colors.textMuted,
 			} as Phaser.Types.GameObjects.Text.TextStyle);
 			lockText.setOrigin(0.5, 0);
@@ -132,7 +134,7 @@ export class MainMenuScene extends BaseScene {
 		if (world.levels.length === 0) {
 			// ── Unlocked but empty: coming soon ──
 			const soonText = this.add.text(cx, y, 'Coming soon...', {
-				...Typography.small,
+				...scaledStyle(Typography.small, ww),
 				color: Colors.textMuted,
 			} as Phaser.Types.GameObjects.Text.TextStyle);
 			soonText.setOrigin(0.5, 0);
@@ -152,14 +154,20 @@ export class MainMenuScene extends BaseScene {
 			const row = Math.floor(i / MAX_COLUMNS);
 			const lx = startX + col * (LEVEL_CARD_SIZE + LEVEL_CARD_GAP);
 			const ly = y + row * (LEVEL_CARD_SIZE + LEVEL_CARD_GAP);
-			this.createLevelCard(lx, ly, levelId, world.id);
+			this.createLevelCard(lx, ly, levelId, world.id, ww);
 		}
 
 		const rows = Math.ceil(levels.length / MAX_COLUMNS);
 		return y + rows * (LEVEL_CARD_SIZE + LEVEL_CARD_GAP) + Spacing.md;
 	}
 
-	private createLevelCard(x: number, y: number, levelId: string, worldId: WorldId): void {
+	private createLevelCard(
+		x: number,
+		y: number,
+		levelId: string,
+		worldId: WorldId,
+		ww: number,
+	): void {
 		const saveData = this.container.sessionSave.current;
 		const completion = saveData.levels[levelId];
 		const hasStars = completion !== undefined;
@@ -172,7 +180,7 @@ export class MainMenuScene extends BaseScene {
 		// ── Level label ──
 		const displayName = levelId.replace(/-/g, ' ');
 		const label = this.add.text(x, y - 12, displayName, {
-			...Typography.small,
+			...scaledStyle(Typography.small, ww),
 			color: Colors.text,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
 		label.setOrigin(0.5, 0.5);
@@ -180,7 +188,7 @@ export class MainMenuScene extends BaseScene {
 		// ── Star rating ──
 		if (hasStars) {
 			const stars = this.add.text(x, y + 16, formatStars(completion.stars), {
-				...Typography.small,
+				...scaledStyle(Typography.small, ww),
 				color: Colors.accent,
 			} as Phaser.Types.GameObjects.Text.TextStyle);
 			stars.setOrigin(0.5, 0.5);

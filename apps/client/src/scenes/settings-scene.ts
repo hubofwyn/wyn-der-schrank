@@ -1,7 +1,7 @@
 import type { SceneKey } from '../modules/navigation/scene-keys.js';
 import { SceneKeys } from '../modules/navigation/scene-keys.js';
 import { Colors, Spacing, Typography } from '../modules/ui/design-tokens.js';
-import { menuLayout } from '../modules/ui/scene-layout.js';
+import { menuLayout, scaledStyle } from '../modules/ui/scene-layout.js';
 import { BaseScene } from './base-scene.js';
 
 interface ToggleDef {
@@ -44,6 +44,7 @@ export class SettingsScene extends BaseScene {
 		}
 
 		const safeZone = this.container.viewport.safeZone;
+		const ww = this.container.viewport.worldSize.width;
 		const layout = menuLayout(safeZone, [0.12, 0.85]);
 		const cx = layout.cx;
 		this.cameras.main.setBackgroundColor(Colors.background);
@@ -51,7 +52,7 @@ export class SettingsScene extends BaseScene {
 
 		// ── Title ──
 		const title = this.add.text(cx, layout.items[0]!, 'Settings', {
-			...Typography.heading,
+			...scaledStyle(Typography.heading, ww),
 			color: Colors.accent,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
 		title.setOrigin(0.5, 0.5);
@@ -66,7 +67,7 @@ export class SettingsScene extends BaseScene {
 
 			// Label
 			const label = this.add.text(cx - 140, y, toggle.label, {
-				...Typography.body,
+				...scaledStyle(Typography.body, ww),
 				color: Colors.text,
 			} as Phaser.Types.GameObjects.Text.TextStyle);
 			label.setOrigin(0, 0.5);
@@ -74,11 +75,11 @@ export class SettingsScene extends BaseScene {
 			// Value button
 			const current = this.getToggleValue(toggle);
 			const valueBtn = this.add.text(cx + 140, y, current ? '[ON]' : '[OFF]', {
-				...Typography.body,
+				...scaledStyle(Typography.body, ww),
 				color: current ? Colors.success : Colors.textMuted,
 			} as Phaser.Types.GameObjects.Text.TextStyle);
 			valueBtn.setOrigin(1, 0.5);
-			valueBtn.setInteractive({ useHandCursor: true });
+			this.makeButton(valueBtn);
 
 			const idx = i;
 			valueBtn.on('pointerdown', () => {
@@ -91,11 +92,11 @@ export class SettingsScene extends BaseScene {
 
 		// ── Back button ──
 		const backBtn = this.add.text(cx, layout.items[1]!, 'Back', {
-			...Typography.button,
+			...scaledStyle(Typography.button, ww),
 			color: Colors.button,
 		} as Phaser.Types.GameObjects.Text.TextStyle);
 		backBtn.setOrigin(0.5, 0.5);
-		backBtn.setInteractive({ useHandCursor: true });
+		this.makeButton(backBtn);
 		backBtn.on('pointerover', () => backBtn.setColor(Colors.buttonHover));
 		backBtn.on('pointerout', () => backBtn.setColor(Colors.button));
 		backBtn.on('pointerdown', () => {
