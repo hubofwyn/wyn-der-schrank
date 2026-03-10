@@ -22,16 +22,17 @@ Shell Viewport -> Canvas Container -> World Size Computation -> Engine Display S
 - **`modules/viewport/`** is pure TS. No Phaser, no DOM, no browser globals. Layout math only.
   - `computeWorldSize()` — fixed height, variable width
   - `createSafeZone()` — centered authored-content rectangle
-  - `computeTextScaleFactor()`, `scaleFontSize()` — HUD scaling compensation
+  - `scaleFontSize()`, `scaleFontSizeStr()` — HUD scaling compensation (TEXT_SCALE_FLOOR prevents double-dip with FIT)
+  - `anchorInSafeZone()` — 5-point anchor positioning (top-left, top-right, bottom-left, bottom-right, center)
 - **`core/ports/viewport.ts`** defines `IViewportProvider` interface.
 - **`core/adapters/phaser-viewport.ts`** implements `IViewportProvider` using module functions + DOM probe for safe area insets.
-- **`core/adapters/touch-input.ts`** implements `IInputProvider` (existing port) using DOM `PointerEvent` on canvas.
-- **`core/adapters/adaptive-input.ts`** wraps keyboard + touch, auto-selects via settings.
+- **`core/adapters/touch-input.ts`** implements `IInputProvider` (existing port) using DOM `PointerEvent` overlay with pointer capture for multi-touch.
+- **`core/adapters/adaptive-input.ts`** composites keyboard + touch via logical OR, auto-selects via settings.
 
 ## Layout Rules (scenes)
 
-- **Safe zone anchoring.** HUD elements anchor to `container.viewportProvider.safeZone`, not raw `(0, 0)` or `this.scale.width/height`.
-- **HUD text scaling.** Use `scaleFontSize(baseSize, container.viewportProvider.textScale)`. Never hardcode pixel font sizes in scenes without scale compensation.
+- **Safe zone anchoring.** HUD elements anchor to `container.viewport.safeZone`, not raw `(0, 0)` or `this.scale.width/height`.
+- **HUD text scaling.** Use `container.viewport.scaleFontSize(baseSizePx)`. Never hardcode pixel font sizes in scenes without scale compensation.
 - **Resize response.** Scenes listen for viewport changes through the registry pattern, not ad-hoc `window.addEventListener('resize', ...)`.
 - **Physics bounds.** Update `physics.world.setBounds()` on resize to match new world dimensions.
 
@@ -49,7 +50,7 @@ Shell Viewport -> Canvas Container -> World Size Computation -> Engine Display S
 - **`viewport-fit=cover`** in the viewport meta tag for safe area inset support.
 - **No scrolling.** `overflow: hidden` on body. The game surface is the page.
 
-## Constants (modules/viewport/viewport-config.ts)
+## Constants (modules/viewport/viewport-math.ts)
 
 | Constant | Value | Rationale |
 |----------|-------|-----------|

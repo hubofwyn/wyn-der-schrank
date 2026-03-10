@@ -1,3 +1,12 @@
+---
+title: Agentic Development Setup
+category: plans
+status: reference
+last_updated: 2026-03-09
+tags: [agentic, infrastructure, hooks, rules]
+priority: medium
+---
+
 # Wyn der Schrank — Agentic Development Setup
 
 **Companion to:** `docs/FOUNDATION.md` (architecture), `docs/plans/game-blueprint.md` (domain), `docs/plans/telemetry.md` (enforcement)

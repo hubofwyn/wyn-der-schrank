@@ -1,3 +1,13 @@
+---
+title: Responsive Multi-Platform Development Guide
+category: plans
+component: viewport
+status: reference
+last_updated: 2026-03-09
+tags: [mobile, viewport, touch, responsive, reference]
+priority: high
+---
+
 # Responsive Multi-Platform Development Guide
 
 > Machine-readable agentic reference for building a web-first game that works on desktop and mobile from a single codebase. Extracted from a production SvelteKit + Phaser 4 arcade shooter monorepo. Contains hard-won lessons from shipping on phones, tablets, and desktops.

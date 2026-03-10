@@ -1,3 +1,12 @@
+---
+title: Lint, Format and Git Hooks
+category: plans
+status: reference
+last_updated: 2026-03-09
+tags: [lint, format, hooks, biome, eslint]
+priority: medium
+---
+
 # Wyn der Schrank — Lint, Format & Git Hooks
 
 **Companion to:** Foundation (architecture), Agentic Setup (agent tooling), Telemetry & Enforcement  

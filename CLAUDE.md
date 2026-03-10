@@ -16,6 +16,8 @@ Read `AGENTS.md` first. It is the project contract.
 | Agentic setup | `docs/plans/agentic-setup.md` | Design of .claude/ infrastructure |
 | Lint & hooks | `docs/plans/lint-format-hooks.md` | Tool roles, config, git hook pipeline |
 | Mobile responsive | `docs/plans/mobile-responsive-plan.md` | Viewport, safe zone, touch, HUD scaling guide |
+| Mobile research | `docs/plans/mobile-ui-ux-research.md` | March 2026 mobile web platform research |
+| Mobile goals | `docs/plans/mobile-goals.md` | G13-G15 implementation plan for mobile polish |
 | Phaser evidence | `docs/PHASER_EVIDENCE.md` | Verified Phaser 4 API usage log |
 
 ## Workflow
