@@ -102,6 +102,8 @@ export class PauseScene extends BaseScene {
 				this.escHandler = null;
 			}
 		});
+
+		this.subscribeResize();
 	}
 
 	private resumeGame(): void {

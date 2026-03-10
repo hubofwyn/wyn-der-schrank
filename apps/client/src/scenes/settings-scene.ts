@@ -103,6 +103,8 @@ export class SettingsScene extends BaseScene {
 			this.playButtonSfx();
 			this.navigateTo(this.returnTo);
 		});
+
+		this.subscribeResize();
 	}
 
 	private getToggleValue(toggle: ToggleDef): boolean {

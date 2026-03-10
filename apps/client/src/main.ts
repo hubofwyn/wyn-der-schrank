@@ -162,3 +162,10 @@ container.audio.setSfxVolume(audioSettings.sfxVolume);
 if (audioSettings.muted) {
 	container.audio.mute();
 }
+
+// Resize pipeline: update Phaser game size when viewport changes.
+// PhaserViewport already debounces (100ms) and recomputes worldSize/safeZone.
+// Scenes subscribe via onViewportResize() in BaseScene.
+container.viewport.onResize((newWorldSize) => {
+	game.scale.setGameSize(newWorldSize.width, newWorldSize.height);
+});

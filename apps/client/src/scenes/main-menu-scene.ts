@@ -101,6 +101,8 @@ export class MainMenuScene extends BaseScene {
 			this.playButtonSfx();
 			this.scene.start(SceneKeys.SETTINGS, { returnTo: SceneKeys.MAIN_MENU });
 		});
+
+		this.subscribeResize();
 	}
 
 	private createWorldSection(

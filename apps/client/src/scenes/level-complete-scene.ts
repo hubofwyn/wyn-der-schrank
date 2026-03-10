@@ -146,6 +146,8 @@ export class LevelCompleteScene extends BaseScene {
 			this.scene.stop(SceneKeys.PAUSE);
 			this.navigateTo(SceneKeys.MAIN_MENU);
 		});
+
+		this.subscribeResize();
 	}
 
 	private readGameplayState(): GameplayState {

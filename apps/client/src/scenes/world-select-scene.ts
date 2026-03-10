@@ -69,6 +69,8 @@ export class WorldSelectScene extends BaseScene {
 			this.playButtonSfx();
 			this.navigateTo(SceneKeys.MAIN_MENU);
 		});
+
+		this.subscribeResize();
 	}
 
 	private createWorldCard(

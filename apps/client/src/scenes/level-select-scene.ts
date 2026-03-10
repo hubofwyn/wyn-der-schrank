@@ -98,6 +98,8 @@ export class LevelSelectScene extends BaseScene {
 			this.playButtonSfx();
 			this.navigateTo(SceneKeys.WORLD_SELECT);
 		});
+
+		this.subscribeResize();
 	}
 
 	private createLevelCard(

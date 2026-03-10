@@ -25,9 +25,36 @@
         display: block;
         touch-action: none;
       }
+      /* Portrait orientation overlay — prompts rotation to landscape */
+      #portrait-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: #1a1a2e;
+        color: #e0e0e0;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        font-family: monospace;
+        font-size: 1.25rem;
+        text-align: center;
+        padding: 2rem;
+      }
+      #portrait-overlay .rotate-icon {
+        font-size: 3rem;
+      }
+      @media (orientation: portrait) {
+        #portrait-overlay { display: flex; }
+      }
     </style>
   </head>
   <body>
+    <div id="portrait-overlay">
+      <div class="rotate-icon">&#x1F504;</div>
+      <div>Please rotate your device to landscape</div>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

@@ -35,10 +35,10 @@ This plan covers what remains to make the game fully playable and polished on mo
 
 1. ~~**Zero scenes use safe zone**~~ — **FIXED**: all 14 UI scenes now use `container.viewport.safeZone` via scene-layout helpers
 2. ~~**Zero scenes use `scaleFontSize()`**~~ — **FIXED**: all scenes use `scaledStyle()` or `scaleFontSizeStr()` for responsive text sizing
-3. **No resize listeners** — HUD positions set once in `create()`, never update
+3. ~~**No resize listeners**~~ — **FIXED**: PhaserViewport debounces resize (100ms), `main.ts` calls `setGameSize()`, UI scenes subscribe via `subscribeResize()` in BaseScene and restart to re-layout
 4. ~~**No touch target enforcement**~~ — **FIXED**: `makeButton()` in BaseScene applies expanded hit areas (44px minimum) via `hitArea()` from scene-layout
 5. ~~**Hardcoded corner buttons**~~ — **FIXED**: all corner buttons now use `cornerButton()` with safe-zone anchoring
-6. **No portrait overlay** — game adapts via clamping but never prompts rotation
+6. ~~**No portrait overlay**~~ — **FIXED**: CSS `@media (orientation: portrait)` overlay in `index.html` prompts landscape rotation
 7. **No PWA infrastructure** — no manifest, no service worker, no icons, no theme-color
 8. **No wake lock** — screen dims during gameplay on mobile
 9. **No visibility pause** — game keeps running when tab/app switches
@@ -99,10 +99,11 @@ Migrate all 14 UI scenes (excluding BootScene and BaseScene) from hardcoded/perc
 
 ### G14: Resize Pipeline
 
-> **Status:** not-started
+> **Status:** complete
 > **Requires:** G13 (scenes must use safe-zone positioning for resize to reposition correctly)
 > **Benefits from:** none
 > **Unlocks:** G15
+> **Branch:** feat/resize-pipeline
 
 Wire the resize event pipeline so that viewport changes (orientation rotation, browser chrome collapse, desktop window resize) update the game canvas size and reposition scene UI in real time.
 
@@ -115,13 +116,13 @@ Wire the resize event pipeline so that viewport changes (orientation rotation, b
 
 **Deliverables:**
 
-- [ ] Resize handler in `main.ts` calls `game.scale.setGameSize()` on viewport change with 100ms debounce
-- [ ] BaseScene adds optional `onViewportResize()` hook that subclasses can override
-- [ ] HudScene and MinigameHudScene implement `onViewportResize()` — reposition all elements
-- [ ] Menu scenes (Title, Pause, Settings, GameOver, LevelComplete) implement `onViewportResize()`
-- [ ] Selection scenes (CharacterSelect, MainMenu, WorldSelect, LevelSelect) implement `onViewportResize()`
-- [ ] Portrait orientation overlay — CSS `@media (orientation: portrait)` shows "Rotate to landscape" message
-- [ ] Tests for debounce logic and resize handler
+- [x] Resize handler in `main.ts` calls `game.scale.setGameSize()` on viewport change with 100ms debounce
+- [x] BaseScene adds optional `onViewportResize()` hook that subclasses can override — default restarts scene, gameplay scenes are exempt
+- [x] HudScene and MinigameHudScene implement `onViewportResize()` — subscribe via `subscribeResize()`, restart to re-layout
+- [x] Menu scenes (Title, Pause, Settings, GameOver, LevelComplete) implement `onViewportResize()` — subscribe via `subscribeResize()`
+- [x] Selection scenes (CharacterSelect, MainMenu, WorldSelect, LevelSelect) implement `onViewportResize()` — subscribe via `subscribeResize()`
+- [x] Portrait orientation overlay — CSS `@media (orientation: portrait)` shows "Rotate to landscape" message in `index.html`
+- [x] Tests for debounce logic (9 tests) — pure TS with injectable fake timer
 
 ---
 

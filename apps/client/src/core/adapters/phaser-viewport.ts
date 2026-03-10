@@ -1,3 +1,4 @@
+import { type DebouncedFn, debounce } from '../../modules/viewport/debounce.js';
 import {
 	computeWorldSize,
 	createSafeZone,
@@ -8,6 +9,8 @@ import {
 	type WorldSize,
 } from '../../modules/viewport/viewport-math.js';
 import type { IViewportProvider } from '../ports/viewport.js';
+
+const RESIZE_DEBOUNCE_MS = 100;
 
 /**
  * Adapter that bridges device/browser viewport state into IViewportProvider.
@@ -23,6 +26,7 @@ export class PhaserViewport implements IViewportProvider {
 	private _safeAreaInsets: SafeAreaInsets;
 	private _isTouchDevice: boolean;
 	private readonly _listeners = new Set<(worldSize: WorldSize, safeZone: SafeZone) => void>();
+	private readonly _debouncedResize: DebouncedFn<() => void>;
 	private readonly _resizeHandler: () => void;
 
 	constructor(screenWidth: number, screenHeight: number) {
@@ -31,7 +35,8 @@ export class PhaserViewport implements IViewportProvider {
 		this._safeAreaInsets = PhaserViewport.probeSafeAreaInsets();
 		this._isTouchDevice = PhaserViewport.detectTouch();
 
-		this._resizeHandler = () => this.handleResize();
+		this._debouncedResize = debounce(() => this.handleResize(), RESIZE_DEBOUNCE_MS);
+		this._resizeHandler = () => this._debouncedResize();
 		window.addEventListener('resize', this._resizeHandler);
 	}
 
@@ -68,6 +73,7 @@ export class PhaserViewport implements IViewportProvider {
 
 	destroy(): void {
 		window.removeEventListener('resize', this._resizeHandler);
+		this._debouncedResize.cancel();
 		this._listeners.clear();
 	}
 

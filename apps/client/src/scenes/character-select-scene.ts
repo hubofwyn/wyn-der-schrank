@@ -82,6 +82,8 @@ export class CharacterSelectScene extends BaseScene {
 			this.container.flowController.reset();
 			this.navigateTo(SceneKeys.TITLE);
 		});
+
+		this.subscribeResize();
 	}
 
 	private createCharacterCard(x: number, y: number, char: CharacterDefinition, ww: number): void {

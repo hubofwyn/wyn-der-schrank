@@ -1,17 +1,17 @@
 ---
 title: Active Plan
-last_updated: 2026-03-09
+last_updated: 2026-03-10
 ---
 
 # Active Plan
 
 ## Snapshot
 
-- __Active:__ G13 Safe-Zone Scene Anchoring [feat/hit-area-font-scale]
-- __Next ready:__ G14 Resize Pipeline
+- __Active:__ G14 Resize Pipeline [feat/resize-pipeline]
+- __Next ready:__ G15 PWA Shell and Session Polish
 - __Blocked:__ none
-- __Last milestone:__ 2026-03-09 — G13 Safe-Zone Scene Anchoring complete (569 tests)
-- __Gates:__ all green (569 tests)
+- __Last milestone:__ 2026-03-10 — G14 Resize Pipeline complete (578 tests)
+- __Gates:__ all green (578 tests)
 
 ## Goals
 
@@ -314,6 +314,8 @@ __Deliverables:__
 
 ## Completed Log
 
+- __2026-03-10__ — G14: Resize Pipeline — debounce utility (9 tests), PhaserViewport debounced resize (100ms), main.ts setGameSize wiring, BaseScene subscribeResize/onViewportResize lifecycle, 12 UI scenes subscribe, portrait orientation overlay (578 tests) [feat/resize-pipeline]
+- __2026-03-09__ — G13: Safe-Zone Scene Anchoring — scene-layout helper (9 functions, 29 tests), makeButton hit-area expansion (44px min), scaledStyle font scaling, 14 UI scenes migrated to safe-zone + scaledStyle + makeButton (569 tests) [feat/safe-zone-anchoring, feat/hit-area-font-scale]
 - __2026-02-15__ — G12: Second Minigame (Coin Catch) — MinigameRenderStateBase, clampDelta, data-driven view config, injected RNG, falling-objects module, scoring module, CoinCatchLogic, MinigameScene refactored to generic renderer, coin-catch portal in forest-2, regression fixes (tintOverride, intro position, removeInactive) (457 tests) [feat/coin-catch]
 - __2026-02-15__ — G11: Character System & Selection Flow — CharacterCatalog, WorldCatalog, FlowController (FSM), 4 new scenes (CharacterSelect, MainMenu, WorldSelect, LevelSelect), character/world JSON data, navigation chain rewiring (396 tests) [feat/character-system]
 - __2026-02-15__ — G10: Audio System — PhaserAudio adapter (layered volume, crossfade, AudioContext unlock), audio-keys domain module (SFX variants), 26 audio assets, scene integration across all 8 scenes, settings round-trip (348 tests) [feat/audio-system]
